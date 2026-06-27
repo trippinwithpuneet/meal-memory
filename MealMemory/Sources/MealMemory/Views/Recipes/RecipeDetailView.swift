@@ -41,7 +41,11 @@ struct RecipeDetailView: View {
                         Text(recipe.name)
                             .font(.system(size: 22, weight: .bold))
                             .foregroundColor(Theme.navy)
-                        Text("\(recipe.ingredients.count) ingredients · \(recipe.steps.count) steps")
+                        Text([
+                            "\(recipe.ingredients.count) ingredients",
+                            "\(recipe.steps.count) steps",
+                            recipe.prepTimeMinutes.map { "\($0) min" }
+                        ].compactMap { $0 }.joined(separator: " · "))
                             .font(Theme.Font.caption())
                             .foregroundColor(Theme.textSecondary)
                         if let url = recipe.sourceUrl, !url.isEmpty {

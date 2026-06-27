@@ -178,6 +178,11 @@ struct HouseholdView: View {
     }
 
     private func loadMembers() async {
+        if DemoData.isDemoMode {
+            members = DemoData.members
+            appState.members = members
+            return
+        }
         members = (try? await householdService.fetchMembers(householdId: householdId)) ?? []
         // Push to AppState and apply any locally-persisted restrictions.
         if !members.isEmpty {
@@ -226,7 +231,7 @@ struct MemberEditSheet: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    private let allRestrictions = ["Vegan", "Vegetarian", "Jain", "No onion-garlic", "Gluten-free", "Dairy-free"]
+    private let allRestrictions = ["Vegan", "Vegetarian", "Jain", "No onion-garlic", "Gluten-free", "No milk", "Dairy-free"]
 
     init(member: Member, onSave: @escaping (Member) -> Void) {
         _member = State(initialValue: member)

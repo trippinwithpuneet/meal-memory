@@ -60,9 +60,18 @@
 
 ### Remaining (pre-TestFlight)
 
-1. **Prep alerts** — `send-prep-alerts` Edge Function exists; needs APNs setup and cron schedule
-2. **Two-phone invite test** — invite flow implemented, needs real second device
-3. **TestFlight build** — next milestone per GTM plan
+1. **Apple Developer Program enrollment** ← RESUME HERE NEXT SESSION
+   - Go to developer.apple.com/programs/enroll
+   - Sign in with personal Apple ID
+   - Choose Individual / Sole Proprietor
+   - Pay $99/year — activates in minutes
+   - Once done: register Bundle ID `com.puneetjain.mealmemory` in developer.apple.com/account → Identifiers
+   - Create app record in appstoreconnect.apple.com → New App
+   - Open Xcode → MealMemory target → Signing & Capabilities → set Team → Archive → Distribute → TestFlight
+
+2. **Two-phone invite test** — invite flow implemented, needs real second device (do after TestFlight install)
+
+3. **Prep alerts** — `send-prep-alerts` Edge Function exists; needs APNs setup and cron schedule (post-TestFlight)
 
 ### Architecture notes
 

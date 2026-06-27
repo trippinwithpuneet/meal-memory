@@ -16,7 +16,7 @@ enum DemoData {
             householdId: householdId,
             userId: userId,
             displayName: "Puneet",
-            dietaryRestrictions: ["Vegetarian"],
+            dietaryRestrictions: ["Gluten-free", "No milk"],
             apnsDeviceTokens: [],
             joinedAt: Date()
         ),
@@ -24,8 +24,8 @@ enum DemoData {
             id: UUID(uuidString: "00000000-0000-0000-0001-000000000002")!,
             householdId: householdId,
             userId: UUID(uuidString: "00000000-0000-0000-0000-000000000003")!,
-            displayName: "Priya",
-            dietaryRestrictions: ["No onion-garlic"],
+            displayName: "Rachel",
+            dietaryRestrictions: [],
             apnsDeviceTokens: [],
             joinedAt: Date()
         ),
@@ -34,47 +34,47 @@ enum DemoData {
     // MARK: - Recipes
 
     static let recipes: [Recipe] = [
-        make(id: 1, name: "Dal Makhani",          emoji: "🫕",
+        make(id: 1, name: "Dal Makhani",          emoji: "🫕",  prepTime: 50,
              ingredients: ["1 cup black lentils", "1/2 cup kidney beans", "2 tbsp butter",
                            "1 onion", "2 garlic cloves", "1 tsp cumin", "200ml cream",
                            "1 tsp garam masala", "salt to taste"],
              steps: ["Soak lentils overnight", "Pressure cook for 20 min",
                      "Sauté onion and garlic in butter", "Add spices and cook 5 min",
                      "Add lentils and simmer 30 min", "Finish with cream"],
-             safeFor: ["Vegetarian", "Gluten-free"]),   // has onion-garlic → conflict with Priya
+             safeFor: ["Vegetarian", "Gluten-free"]),
 
-        make(id: 2, name: "Jeera Rice",            emoji: "🍚",
+        make(id: 2, name: "Jeera Rice",            emoji: "🍚",  prepTime: 25,
              ingredients: ["2 cups basmati rice", "1 tsp cumin seeds", "1 tbsp ghee",
                            "4 cups water", "salt to taste"],
              steps: ["Wash and soak rice 20 min", "Heat ghee and splutter cumin",
                      "Add rice and water", "Cook until tender"],
-             safeFor: ["Vegetarian", "Vegan", "No onion-garlic", "Gluten-free", "Dairy-free"]),
+             safeFor: ["Vegetarian", "Vegan", "No onion-garlic", "Gluten-free", "Dairy-free", "No milk"]),
 
-        make(id: 3, name: "Paneer Butter Masala", emoji: "🧀",
+        make(id: 3, name: "Paneer Butter Masala", emoji: "🧀",  prepTime: 35,
              ingredients: ["300g paneer", "2 onions", "3 tomatoes", "2 tbsp butter",
                            "4 garlic cloves", "1 tsp ginger", "1/2 cup cream",
                            "1 tsp kashmiri chilli", "1 tsp garam masala"],
              steps: ["Fry paneer cubes until golden", "Make onion-tomato-garlic paste",
                      "Cook paste in butter 10 min", "Add spices and cream",
                      "Add paneer and simmer 10 min"],
-             safeFor: ["Vegetarian"]),                  // has onion-garlic → conflict with Priya
+             safeFor: ["Vegetarian"]),
 
-        make(id: 4, name: "Aloo Paratha",          emoji: "🫓",
+        make(id: 4, name: "Aloo Paratha",          emoji: "🫓",  prepTime: 30,
              ingredients: ["2 cups wheat flour", "3 potatoes boiled", "1 tsp cumin powder",
                            "1/2 tsp amchur", "2 tbsp coriander", "salt", "ghee for cooking"],
              steps: ["Knead soft dough", "Mash potatoes with spices",
                      "Stuff dough with potato mix", "Roll and cook on tawa with ghee"],
              safeFor: ["Vegetarian", "No onion-garlic"]),
 
-        make(id: 5, name: "Chana Masala",          emoji: "🍛",
+        make(id: 5, name: "Chana Masala",          emoji: "🍛",  prepTime: 40,
              ingredients: ["2 cups chickpeas", "2 tomatoes", "1 tsp cumin", "1 tsp coriander powder",
                            "1/2 tsp turmeric", "1 tsp amchur", "1 tsp chilli powder",
                            "1 tbsp oil", "salt"],
              steps: ["Soak and boil chickpeas", "Make tomato base",
                      "Add spices and chickpeas", "Simmer 15 min"],
-             safeFor: ["Vegetarian", "Vegan", "No onion-garlic", "Gluten-free", "Dairy-free"]),
+             safeFor: ["Vegetarian", "Vegan", "No onion-garlic", "Gluten-free", "Dairy-free", "No milk"]),
 
-        make(id: 6, name: "Mango Lassi",           emoji: "🥭",
+        make(id: 6, name: "Mango Lassi",           emoji: "🥭",  prepTime: 10,
              ingredients: ["1 cup yogurt", "1 ripe mango", "2 tbsp sugar", "1/2 cup milk",
                            "pinch of cardamom"],
              steps: ["Blend all ingredients until smooth", "Chill and serve"],
@@ -123,7 +123,7 @@ enum DemoData {
 
     // MARK: - Factory
 
-    private static func make(id: Int, name: String, emoji: String,
+    private static func make(id: Int, name: String, emoji: String, prepTime: Int = 0,
                               ingredients: [String], steps: [String],
                               safeFor: [String]) -> Recipe {
         Recipe(
@@ -134,6 +134,7 @@ enum DemoData {
             ingredients: ingredients,
             steps: steps.map { RecipeStep(text: $0, hoursBefore: 0) },
             safeForTags: safeFor,
+            prepTimeMinutes: prepTime > 0 ? prepTime : nil,
             sourceUrl: nil,
             photoPath: nil,
             archived: false,

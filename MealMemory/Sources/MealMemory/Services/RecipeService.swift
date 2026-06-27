@@ -25,6 +25,7 @@ final class RecipeService: ObservableObject {
         ingredients: [String],
         steps: [RecipeStep],
         safeForTags: [String],
+        prepTimeMinutes: Int? = nil,
         sourceUrl: String? = nil,
         photoPath: String? = nil
     ) async throws -> Recipe {
@@ -43,6 +44,7 @@ final class RecipeService: ObservableObject {
             "created_by":    .string(userId.uuidString)
         ]
         if let photoPath { payload["photo_path"] = .string(photoPath) }
+        if let mins = prepTimeMinutes, mins > 0 { payload["prep_time_minutes"] = .integer(mins) }
 
         let c = client
         Task.detached { try? await c.from("recipes").insert(payload).execute() }
@@ -55,6 +57,7 @@ final class RecipeService: ObservableObject {
             ingredients: ingredients,
             steps: steps,
             safeForTags: safeForTags,
+            prepTimeMinutes: prepTimeMinutes,
             sourceUrl: sourceUrl,
             photoPath: photoPath,
             archived: false,
@@ -78,6 +81,7 @@ final class RecipeService: ObservableObject {
             "safe_for_tags": .array(recipe.safeForTags.map { .string($0) })
         ]
         if let photoPath = recipe.photoPath { payload["photo_path"] = .string(photoPath) }
+        if let mins = recipe.prepTimeMinutes, mins > 0 { payload["prep_time_minutes"] = .integer(mins) }
 
         let c = client
         let recipeId = recipe.id

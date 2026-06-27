@@ -47,6 +47,7 @@ struct Recipe: Codable, Identifiable, Transferable {
     var ingredients: [String]
     var steps: [RecipeStep]
     var safeForTags: [String]
+    var prepTimeMinutes: Int?
     var sourceUrl: String?
     var photoPath: String?
     var archived: Bool
@@ -56,13 +57,14 @@ struct Recipe: Codable, Identifiable, Transferable {
 
     enum CodingKeys: String, CodingKey {
         case id, emoji, ingredients, steps, name, archived
-        case householdId  = "household_id"
-        case safeForTags  = "safe_for_tags"
-        case sourceUrl    = "source_url"
-        case photoPath    = "photo_path"
-        case createdBy    = "created_by"
-        case createdAt    = "created_at"
-        case updatedAt    = "updated_at"
+        case householdId     = "household_id"
+        case safeForTags     = "safe_for_tags"
+        case prepTimeMinutes = "prep_time_minutes"
+        case sourceUrl       = "source_url"
+        case photoPath       = "photo_path"
+        case createdBy       = "created_by"
+        case createdAt       = "created_at"
+        case updatedAt       = "updated_at"
     }
 
     static var transferRepresentation: some TransferRepresentation {

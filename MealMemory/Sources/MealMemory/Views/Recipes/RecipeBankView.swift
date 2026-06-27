@@ -96,6 +96,10 @@ struct RecipeBankView: View {
     }
 
     private func loadRecipes() async {
+        if DemoData.isDemoMode {
+            recipes = DemoData.recipes
+            return
+        }
         isLoading = true
         defer { isLoading = false }
         recipes = (try? await recipeService.fetchRecipes(householdId: householdId)) ?? []
@@ -139,7 +143,11 @@ struct RecipeRowView: View {
                 Text(recipe.name)
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(Theme.navy)
-                Text("\(recipe.ingredients.count) ingredients · \(recipe.steps.count) steps")
+                Text([
+                    "\(recipe.ingredients.count) ingredients",
+                    "\(recipe.steps.count) steps",
+                    recipe.prepTimeMinutes.map { "\($0) min" }
+                ].compactMap { $0 }.joined(separator: " · "))
                     .font(Theme.Font.caption())
                     .foregroundColor(Theme.textSecondary)
             }

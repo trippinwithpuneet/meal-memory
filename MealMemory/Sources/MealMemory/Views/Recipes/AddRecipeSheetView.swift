@@ -2,13 +2,13 @@ import SwiftUI
 import PhotosUI
 import Vision
 
-// 3-entry bottom sheet: camera/OCR, URL paste, manual. Also used for editing.
 struct AddRecipeSheetView: View {
     let householdId: UUID
     let onSave: (Recipe) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @StateObject private var vm: AddRecipeViewModel
+    @State private var selectedDetent: PresentationDetent = .fraction(0.45)
 
     init(householdId: UUID, editing recipe: Recipe? = nil, onSave: @escaping (Recipe) -> Void) {
         self.householdId = householdId
@@ -17,16 +17,112 @@ struct AddRecipeSheetView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // Entry method picker — hidden in edit mode since we go straight to form
-                if !vm.isEditing {
-                    entryMethodPicker
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
-                    Divider().padding(.top, 12)
+        Group {
+            if vm.isEditing || vm.entryMethod != nil {
+                formSheet
+            } else {
+                methodPickerSheet
+            }
+        }
+        .presentationDetents(
+            vm.isEditing || vm.entryMethod != nil ? [.large] : [.fraction(0.45), .large],
+            selection: $selectedDetent
+        )
+    }
+
+    // MARK: - Method picker (bottom sheet, compact)
+
+    private var methodPickerSheet: some View {
+        VStack(spacing: 0) {
+            // Drag handle
+            Capsule()
+                .fill(Theme.border)
+                .frame(width: 36, height: 4)
+                .padding(.top, 12)
+                .padding(.bottom, 20)
+
+            Text("Add Recipe")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(Theme.navy)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 20)
+
+            Text("How would you like to add it?")
+                .font(.system(size: 14))
+                .foregroundColor(Theme.textSecondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 20)
+                .padding(.top, 4)
+                .padding(.bottom, 20)
+
+            VStack(spacing: 12) {
+                methodCard(
+                    icon: "📷",
+                    title: "Scan a recipe",
+                    subtitle: "Take a photo of a recipe card or book",
+                    method: .camera
+                )
+                methodCard(
+                    icon: "🔗",
+                    title: "Import from URL",
+                    subtitle: "Paste a link from any cooking website",
+                    method: .url
+                )
+                methodCard(
+                    icon: "✏️",
+                    title: "Add manually",
+                    subtitle: "Type in your own recipe from scratch",
+                    method: .manual
+                )
+            }
+            .padding(.horizontal, 16)
+
+            Spacer()
+        }
+        .background(Theme.appBackground)
+    }
+
+    private func methodCard(icon: String, title: String, subtitle: String, method: AddRecipeViewModel.EntryMethod) -> some View {
+        Button {
+            withAnimation(.spring(response: 0.3)) {
+                vm.entryMethod = method
+                selectedDetent = .large
+            }
+        } label: {
+            HStack(spacing: 16) {
+                Text(icon)
+                    .font(.system(size: 28))
+                    .frame(width: 48, height: 48)
+                    .background(Theme.cardEmpty)
+                    .cornerRadius(12)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(Theme.navy)
+                    Text(subtitle)
+                        .font(.system(size: 13))
+                        .foregroundColor(Theme.textSecondary)
                 }
 
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(Theme.border)
+            }
+            .padding(14)
+            .background(Theme.cardFilled)
+            .cornerRadius(14)
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Form sheet (full size)
+
+    private var formSheet: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
                 if let error = vm.saveError {
                     Text(error)
                         .font(Theme.Font.caption())
@@ -35,7 +131,7 @@ struct AddRecipeSheetView: View {
                         .padding(.top, 8)
                 }
 
-                switch vm.entryMethod {
+                switch vm.entryMethod ?? .manual {
                 case .camera:  CameraEntryView(vm: vm)
                 case .url:     URLEntryView(vm: vm)
                 case .manual:  ManualEntryView(vm: vm)
@@ -46,7 +142,13 @@ struct AddRecipeSheetView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(vm.isEditing ? "Cancel" : "Back") {
+                        if vm.isEditing {
+                            dismiss()
+                        } else {
+                            withAnimation { vm.entryMethod = nil; selectedDetent = .fraction(0.45) }
+                        }
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(vm.isEditing ? "Update" : "Save") {
@@ -62,30 +164,6 @@ struct AddRecipeSheetView: View {
                 }
             }
         }
-        .presentationDetents([.large])
-    }
-
-    private var entryMethodPicker: some View {
-        HStack(spacing: 0) {
-            ForEach(AddRecipeViewModel.EntryMethod.allCases, id: \.self) { method in
-                Button {
-                    vm.entryMethod = method
-                } label: {
-                    HStack(spacing: 6) {
-                        Text(method.icon)
-                        Text(method.label)
-                            .font(.system(size: 14, weight: .semibold))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .background(vm.entryMethod == method ? Theme.navy : Color.clear)
-                    .foregroundColor(vm.entryMethod == method ? .white : Theme.textSecondary)
-                    .cornerRadius(10)
-                }
-            }
-        }
-        .background(Theme.cardEmpty)
-        .cornerRadius(12)
     }
 }
 
@@ -93,7 +171,6 @@ struct AddRecipeSheetView: View {
 
 struct CameraEntryView: View {
     @ObservedObject var vm: AddRecipeViewModel
-    @State private var showPhotoPicker = false
     @State private var photosItem: PhotosPickerItem?
 
     var body: some View {
@@ -258,6 +335,29 @@ struct RecipeFormFields: View {
             .background(Theme.cardFilled)
             .cornerRadius(12)
 
+            // Prep time
+            HStack {
+                Image(systemName: "clock")
+                    .font(.system(size: 15))
+                    .foregroundColor(Theme.textTertiary)
+                    .frame(width: 20)
+                Text("Prep time")
+                    .font(.system(size: 15))
+                    .foregroundColor(Theme.navy)
+                Spacer()
+                Stepper(
+                    vm.prepTimeMinutes == 0 ? "Not set" : "\(vm.prepTimeMinutes) min",
+                    value: $vm.prepTimeMinutes,
+                    in: 0...240,
+                    step: 5
+                )
+                .font(.system(size: 14))
+                .foregroundColor(vm.prepTimeMinutes > 0 ? Theme.saffron : Theme.textSecondary)
+            }
+            .padding(12)
+            .background(Theme.cardFilled)
+            .cornerRadius(12)
+
             // Ingredients
             VStack(alignment: .leading, spacing: 8) {
                 Text("Ingredients")
@@ -295,46 +395,25 @@ struct RecipeFormFields: View {
                     .textCase(.uppercase)
 
                 ForEach(vm.steps.indices, id: \.self) { i in
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack(alignment: .top, spacing: 8) {
-                            Text("\(i + 1).")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(Theme.textSecondary)
-                                .padding(.top, 12)
+                    HStack(alignment: .top, spacing: 8) {
+                        Text("\(i + 1).")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(Theme.textSecondary)
+                            .padding(.top, 12)
 
-                            TextField("Step \(i + 1)", text: $vm.steps[i].text, axis: .vertical)
-                                .lineLimit(2...4)
-                                .padding(10)
-                                .background(Theme.cardFilled)
-                                .cornerRadius(10)
+                        TextField("Step \(i + 1)", text: $vm.steps[i].text, axis: .vertical)
+                            .lineLimit(2...4)
+                            .padding(10)
+                            .background(Theme.cardFilled)
+                            .cornerRadius(10)
 
-                            if vm.steps.count > 1 {
-                                Button { vm.steps.remove(at: i) } label: {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(Theme.textTertiary)
-                                        .padding(.top, 12)
-                                }
+                        if vm.steps.count > 1 {
+                            Button { vm.steps.remove(at: i) } label: {
+                                Image(systemName: "minus.circle.fill")
+                                    .foregroundColor(Theme.textTertiary)
+                                    .padding(.top, 12)
                             }
                         }
-                        // Prep time — how many hours before mealtime to start this step
-                        HStack(spacing: 8) {
-                            Image(systemName: "clock")
-                                .font(.system(size: 12))
-                                .foregroundColor(Theme.textTertiary)
-                            Text("Start")
-                                .font(.system(size: 12))
-                                .foregroundColor(Theme.textTertiary)
-                            Stepper(
-                                vm.steps[i].hoursBefore == 0
-                                    ? "at mealtime"
-                                    : "\(vm.steps[i].hoursBefore)h before",
-                                value: $vm.steps[i].hoursBefore,
-                                in: 0...24
-                            )
-                            .font(.system(size: 12))
-                            .foregroundColor(vm.steps[i].hoursBefore > 0 ? Theme.saffron : Theme.textSecondary)
-                        }
-                        .padding(.leading, 28)
                     }
                 }
 
@@ -352,7 +431,7 @@ struct RecipeFormFields: View {
                     .foregroundColor(Theme.textTertiary)
                     .textCase(.uppercase)
 
-                let allTags = ["Vegan", "Vegetarian", "Jain", "No onion-garlic", "Gluten-free", "Dairy-free"]
+                let allTags = ["Vegan", "Vegetarian", "Jain", "No onion-garlic", "Gluten-free", "No milk", "Dairy-free"]
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(allTags, id: \.self) { tag in

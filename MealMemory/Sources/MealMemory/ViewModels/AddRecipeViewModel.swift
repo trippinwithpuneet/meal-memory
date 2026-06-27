@@ -16,12 +16,13 @@ final class AddRecipeViewModel: ObservableObject {
         }
     }
 
-    @Published var entryMethod: EntryMethod = .manual
+    @Published var entryMethod: EntryMethod? = nil
     @Published var name = ""
     @Published var emoji = ""
     @Published var ingredients: [String] = [""]
     @Published var steps: [RecipeStep] = [RecipeStep(text: "", hoursBefore: 0)]
     @Published var safeForTags: [String] = []
+    @Published var prepTimeMinutes: Int = 0
     @Published var dishPhoto: UIImage?
     @Published var isOCRProcessing = false
     @Published var isImporting = false
@@ -45,6 +46,7 @@ final class AddRecipeViewModel: ObservableObject {
             ingredients = recipe.ingredients.isEmpty ? [""] : recipe.ingredients
             steps = recipe.steps.isEmpty ? [RecipeStep(text: "", hoursBefore: 0)] : recipe.steps
             safeForTags = recipe.safeForTags
+            prepTimeMinutes = recipe.prepTimeMinutes ?? 0
             entryMethod = .manual
             // dishPhoto stays nil — the existing photo is shown via signed URL in RecipeDetailView.
             // A new pick in the edit sheet replaces it.
@@ -132,6 +134,7 @@ final class AddRecipeViewModel: ObservableObject {
                 existing.ingredients = ingredients.filter { !$0.isEmpty }
                 existing.steps = steps.filter { !$0.text.isEmpty }
                 existing.safeForTags = safeForTags
+                existing.prepTimeMinutes = prepTimeMinutes > 0 ? prepTimeMinutes : nil
                 if let photo = dishPhoto,
                    let path = try? await recipeService.uploadPhoto(photo, householdId: householdId, recipeId: existing.id) {
                     existing.photoPath = path
@@ -151,6 +154,7 @@ final class AddRecipeViewModel: ObservableObject {
                     ingredients: ingredients.filter { !$0.isEmpty },
                     steps: steps.filter { !$0.text.isEmpty },
                     safeForTags: safeForTags,
+                    prepTimeMinutes: prepTimeMinutes > 0 ? prepTimeMinutes : nil,
                     photoPath: photoPath
                 )
             }
