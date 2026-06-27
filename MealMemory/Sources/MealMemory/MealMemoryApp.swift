@@ -9,7 +9,9 @@ struct MealMemoryApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                if authService.isSignedIn {
+                if DemoData.isDemoMode {
+                    MainTabView(householdId: DemoData.householdId)
+                } else if authService.isSignedIn {
                     if let householdId = appState.householdId {
                         MainTabView(householdId: householdId)
                     } else {
@@ -22,7 +24,13 @@ struct MealMemoryApp: App {
             }
             .environmentObject(authService)
             .environmentObject(appState)
-            .onAppear { appState.loadHousehold() }
+            .onAppear {
+                if DemoData.isDemoMode {
+                    appState.members = DemoData.members
+                } else {
+                    appState.loadHousehold()
+                }
+            }
         }
     }
 }

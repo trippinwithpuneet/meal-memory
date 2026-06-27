@@ -101,6 +101,14 @@ final class MealPlanViewModel: ObservableObject {
 
     func load(householdId: UUID) async {
         self.householdId = householdId
+
+        if DemoData.isDemoMode {
+            recipes = Dictionary(uniqueKeysWithValues: DemoData.recipes.map { ($0.id, $0) })
+            slots   = DemoData.slots(for: weekStart)
+            members = DemoData.members
+            return
+        }
+
         isLoading = true
         defer { isLoading = false }
 
@@ -128,6 +136,10 @@ final class MealPlanViewModel: ObservableObject {
     }
 
     func reloadSlots() async {
+        if DemoData.isDemoMode {
+            slots = DemoData.slots(for: weekStart)
+            return
+        }
         guard let id = householdId else { return }
         if let fetched = try? await mealPlanService.fetchWeek(householdId: id, startDate: weekStart) {
             slots = Dictionary(uniqueKeysWithValues: fetched.map { ($0.slotKey, $0) })
