@@ -2,8 +2,8 @@
 
 ## Resume Here
 
-**Last session:** 2026-06-27  
-**Status:** Core feature build complete. Ready for TestFlight prep.
+**Last session:** 2026-06-28  
+**Status:** Demo polished, prep indicator shipped. Next: Apple Developer enrollment + apply 2 pending migrations.
 
 ### What's done (cumulative)
 
@@ -11,7 +11,7 @@
 - ✅ Migrations 001–003 applied (core schema, RLS, members recursion fix)
 - ✅ Migration 004 applied: `archived BOOLEAN DEFAULT FALSE` on recipes
 - ✅ Auth, household creation, invite flow, recipe CRUD all working
-- ✅ Dietary conflict detection — red dot/border on plan grid when recipe violates a member's restriction
+- ✅ Dietary conflict detection logic (`dietaryConflicts()` on MealPlanViewModel) — preserved in code, not shown in UI (see session 4)
 - ✅ `appState.members` read directly at render time in `WeekGridView` (bypasses async timing gap)
 - ✅ UserDefaults cache for member data (name + dietary restrictions) — survives relaunch when DB writes fail (Simulator QUIC bug)
 - ✅ Member display name auto-populated from email prefix on household create/invite claim (`defaultDisplayName()` in `HouseholdService`)
@@ -33,10 +33,22 @@
 - ✅ Onboarding empty state wired into PlanTabView (shown when recipes.isEmpty && !isLoading)
 - ✅ Invite share button — ShareLink in HouseholdView sends invite code via iOS share sheet
 
-### Deployed
+**Session 4 additions (2026-06-28):**
+- ✅ Demo mode — 10 real household recipes (Burrito Bowl, Chana Salad, Quinoa Beetroot, Spaghetti, Egg Sandwich, Moong Dal Chilla, Paneer Bhurji, Pancakes, Tofu Stir Fry, Tuna & Egg Salad) with realistic Mon–Fri week grid; Puneet gluten-free + no milk, Rachel no restrictions
+- ✅ Demo mode mutations fixed — `placeRecipe`, `swapSlots`, `clearSlot` now update local state in demo mode instead of hitting Supabase
+- ✅ Prep time field — `prepTimeMinutes: Int?` on Recipe; Stepper in form (0–240 min, step 5); shown in recipe row and detail as "X min"
+- ✅ Add recipe bottom sheet — 3-option picker (Camera / URL / Manual) slides up before the full form
+- ✅ Night-before prep indicator — `prepNightBefore: Bool` on Recipe; 🌙 shown top-right of slot cells; long-press context menu "Prep needed the night before"; toggle in recipe form; Burrito Bowl + Moong Dal Chilla flagged in demo
+- ✅ Dietary conflict red dot removed — replaced by 🌙 prep indicator; `dietaryConflicts()` preserved in code for future use
+- ✅ `No milk` dietary tag added to allRestrictions in MemberEditSheet and allTags in RecipeFormFields
+- ✅ Docs updated — reference-data-model, reference-dietary-tags, howto-dietary-restrictions, explanation-conflict-detection all reflect current state
+
+### Deployed / applied
 
 - ✅ Migration `20260627000001_recipe_archiving.sql` applied
 - ✅ Edge Function `fetch-recipe` deployed
+- ⏳ Migration `20260628000001_recipe_prep_time.sql` — **not yet applied** (needed before real mode)
+- ⏳ Migration `20260628000002_recipe_prep_night_before.sql` — **not yet applied** (needed before real mode; app safe without it thanks to `decodeIfPresent` default)
 
 ### Known simulator issues
 

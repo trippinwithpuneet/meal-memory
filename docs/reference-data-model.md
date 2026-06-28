@@ -48,6 +48,8 @@ The household's recipe collection. Recipes are shared: any member can read, crea
 | `ingredients` | `text[]` | `'{}'` | Free-text ingredient list |
 | `steps` | `jsonb` | `'[]'` | Array of `{text: string, hours_before: int}` objects |
 | `safe_for_tags` | `text[]` | `'{}'` | Dietary tags this recipe is safe for (see [Dietary Tags](reference-dietary-tags.md)) |
+| `prep_time_minutes` | `integer` | `null` | Active cooking/prep time in minutes; shown in the recipe row and detail view |
+| `prep_night_before` | `boolean` | `false` | True when the recipe needs overnight prep (soaking, marinating, defrosting) — shows 🌙 in the plan grid |
 | `source_url` | `text` | `null` | Original URL if imported |
 | `photo_path` | `text` | `null` | Storage path: `{household_id}/{recipe_id}/photo.jpg` |
 | `archived` | `boolean` | `false` | Soft-delete flag; archived recipes are hidden from the bank and plan picker |
@@ -118,6 +120,8 @@ Signed URLs (1-hour expiry) are generated server-side for display — the bucket
 | `20260626000002_rls_policies.sql` | ✅ | All RLS policies + storage policies |
 | `20260626000003_fix_members_rls_recursion.sql` | ✅ | `my_household_id()` SECURITY DEFINER to break recursion |
 | `20260627000001_recipe_archiving.sql` | ✅ | `archived` column on `recipes` |
+| `20260628000001_recipe_prep_time.sql` | ⏳ apply before real mode | `prep_time_minutes` column on `recipes` |
+| `20260628000002_recipe_prep_night_before.sql` | ⏳ apply before real mode | `prep_night_before` boolean on `recipes` |
 
 ## Related
 

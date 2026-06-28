@@ -1,6 +1,6 @@
-# How to Set Dietary Restrictions and Understand Conflict Warnings
+# How to Set Dietary Restrictions
 
-Dietary restrictions let Meal Memory warn you when a planned recipe isn't safe for everyone in the household.
+Dietary restrictions let Meal Memory tag each recipe with who can eat it, and let you filter or identify suitable meals when planning.
 
 ## Setting a restriction
 
@@ -21,6 +21,7 @@ The change takes effect immediately — the week grid re-renders with updated co
 | Jain | No meat, fish, eggs, or root vegetables (onion, garlic, potato, carrot, beetroot) |
 | No onion-garlic | No onion or garlic |
 | Gluten-free | No wheat, barley, rye, or their derivatives |
+| No milk | No liquid milk; other dairy may still be present |
 | Dairy-free | No milk, cheese, butter, cream, or other dairy |
 
 ## Tagging a recipe as safe
@@ -33,28 +34,12 @@ When you create or edit a recipe:
 
 A recipe must be explicitly tagged for a restriction to be considered safe. If in doubt, don't tag it — the warning system is conservative by design.
 
-## Reading conflict warnings
+## Using tags when planning
 
-The week grid shows a small **red dot** (top-right corner) and a **red border** on any meal slot where the assigned recipe doesn't satisfy all household members' restrictions.
+When you open a recipe in the recipe bank or detail view, the **Safe For** tags are shown as coloured chips. Use these as a quick reference when choosing what to cook.
 
-To see which restrictions conflict:
-
-- **Long-press** the slot
-- A context menu appears with warning lines: e.g. `⚠️ Vegan`, `⚠️ Dairy-free`
-
-No indicator means the recipe is safe for everyone.
-
-## Example
-
-- Person A has: Vegan
-- Person B has: Dairy-free
-- A recipe is tagged: Vegetarian, Dairy-free
-
-The union of restrictions is `{Vegan, Dairy-free}`. The recipe covers `Dairy-free` but not `Vegan`. Result: conflict warning appears on the slot.
-
-To resolve it: either plan a different recipe, or update the recipe's dietary tags if you know it's actually vegan.
+The week grid does not currently show a per-slot conflict indicator — in a shared household context, the assumption is that members plan meals together with each other's restrictions already in mind. Tags on recipes serve as a recipe-level label you can check at a glance.
 
 ## Related
 
 - [Dietary Tags Reference](reference-dietary-tags.md)
-- [Conflict Detection Explanation](explanation-conflict-detection.md)

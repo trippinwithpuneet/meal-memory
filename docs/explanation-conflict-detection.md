@@ -1,34 +1,18 @@
-# Dietary Conflict Detection
+# Dietary Conflict Detection and the Night-Before Prep Indicator
 
-Conflict detection answers: "Is this recipe safe for everyone in the household to eat?"
+## Current design: 🌙 night-before prep indicator
 
-## End-to-end flow
+The week plan grid currently shows one indicator on slot cells: a **🌙 moon** (top-right corner) when the planned recipe needs overnight preparation — soaking beans, marinating, defrosting, etc.
 
-```
-Member dietary_restrictions (DB / UserDefaults)
-           │
-           ▼
-  HouseholdView → appState.members (EnvironmentObject)
-           │
-           ▼
-  WeekGridView reads appState.members at render time
-           │
-           ▼
-  MealPlanViewModel.dietaryConflicts(for: recipe, using: appState.members)
-           │ computes set difference
-           ▼
-  conflicts: [String]
-           │
-    ┌──────┴──────┐
-    │ empty       │ non-empty
-    ▼             ▼
-  no indicator  red border + red dot on slot cell
-                long-press → "⚠️ Vegan, ⚠️ Jain"
-```
+This is stored as `prep_night_before: Bool` on the `Recipe` model and set when creating or editing a recipe. The indicator is purely data-driven: if the flag is true and the recipe is placed in a slot, the 🌙 appears.
 
-## The computation
+Long-pressing a 🌙 slot surfaces a context menu: "Prep needed the night before."
 
-`MealPlanViewModel.dietaryConflicts(for:using:)` in `MealPlanViewModel.swift:107`:
+## Why the conflict red dot was removed
+
+Earlier versions showed a red dot and red border on slots where the planned recipe didn't satisfy all household members' dietary restrictions. This was removed for a product reason: in a household that plans meals together, members already know each other's restrictions at plan time. A couple where one person is gluten-free doesn't plan spaghetti for dinner and then discover a conflict — they know. The red dot created visual noise without adding decision-relevant information.
+
+The **conflict detection function** (`MealPlanViewModel.dietaryConflicts(for:using:)`) is preserved in the codebase for future use:
 
 ```swift
 func dietaryConflicts(for recipe: Recipe, using members: [Member]) -> [String] {
@@ -37,51 +21,27 @@ func dietaryConflicts(for recipe: Recipe, using members: [Member]) -> [String] {
 }
 ```
 
-It unions all members' restrictions into a single set, then returns any restriction not covered by the recipe's `safe_for_tags`. This is conservative by design: a recipe must be explicitly tagged as safe for a restriction to be considered conflict-free. Absence of a tag is treated as a conflict.
+It unions all members' restrictions and returns any not covered by `safe_for_tags`. If a future feature (e.g. a recipe suggestion engine, or a household with more members) needs conflict data, the computation is ready.
 
-## Why union, not intersection?
+## How member restriction data flows
 
-Using the union of all restrictions means: if ANY member can't eat it, the meal gets flagged. This is the correct behavior for a household meal planner — you can't cook two different dinners.
+`WeekGridView` reads `appState.members` (not `viewModel.members`). `AppState` is updated synchronously when a member saves restriction edits in `HouseholdView`, so any future conflict-aware UI would have real-time data without a DB round-trip.
 
-If the household had member A (Vegan) and member B (no restrictions), a non-vegan dinner is flagged because A can't eat it. B's lack of restrictions doesn't suppress A's conflict.
+`AppState.applyLocalRestrictions()` overlays UserDefaults-cached member data on top of freshly fetched DB rows — meaning restriction edits made on this device are reflected immediately, even before the Supabase write completes.
 
-## Where member data comes from
+## Night-before prep: data path
 
-`WeekGridView` reads `appState.members` (not `viewModel.members`), because `AppState` is updated synchronously when the user saves restriction edits in `HouseholdView`. If we read from `viewModel.members`, there would be an async gap at launch (members not yet fetched from DB) when the grid would render without any restriction data.
+1. When creating/editing a recipe, toggle **"Needs night-before prep"** in the form.
+2. `AddRecipeViewModel.prepNightBefore: Bool` is saved to the `prep_night_before` column.
+3. When `MealPlanViewModel.load()` or `reloadSlots()` runs, recipes with `prepNightBefore = true` are included in `self.recipes`.
+4. `WeekGridView.mealRow()` reads `recipe?.prepNightBefore == true` and passes `needsNightBefore` to `SlotCell`.
+5. `SlotCell` renders the 🌙 emoji in the top-right corner.
 
-`AppState.applyLocalRestrictions()` overlays UserDefaults-cached member data on top of freshly fetched DB rows. This means restriction edits made on this device are always reflected in conflict detection, even before the Supabase write completes.
-
-## Data path: setting a restriction
-
-1. User opens Household tab → Member row → edit sheet
-2. User toggles "Vegan" on
-3. `HouseholdView` calls `appState.members[i].dietaryRestrictions = [...]`
-4. `appState.saveLocalMemberData()` writes to UserDefaults
-5. `HouseholdService.updateMember(...)` fire-and-forgets the DB write
-6. `WeekGridView` is already observing `appState.members` via `@EnvironmentObject` → re-renders the grid → conflict dots appear/disappear
-
-No re-fetch from Supabase is needed. The change propagates immediately through SwiftUI's observation system.
-
-## Data path: the second phone
-
-Member B's phone doesn't get a Realtime event for `members` row changes (only `meal_slots` are subscribed). Member B sees updated conflict indicators after:
-- App relaunch (members re-fetched on `HouseholdView.onAppear`)
-- Manual pull-to-refresh
-
-A future improvement could subscribe to `members` changes via Realtime.
-
-## Visual design
-
-| Condition | Visual |
-|---|---|
-| Recipe is safe for all members | No indicator |
-| One or more conflicts | Red 1px border + 6px red circle (top-right) |
-| Slot has no recipe | No indicator |
-
-The conflict list is shown in a long-press context menu, not inline — to avoid cluttering small slot cells.
+In demo mode the flag is set on Burrito Bowl and Moong Dal Chilla (both require overnight soaking).
 
 ## Related
 
 - [Dietary Tags Reference](reference-dietary-tags.md)
 - [How to Set Dietary Restrictions](howto-dietary-restrictions.md)
+- [Data Model Reference](reference-data-model.md) — `prep_night_before` column
 - [Architecture Overview](explanation-architecture.md) — why AppState.members instead of viewModel.members
