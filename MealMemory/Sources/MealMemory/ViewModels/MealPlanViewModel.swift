@@ -150,6 +150,17 @@ final class MealPlanViewModel: ObservableObject {
 
     func placeRecipe(_ recipeId: UUID, on date: Date, mealType: MealType) async {
         guard let householdId else { return }
+        if DemoData.isDemoMode {
+            let key = slotKey(date: date, mealType: mealType)
+            var slot = slots[key] ?? MealSlot(
+                id: UUID(), householdId: householdId,
+                slotDate: date, mealType: mealType,
+                recipeId: nil, updatedBy: DemoData.userId, updatedAt: Date())
+            slot.recipeId = recipeId
+            slot.updatedAt = Date()
+            slots[key] = slot
+            return
+        }
         do {
             let updated = try await mealPlanService.upsertSlot(
                 householdId: householdId, date: date, mealType: mealType, recipeId: recipeId)
@@ -160,6 +171,15 @@ final class MealPlanViewModel: ObservableObject {
     }
 
     func swapSlots(_ slotA: MealSlot, _ slotB: MealSlot) async {
+        if DemoData.isDemoMode {
+            var a = slotA; var b = slotB
+            let tmp = a.recipeId
+            a.recipeId = b.recipeId
+            b.recipeId = tmp
+            a.updatedAt = Date(); b.updatedAt = Date()
+            slots[a.slotKey] = a; slots[b.slotKey] = b
+            return
+        }
         guard let householdId else { return }
         do {
             let (a, b) = try await mealPlanService.swapSlots(householdId: householdId, slotA: slotA, slotB: slotB)
@@ -171,6 +191,15 @@ final class MealPlanViewModel: ObservableObject {
     }
 
     func clearSlot(date: Date, mealType: MealType) async {
+        if DemoData.isDemoMode {
+            let key = slotKey(date: date, mealType: mealType)
+            if var slot = slots[key] {
+                slot.recipeId = nil
+                slot.updatedAt = Date()
+                slots[key] = slot
+            }
+            return
+        }
         guard let householdId else { return }
         do {
             let updated = try await mealPlanService.upsertSlot(
