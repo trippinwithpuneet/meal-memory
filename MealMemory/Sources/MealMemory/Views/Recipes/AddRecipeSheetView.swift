@@ -140,8 +140,12 @@ struct AddRecipeSheetView: View {
             .background(Theme.appBackground)
             .navigationTitle(vm.isEditing ? "Edit Recipe" : "Add Recipe")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Theme.appBackground, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
+                // .navigationBarLeading/.Trailing avoid the dark glass capsule iOS 26
+                // applies to .cancellationAction / .confirmationAction in sheets
+                ToolbarItem(placement: .navigationBarLeading) {
                     Button(vm.isEditing ? "Cancel" : "Back") {
                         if vm.isEditing {
                             dismiss()
@@ -149,8 +153,9 @@ struct AddRecipeSheetView: View {
                             withAnimation { vm.entryMethod = nil; selectedDetent = .fraction(0.45) }
                         }
                     }
+                    .foregroundColor(Theme.saffron)
                 }
-                ToolbarItem(placement: .confirmationAction) {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button(vm.isEditing ? "Update" : "Save") {
                         Task {
                             if let recipe = await vm.save(householdId: householdId) {
@@ -161,6 +166,7 @@ struct AddRecipeSheetView: View {
                     }
                     .disabled(!vm.canSave || vm.isSaving)
                     .fontWeight(.semibold)
+                    .foregroundColor(vm.canSave ? Theme.saffron : Theme.textTertiary)
                 }
             }
         }
@@ -284,6 +290,28 @@ struct RecipeFormFields: View {
     @ObservedObject var vm: AddRecipeViewModel
     @State private var dishPickerItem: PhotosPickerItem?
 
+    private func tagChips(_ tags: [String]) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(tags, id: \.self) { tag in
+                    let selected = vm.safeForTags.contains(tag)
+                    Button {
+                        if selected { vm.safeForTags.removeAll { $0 == tag } }
+                        else { vm.safeForTags.append(tag) }
+                    } label: {
+                        Text(tag)
+                            .font(.system(size: 13, weight: .medium))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(selected ? Theme.saffron : Theme.cardFilled)
+                            .foregroundColor(selected ? .white : Theme.textSecondary)
+                            .cornerRadius(20)
+                    }
+                }
+            }
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Dish photo picker
@@ -389,6 +417,7 @@ struct RecipeFormFields: View {
                 ForEach(vm.ingredients.indices, id: \.self) { i in
                     HStack {
                         TextField("e.g. 1 cup dal", text: $vm.ingredients[i])
+                            .foregroundColor(Theme.textPrimary)
                         if vm.ingredients.count > 1 {
                             Button { vm.ingredients.remove(at: i) } label: {
                                 Image(systemName: "minus.circle.fill")
@@ -424,6 +453,7 @@ struct RecipeFormFields: View {
 
                         TextField("Step \(i + 1)", text: $vm.steps[i].text, axis: .vertical)
                             .lineLimit(2...4)
+                            .foregroundColor(Theme.textPrimary)
                             .padding(10)
                             .background(Theme.cardFilled)
                             .cornerRadius(10)
@@ -445,6 +475,16 @@ struct RecipeFormFields: View {
                 }
             }
 
+            // Meal type
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Meal type")
+                    .font(Theme.Font.sectionHeader())
+                    .foregroundColor(Theme.textTertiary)
+                    .textCase(.uppercase)
+
+                tagChips(["Breakfast", "Lunch", "Dinner", "Snack"])
+            }
+
             // Dietary tags
             VStack(alignment: .leading, spacing: 8) {
                 Text("Safe for")
@@ -452,29 +492,7 @@ struct RecipeFormFields: View {
                     .foregroundColor(Theme.textTertiary)
                     .textCase(.uppercase)
 
-                let allTags = ["Vegan", "Vegetarian", "Jain", "No onion-garlic", "Gluten-free", "No milk", "Dairy-free"]
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(allTags, id: \.self) { tag in
-                            let selected = vm.safeForTags.contains(tag)
-                            Button {
-                                if selected {
-                                    vm.safeForTags.removeAll { $0 == tag }
-                                } else {
-                                    vm.safeForTags.append(tag)
-                                }
-                            } label: {
-                                Text(tag)
-                                    .font(.system(size: 13, weight: .medium))
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(selected ? Theme.saffron : Theme.cardFilled)
-                                    .foregroundColor(selected ? .white : Theme.textSecondary)
-                                    .cornerRadius(20)
-                            }
-                        }
-                    }
-                }
+                tagChips(["Vegan", "Vegetarian", "Jain", "No onion-garlic", "Gluten-free", "No milk", "Dairy-free"])
             }
         }
     }

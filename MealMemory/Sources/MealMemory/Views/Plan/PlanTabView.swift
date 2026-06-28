@@ -17,30 +17,11 @@ struct PlanTabView: View {
                     OnboardingEmptyStateView(showAddRecipe: $showAddRecipe)
                 } else {
                     WeekGridView(viewModel: viewModel, householdId: householdId,
-                                 onAddRecipeTapped: { showAddRecipe = true })
+                                 onAddRecipeTapped: { showAddRecipe = true },
+                                 onEmergencyTapped: { showEmergencyMode = true })
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 4) {
-                        if hasRecipes {
-                            Button { showEmergencyMode = true } label: {
-                                Image(systemName: "fork.knife")
-                                    .foregroundColor(Theme.textTertiary)
-                            }
-                            ShareLink(item: viewModel.weeklyGroceryList()) {
-                                Image(systemName: "square.and.arrow.up")
-                                    .foregroundColor(Theme.navy)
-                            }
-                        }
-                        Button { showAddRecipe = true } label: {
-                            Image(systemName: "plus")
-                                .foregroundColor(Theme.navy)
-                        }
-                    }
-                }
-            }
+            .toolbar(.hidden, for: .navigationBar)
         }
         .sheet(isPresented: $showAddRecipe) {
             AddRecipeSheetView(householdId: householdId) { newRecipe in

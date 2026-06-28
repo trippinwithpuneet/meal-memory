@@ -128,6 +128,8 @@ struct RecipeDetailView: View {
         }
         .background(Theme.appBackground)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Theme.appBackground, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Edit") { showEdit = true }

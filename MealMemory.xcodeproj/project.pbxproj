@@ -19,6 +19,7 @@
 		64739792580FE5C1A14C0EE0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE99649A756381B0ED3FC78A /* AppDelegate.swift */; };
 		667077BE09F4B606E0BF2107 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C3FA85D038817EBE3CF4A4B /* Models.swift */; };
 		6ED137B393533933F9698997 /* EmergencyModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1866F7A431EABE8CA1285D3A /* EmergencyModeView.swift */; };
+		E7DC1096DE9E4CD38E218432 /* MonthCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE8DEECC0E744AAA22FC5AC /* MonthCalendarView.swift */; };
 		6FBBD6AB52F0DA4804CC648B /* HouseholdSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A977A6951BF79DA45AAF6618 /* HouseholdSetupView.swift */; };
 		7C9383F099E8155EFECD3A12 /* MealMemoryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 975A3DA03F6C73928EF1EEE3 /* MealMemoryApp.swift */; };
 		829C43C1202791AD321558FD /* MealPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3993AF8435EA3E831DFB891D /* MealPlanViewModel.swift */; };
@@ -43,6 +44,7 @@
 		16A645EA0CF7F6966A8F2C9C /* EmergencyModeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyModeViewModel.swift; sourceTree = "<group>"; };
 		16E78B930539764DF3FA0635 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
 		1866F7A431EABE8CA1285D3A /* EmergencyModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyModeView.swift; sourceTree = "<group>"; };
+		5EE8DEECC0E744AAA22FC5AC /* MonthCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCalendarView.swift; sourceTree = "<group>"; };
 		25E35AC7191F88D48F7CDD97 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		35ED6E7A2D17A428C492F462 /* WeekGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekGridView.swift; sourceTree = "<group>"; };
 		3993AF8435EA3E831DFB891D /* MealPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanViewModel.swift; sourceTree = "<group>"; };
@@ -62,7 +64,7 @@
 		CEB538A9A4991CBAAEF20B84 /* AddRecipeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecipeViewModel.swift; sourceTree = "<group>"; };
 		D08A75C07AC2A4954C669AE0 /* RecipeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeService.swift; sourceTree = "<group>"; };
 		D2C4260B0A5DC38F082798C9 /* PlanTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTabView.swift; sourceTree = "<group>"; };
-		E092FF4142BA25188AE7D6AC /* MealMemory.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MealMemory.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E092FF4142BA25188AE7D6AC /* MealMemory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MealMemory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF40773AC1D85B66C6FFCC /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		EE99649A756381B0ED3FC78A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FBA969A0CA627A1BDB36468A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 			isa = PBXGroup;
 			children = (
 				1866F7A431EABE8CA1285D3A /* EmergencyModeView.swift */,
+				5EE8DEECC0E744AAA22FC5AC /* MonthCalendarView.swift */,
 				83EE8E6FA978997C0C063C9F /* OnboardingEmptyStateView.swift */,
 				D2C4260B0A5DC38F082798C9 /* PlanTabView.swift */,
 				35ED6E7A2D17A428C492F462 /* WeekGridView.swift */,
@@ -259,7 +262,6 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					E5AA79FC30F7610E8FA33BD5 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -309,6 +311,7 @@
 				BDE12FA7717D234E2C59A94E /* AuthView.swift in Sources */,
 				5CFCFFEC2BA4E4355B935470 /* DemoData.swift in Sources */,
 				6ED137B393533933F9698997 /* EmergencyModeView.swift in Sources */,
+				E7DC1096DE9E4CD38E218432 /* MonthCalendarView.swift in Sources */,
 				B6F88B9399F55BE2061F1743 /* EmergencyModeViewModel.swift in Sources */,
 				3E4A811A5ED9BF7C47CB5E94 /* HouseholdService.swift in Sources */,
 				6FBBD6AB52F0DA4804CC648B /* HouseholdSetupView.swift in Sources */,
@@ -405,7 +408,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q3JN42F5ST;
 				INFOPLIST_FILE = MealMemory/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -429,7 +432,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q3JN42F5ST;
 				INFOPLIST_FILE = MealMemory/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (

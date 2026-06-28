@@ -137,6 +137,7 @@ final class AddRecipeViewModel: ObservableObject {
         if DemoData.isDemoMode {
             // In demo mode there's no real Supabase session — build the recipe in memory.
             let id = editingRecipe?.id ?? pendingId
+            let now = Date()
             return Recipe(
                 id: id,
                 householdId: householdId,
@@ -148,7 +149,9 @@ final class AddRecipeViewModel: ObservableObject {
                 prepTimeMinutes: prepTimeMinutes > 0 ? prepTimeMinutes : nil,
                 prepNightBefore: prepNightBefore,
                 archived: false,
-                photoPath: nil
+                createdBy: DemoData.householdId,
+                createdAt: now,
+                updatedAt: now
             )
         }
 
