@@ -103,6 +103,10 @@ final class AddRecipeViewModel: ObservableObject {
     // MARK: - URL Import
 
     func importURL(_ urlString: String) async {
+        if DemoData.isDemoMode {
+            importError = "URL import requires signing in. Tap \"Start fresh\" in the Household tab to create your account."
+            return
+        }
         guard let url = URL(string: urlString.trimmingCharacters(in: .whitespaces)) else {
             importError = "That doesn't look like a valid URL."
             return
@@ -129,6 +133,25 @@ final class AddRecipeViewModel: ObservableObject {
     func save(householdId: UUID) async -> Recipe? {
         isSaving = true
         defer { isSaving = false }
+
+        if DemoData.isDemoMode {
+            // In demo mode there's no real Supabase session — build the recipe in memory.
+            let id = editingRecipe?.id ?? pendingId
+            return Recipe(
+                id: id,
+                householdId: householdId,
+                name: name.trimmingCharacters(in: .whitespaces),
+                emoji: emoji.isEmpty ? "🍽" : emoji,
+                ingredients: ingredients.filter { !$0.isEmpty },
+                steps: steps.filter { !$0.text.isEmpty },
+                safeForTags: safeForTags,
+                prepTimeMinutes: prepTimeMinutes > 0 ? prepTimeMinutes : nil,
+                prepNightBefore: prepNightBefore,
+                archived: false,
+                photoPath: nil
+            )
+        }
+
         do {
             if var existing = editingRecipe {
                 existing.name = name.trimmingCharacters(in: .whitespaces)
