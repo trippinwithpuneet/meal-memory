@@ -127,13 +127,11 @@ struct WeekGridView: View {
 
             ForEach(viewModel.weekDays, id: \.self) { day in
                 let recipe = viewModel.slot(for: day, mealType: mealType).flatMap { viewModel.recipe(for: $0) }
-                // Use appState.members directly — always current regardless of network load timing.
-                let conflicts = recipe.map { viewModel.dietaryConflicts(for: $0, using: appState.members) } ?? []
                 SlotCell(
                     slot: viewModel.slot(for: day, mealType: mealType),
                     recipe: recipe,
                     isToday: day.isToday,
-                    conflicts: conflicts,
+                    needsNightBefore: recipe?.prepNightBefore == true,
                     onDrop: { droppedRecipeId in
                         handleDrop(recipeId: droppedRecipeId, date: day, mealType: mealType)
                     },
@@ -182,7 +180,7 @@ struct SlotCell: View {
     let slot: MealSlot?
     let recipe: Recipe?
     let isToday: Bool
-    var conflicts: [String] = []
+    var needsNightBefore: Bool = false
     let onDrop: (UUID) -> Void
     var onTap: (() -> Void)? = nil
     var onTapFilled: (() -> Void)? = nil
@@ -227,15 +225,14 @@ struct SlotCell: View {
                 }
             }
 
-            // Dietary conflict warning dot (top-right)
-            if !conflicts.isEmpty {
+            // Night-before prep indicator (top-right)
+            if needsNightBefore {
                 VStack {
                     HStack {
                         Spacer()
-                        Circle()
-                            .fill(Theme.danger)
-                            .frame(width: 7, height: 7)
-                            .padding(3)
+                        Text("🌙")
+                            .font(.system(size: 9))
+                            .padding(2)
                     }
                     Spacer()
                 }
@@ -257,8 +254,8 @@ struct SlotCell: View {
         }
         .draggable(recipe ?? Recipe.placeholder)
         .contextMenu {
-            if !conflicts.isEmpty {
-                Section("⚠️ " + conflicts.joined(separator: ", ")) {}
+            if needsNightBefore {
+                Section("🌙 Prep needed the night before") {}
             }
             if recipe != nil, let onClear {
                 Button(role: .destructive) {
@@ -278,9 +275,8 @@ struct SlotCell: View {
 
     private var borderColor: Color {
         if isTargeted { return Theme.saffron }
-        if !conflicts.isEmpty { return Theme.danger }
         if isToday && recipe != nil { return Theme.saffron }
-        if isToday { return Theme.danger.opacity(0.5) }  // today + unplanned = subtle red
+        if isToday { return Theme.saffron.opacity(0.35) }
         if recipe != nil { return Theme.border }
         return Color.clear
     }

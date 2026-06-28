@@ -48,6 +48,7 @@ struct Recipe: Codable, Identifiable, Transferable {
     var steps: [RecipeStep]
     var safeForTags: [String]
     var prepTimeMinutes: Int?
+    var prepNightBefore: Bool = false
     var sourceUrl: String?
     var photoPath: String?
     var archived: Bool
@@ -60,11 +61,54 @@ struct Recipe: Codable, Identifiable, Transferable {
         case householdId     = "household_id"
         case safeForTags     = "safe_for_tags"
         case prepTimeMinutes = "prep_time_minutes"
+        case prepNightBefore = "prep_night_before"
         case sourceUrl       = "source_url"
         case photoPath       = "photo_path"
         case createdBy       = "created_by"
         case createdAt       = "created_at"
         case updatedAt       = "updated_at"
+    }
+
+    // Custom decode so prepNightBefore defaults to false if the DB column isn't applied yet.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id              = try c.decode(UUID.self,       forKey: .id)
+        householdId     = try c.decode(UUID.self,       forKey: .householdId)
+        name            = try c.decode(String.self,     forKey: .name)
+        emoji           = try c.decode(String.self,     forKey: .emoji)
+        ingredients     = try c.decode([String].self,   forKey: .ingredients)
+        steps           = try c.decode([RecipeStep].self, forKey: .steps)
+        safeForTags     = try c.decode([String].self,   forKey: .safeForTags)
+        prepTimeMinutes = try c.decodeIfPresent(Int.self,    forKey: .prepTimeMinutes)
+        prepNightBefore = try c.decodeIfPresent(Bool.self,   forKey: .prepNightBefore) ?? false
+        sourceUrl       = try c.decodeIfPresent(String.self, forKey: .sourceUrl)
+        photoPath       = try c.decodeIfPresent(String.self, forKey: .photoPath)
+        archived        = try c.decode(Bool.self,   forKey: .archived)
+        createdBy       = try c.decode(UUID.self,   forKey: .createdBy)
+        createdAt       = try c.decode(Date.self,   forKey: .createdAt)
+        updatedAt       = try c.decode(Date.self,   forKey: .updatedAt)
+    }
+
+    init(id: UUID, householdId: UUID, name: String, emoji: String,
+         ingredients: [String], steps: [RecipeStep], safeForTags: [String],
+         prepTimeMinutes: Int? = nil, prepNightBefore: Bool = false,
+         sourceUrl: String? = nil, photoPath: String? = nil,
+         archived: Bool, createdBy: UUID, createdAt: Date, updatedAt: Date) {
+        self.id              = id
+        self.householdId     = householdId
+        self.name            = name
+        self.emoji           = emoji
+        self.ingredients     = ingredients
+        self.steps           = steps
+        self.safeForTags     = safeForTags
+        self.prepTimeMinutes = prepTimeMinutes
+        self.prepNightBefore = prepNightBefore
+        self.sourceUrl       = sourceUrl
+        self.photoPath       = photoPath
+        self.archived        = archived
+        self.createdBy       = createdBy
+        self.createdAt       = createdAt
+        self.updatedAt       = updatedAt
     }
 
     static var transferRepresentation: some TransferRepresentation {

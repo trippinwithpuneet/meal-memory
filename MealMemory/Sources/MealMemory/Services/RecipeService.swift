@@ -26,6 +26,7 @@ final class RecipeService: ObservableObject {
         steps: [RecipeStep],
         safeForTags: [String],
         prepTimeMinutes: Int? = nil,
+        prepNightBefore: Bool = false,
         sourceUrl: String? = nil,
         photoPath: String? = nil
     ) async throws -> Recipe {
@@ -33,15 +34,16 @@ final class RecipeService: ObservableObject {
 
         let now = Date()
         var payload: [String: AnyJSON] = [
-            "id":            .string(id.uuidString),
-            "household_id":  .string(householdId.uuidString),
-            "name":          .string(name),
-            "emoji":         .string(emoji),
-            "ingredients":   .array(ingredients.map { .string($0) }),
-            "steps":         .array(steps.map { stepsToAnyJSON($0) }),
-            "safe_for_tags": .array(safeForTags.map { .string($0) }),
-            "source_url":    sourceUrl.map { .string($0) } ?? .null,
-            "created_by":    .string(userId.uuidString)
+            "id":               .string(id.uuidString),
+            "household_id":     .string(householdId.uuidString),
+            "name":             .string(name),
+            "emoji":            .string(emoji),
+            "ingredients":      .array(ingredients.map { .string($0) }),
+            "steps":            .array(steps.map { stepsToAnyJSON($0) }),
+            "safe_for_tags":    .array(safeForTags.map { .string($0) }),
+            "prep_night_before": .bool(prepNightBefore),
+            "source_url":       sourceUrl.map { .string($0) } ?? .null,
+            "created_by":       .string(userId.uuidString)
         ]
         if let photoPath { payload["photo_path"] = .string(photoPath) }
         if let mins = prepTimeMinutes, mins > 0 { payload["prep_time_minutes"] = .integer(mins) }
@@ -58,6 +60,7 @@ final class RecipeService: ObservableObject {
             steps: steps,
             safeForTags: safeForTags,
             prepTimeMinutes: prepTimeMinutes,
+            prepNightBefore: prepNightBefore,
             sourceUrl: sourceUrl,
             photoPath: photoPath,
             archived: false,
@@ -74,11 +77,12 @@ final class RecipeService: ObservableObject {
 
     func updateRecipe(_ recipe: Recipe) async throws -> Recipe {
         var payload: [String: AnyJSON] = [
-            "name":          .string(recipe.name),
-            "emoji":         .string(recipe.emoji),
-            "ingredients":   .array(recipe.ingredients.map { .string($0) }),
-            "steps":         .array(recipe.steps.map { stepsToAnyJSON($0) }),
-            "safe_for_tags": .array(recipe.safeForTags.map { .string($0) })
+            "name":             .string(recipe.name),
+            "emoji":            .string(recipe.emoji),
+            "ingredients":      .array(recipe.ingredients.map { .string($0) }),
+            "steps":            .array(recipe.steps.map { stepsToAnyJSON($0) }),
+            "safe_for_tags":    .array(recipe.safeForTags.map { .string($0) }),
+            "prep_night_before": .bool(recipe.prepNightBefore)
         ]
         if let photoPath = recipe.photoPath { payload["photo_path"] = .string(photoPath) }
         if let mins = recipe.prepTimeMinutes, mins > 0 { payload["prep_time_minutes"] = .integer(mins) }

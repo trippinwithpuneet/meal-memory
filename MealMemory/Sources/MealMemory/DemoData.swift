@@ -49,7 +49,7 @@ enum DemoData {
 
         // ── Both safe ──────────────────────────────────────────────────────────
 
-        make(id: 1, name: "Burrito Bowl", emoji: "🌯", prepTime: 30,
+        make(id: 1, name: "Burrito Bowl", emoji: "🌯", prepTime: 30, nightBefore: true,
              ingredients: ["1 cup basmati rice",
                            "1 can black beans, drained",
                            "1 cup frozen corn",
@@ -124,7 +124,7 @@ enum DemoData {
 
         // ── Both safe: Rachel's Indian proteins ───────────────────────────────
 
-        make(id: 6, name: "Moong Dal Chilla", emoji: "🫓", prepTime: 25,
+        make(id: 6, name: "Moong Dal Chilla", emoji: "🫓", prepTime: 25, nightBefore: true,
              ingredients: ["1 cup split green moong dal",
                            "1 tsp grated ginger",
                            "1 green chilli, finely chopped",
@@ -252,6 +252,7 @@ enum DemoData {
     // MARK: - Factory
 
     private static func make(id: Int, name: String, emoji: String, prepTime: Int = 0,
+                              nightBefore: Bool = false,
                               ingredients: [String], steps: [String],
                               safeFor: [String]) -> Recipe {
         Recipe(
@@ -263,6 +264,7 @@ enum DemoData {
             steps: steps.map { RecipeStep(text: $0, hoursBefore: 0) },
             safeForTags: safeFor,
             prepTimeMinutes: prepTime > 0 ? prepTime : nil,
+            prepNightBefore: nightBefore,
             sourceUrl: nil,
             photoPath: nil,
             archived: false,

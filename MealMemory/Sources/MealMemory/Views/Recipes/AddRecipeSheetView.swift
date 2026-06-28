@@ -358,6 +358,27 @@ struct RecipeFormFields: View {
             .background(Theme.cardFilled)
             .cornerRadius(12)
 
+            // Night-before prep flag
+            HStack {
+                Text("🌙")
+                    .font(.system(size: 16))
+                    .frame(width: 20)
+                Toggle(isOn: $vm.prepNightBefore) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Needs night-before prep")
+                            .font(.system(size: 15))
+                            .foregroundColor(Theme.navy)
+                        Text("e.g. soak beans, marinate, defrost")
+                            .font(.system(size: 12))
+                            .foregroundColor(Theme.textTertiary)
+                    }
+                }
+                .tint(Theme.saffron)
+            }
+            .padding(12)
+            .background(Theme.cardFilled)
+            .cornerRadius(12)
+
             // Ingredients
             VStack(alignment: .leading, spacing: 8) {
                 Text("Ingredients")

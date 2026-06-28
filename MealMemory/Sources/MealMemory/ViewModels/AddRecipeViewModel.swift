@@ -23,6 +23,7 @@ final class AddRecipeViewModel: ObservableObject {
     @Published var steps: [RecipeStep] = [RecipeStep(text: "", hoursBefore: 0)]
     @Published var safeForTags: [String] = []
     @Published var prepTimeMinutes: Int = 0
+    @Published var prepNightBefore: Bool = false
     @Published var dishPhoto: UIImage?
     @Published var isOCRProcessing = false
     @Published var isImporting = false
@@ -47,6 +48,7 @@ final class AddRecipeViewModel: ObservableObject {
             steps = recipe.steps.isEmpty ? [RecipeStep(text: "", hoursBefore: 0)] : recipe.steps
             safeForTags = recipe.safeForTags
             prepTimeMinutes = recipe.prepTimeMinutes ?? 0
+            prepNightBefore = recipe.prepNightBefore
             entryMethod = .manual
             // dishPhoto stays nil — the existing photo is shown via signed URL in RecipeDetailView.
             // A new pick in the edit sheet replaces it.
@@ -135,6 +137,7 @@ final class AddRecipeViewModel: ObservableObject {
                 existing.steps = steps.filter { !$0.text.isEmpty }
                 existing.safeForTags = safeForTags
                 existing.prepTimeMinutes = prepTimeMinutes > 0 ? prepTimeMinutes : nil
+                existing.prepNightBefore = prepNightBefore
                 if let photo = dishPhoto,
                    let path = try? await recipeService.uploadPhoto(photo, householdId: householdId, recipeId: existing.id) {
                     existing.photoPath = path
@@ -155,6 +158,7 @@ final class AddRecipeViewModel: ObservableObject {
                     steps: steps.filter { !$0.text.isEmpty },
                     safeForTags: safeForTags,
                     prepTimeMinutes: prepTimeMinutes > 0 ? prepTimeMinutes : nil,
+                    prepNightBefore: prepNightBefore,
                     photoPath: photoPath
                 )
             }
