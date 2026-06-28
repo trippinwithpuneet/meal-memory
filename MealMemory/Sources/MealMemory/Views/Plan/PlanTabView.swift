@@ -12,30 +12,12 @@ struct PlanTabView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .bottom) {
+            Group {
                 if showOnboarding {
                     OnboardingEmptyStateView(showAddRecipe: $showAddRecipe)
                 } else {
                     WeekGridView(viewModel: viewModel, householdId: householdId,
                                  onAddRecipeTapped: { showAddRecipe = true })
-                }
-
-                // Emergency mode trigger — only visible when recipes exist
-                if hasRecipes {
-                    Button { showEmergencyMode = true } label: {
-                        HStack(spacing: 6) {
-                            Text("🚨")
-                            Text("What can I cook tonight?")
-                                .font(.system(size: 14, weight: .semibold))
-                        }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 18)
-                        .padding(.vertical, 10)
-                        .background(Theme.navy)
-                        .cornerRadius(22)
-                        .shadow(color: Theme.navy.opacity(0.3), radius: 8, x: 0, y: 4)
-                    }
-                    .padding(.bottom, 12)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -43,6 +25,10 @@ struct PlanTabView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack(spacing: 4) {
                         if hasRecipes {
+                            Button { showEmergencyMode = true } label: {
+                                Image(systemName: "fork.knife")
+                                    .foregroundColor(Theme.textTertiary)
+                            }
                             ShareLink(item: viewModel.weeklyGroceryList()) {
                                 Image(systemName: "square.and.arrow.up")
                                     .foregroundColor(Theme.navy)

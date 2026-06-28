@@ -9,6 +9,7 @@ struct HouseholdView: View {
     @State private var inviteCode: String?
     @State private var isLoading = false
     @State private var showDeleteConfirmation = false
+    @State private var showExitDemoConfirmation = false
     @State private var isDeletingAccount = false
     @State private var editingMember: Member?
     @State private var fridayReminderOn = NotificationService.shared.isEnabled
@@ -50,40 +51,63 @@ struct HouseholdView: View {
                 }
                 .listRowBackground(Theme.cardFilled)
 
-                Section("Invite") {
-                    if let code = inviteCode {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text(code)
-                                .font(.system(size: 32, weight: .bold, design: .monospaced))
-                                .foregroundColor(Theme.navy)
-                                .textSelection(.enabled)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .padding(.top, 4)
-
-                            ShareLink(item: "Join my household on Meal Memory!\n\nCode: \(code)\n\nOpen Meal Memory → Join Household → Enter the code above. Valid for 48 hours.") {
-                                Label("Share code", systemImage: "square.and.arrow.up")
+                if DemoData.isDemoMode {
+                    Section {
+                        Button {
+                            showExitDemoConfirmation = true
+                        } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Start with my own data")
                                     .font(.system(size: 15, weight: .semibold))
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 10)
-                                    .background(Theme.saffron)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(10)
+                                    .foregroundColor(Theme.saffron)
+                                Text("Create an account and build your real recipe collection")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(Theme.textTertiary)
                             }
-
-                            Text("Valid for 48 hours · tap to copy or share")
-                                .font(Theme.Font.caption())
-                                .foregroundColor(Theme.textTertiary)
-                                .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, 2)
                         }
-                        .padding(.vertical, 4)
-                    } else {
-                        Button("Invite someone") {
-                            Task { await generateInvite() }
-                        }
-                        .foregroundColor(Theme.saffron)
+                    } header: {
+                        Text("Demo Mode")
+                    } footer: {
+                        Text("You're exploring with sample data. Your demo recipes and meal plan will be replaced by your own once you sign up.")
                     }
+                    .listRowBackground(Theme.cardFilled)
+                } else {
+                    Section("Invite") {
+                        if let code = inviteCode {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text(code)
+                                    .font(.system(size: 32, weight: .bold, design: .monospaced))
+                                    .foregroundColor(Theme.navy)
+                                    .textSelection(.enabled)
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                                    .padding(.top, 4)
+
+                                ShareLink(item: "Join my household on Meal Memory!\n\nCode: \(code)\n\nOpen Meal Memory → Join Household → Enter the code above. Valid for 48 hours.") {
+                                    Label("Share code", systemImage: "square.and.arrow.up")
+                                        .font(.system(size: 15, weight: .semibold))
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 10)
+                                        .background(Theme.saffron)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(10)
+                                }
+
+                                Text("Valid for 48 hours · tap to copy or share")
+                                    .font(Theme.Font.caption())
+                                    .foregroundColor(Theme.textTertiary)
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                            }
+                            .padding(.vertical, 4)
+                        } else {
+                            Button("Invite someone") {
+                                Task { await generateInvite() }
+                            }
+                            .foregroundColor(Theme.saffron)
+                        }
+                    }
+                    .listRowBackground(Theme.cardFilled)
                 }
-                .listRowBackground(Theme.cardFilled)
 
                 Section("Reminders") {
                     Toggle(isOn: $fridayReminderOn) {
@@ -110,19 +134,21 @@ struct HouseholdView: View {
                 }
                 .listRowBackground(Theme.cardFilled)
 
-                Section {
-                    Button("Sign out", role: .destructive) {
-                        Task {
-                            try? await authService.signOut()
-                            appState.clearHousehold()
+                if !DemoData.isDemoMode {
+                    Section {
+                        Button("Sign out", role: .destructive) {
+                            Task {
+                                try? await authService.signOut()
+                                appState.clearHousehold()
+                            }
+                        }
+
+                        Button("Delete account", role: .destructive) {
+                            showDeleteConfirmation = true
                         }
                     }
-
-                    Button("Delete account", role: .destructive) {
-                        showDeleteConfirmation = true
-                    }
+                    .listRowBackground(Theme.cardFilled)
                 }
-                .listRowBackground(Theme.cardFilled)
             }
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
@@ -149,6 +175,18 @@ struct HouseholdView: View {
                     dietaryRestrictions: updated.dietaryRestrictions
                 )}
             }
+        }
+        .confirmationDialog(
+            "Start fresh?",
+            isPresented: $showExitDemoConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Start Fresh", role: .destructive) {
+                UserDefaults.standard.set(false, forKey: "demo_mode_active")
+            }
+            Button("Keep Exploring", role: .cancel) {}
+        } message: {
+            Text("Demo data will be cleared. You'll create your own account and build your real recipe collection from scratch.")
         }
         .confirmationDialog(
             "Delete your account?",

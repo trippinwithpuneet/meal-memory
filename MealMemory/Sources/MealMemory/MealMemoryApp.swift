@@ -5,11 +5,12 @@ struct MealMemoryApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var authService = AuthService.shared
     @StateObject private var appState = AppState()
+    @AppStorage("demo_mode_active") private var demoModeActive: Bool = true
 
     var body: some Scene {
         WindowGroup {
             Group {
-                if DemoData.isDemoMode {
+                if demoModeActive {
                     MainTabView(householdId: DemoData.householdId)
                 } else if authService.isSignedIn {
                     if let householdId = appState.householdId {
@@ -25,7 +26,7 @@ struct MealMemoryApp: App {
             .environmentObject(authService)
             .environmentObject(appState)
             .onAppear {
-                if DemoData.isDemoMode {
+                if demoModeActive {
                     appState.members = DemoData.members
                 } else {
                     appState.loadHousehold()

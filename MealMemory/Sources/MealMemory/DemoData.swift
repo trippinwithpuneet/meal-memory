@@ -3,7 +3,12 @@ import Foundation
 // Toggle this to true to run the app with pre-loaded fake data on the simulator.
 // No network calls are made in demo mode — safe to use on iOS 26.5 simulator.
 enum DemoData {
-    static let isDemoMode = true
+    static var isDemoMode: Bool {
+        // True by default (first install). Flips to false when user taps "Start fresh".
+        UserDefaults.standard.object(forKey: "demo_mode_active") == nil
+            ? true
+            : UserDefaults.standard.bool(forKey: "demo_mode_active")
+    }
 
     static let householdId = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
     static let userId      = UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
