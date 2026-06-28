@@ -68,7 +68,7 @@ The recipe appears in your Recipe Bank.
 ## Step 4 — Place the recipe on the plan
 
 1. Tap the **Plan** tab (calendar icon, first tab).
-2. The week grid shows 7 days × 3 meals (Breakfast, Lunch, Dinner).
+2. The week grid shows 3 meal rows (Breakfast, Lunch, Dinner) across the days of the week. The grid scrolls horizontally and centers on today, so about four days are visible at once — swipe sideways to reach the rest.
 3. Tap any empty cell (e.g. Monday Dinner).
 4. A recipe picker slides up showing your Recipe Bank.
 5. Tap **Dal Tadka** (or whatever you added).
@@ -82,7 +82,7 @@ Repeat for as many slots as you like. Each slot updates instantly on both phones
 
 - Swipe left on the grid (or tap the **›** arrow at the top right) to move to next week.
 - Swipe right (or tap **‹**) to go back.
-- Tap **Today** to jump back to the current week.
+- Tap the **calendar icon** (between the arrows) to open a full month overview and see the dates around you.
 
 ---
 
@@ -95,7 +95,7 @@ If anyone in your household has dietary restrictions:
 3. Toggle on any restrictions that apply to you.
 4. Tap **Save**.
 
-Now, any recipe placed in the plan that doesn't cover your restriction will show a red dot and border. Long-press the slot to see which restriction triggered the warning.
+Restrictions are saved per member and used as recipe-level labels. The week grid does not show a per-slot conflict dot — in a shared household the assumption is that you plan meals with each other's restrictions in mind. Recipes that need prep the night before show a 🌙 marker in the top-right of their slot instead; long-press a slot for the "Prep needed the night before" note.
 
 ---
 
@@ -105,6 +105,7 @@ Now, any recipe placed in the plan that doesn't cover your restriction will show
 - **Import more recipes from URLs:** Recipes → + → Import from URL
 - **Enable weekly reminders:** Household → Reminders → toggle on Friday planning reminder
 - **Archive recipes you no longer use:** Recipes → swipe left on a row → Archive
+- **Stuck on what to cook?** Tap the **What can I cook?** pill at the bottom of the Plan tab to open **Fridge Raid** — type in the ingredients you have on hand and it ranks recipes you can make right now.
 
 ## Getting help
 

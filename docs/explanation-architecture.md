@@ -16,6 +16,8 @@ Meal Memory is a SwiftUI iOS app backed by Supabase (PostgreSQL + Auth + Storage
 │    ├── Plan tab                                                 │
 │    │     PlanTabView → MealPlanViewModel                        │
 │    │     WeekGridView ← appState.members (direct EnvironmentObject) │
+│    │       ├── MonthCalendarView (date jump)                    │
+│    │       └── EmergencyModeView (Fridge Raid)                  │
 │    ├── Recipes tab                                              │
 │    │     RecipeBankView → RecipeService                         │
 │    │     AddRecipeSheetView → AddRecipeViewModel                │
