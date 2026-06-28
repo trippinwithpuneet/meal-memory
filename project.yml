@@ -18,9 +18,8 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - path: MealMemory/Sources/MealMemory
-    resources:
-      - path: MealMemory/Resources
-        optional: true
+      - path: MealMemory/Resources/Assets.xcassets
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.puneetjain.mealmemory
@@ -32,6 +31,7 @@ targets:
         CURRENT_PROJECT_VERSION: "1"
         INFOPLIST_FILE: MealMemory/Info.plist
         PRODUCT_NAME: MealMemory
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     info:
       path: MealMemory/Info.plist
       properties:
