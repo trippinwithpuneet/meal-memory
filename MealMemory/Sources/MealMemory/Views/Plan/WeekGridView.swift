@@ -42,7 +42,7 @@ struct WeekGridView: View {
     // Sized so ~4 days are visible at once; label column is intentionally thin
     private let cellWidth:       CGFloat = 80
     private let cellHeight:      CGFloat = 96
-    private let dayHeaderHeight: CGFloat = 24
+    private let dayHeaderHeight: CGFloat = 38
     private let labelWidth:      CGFloat = 20
     private let cellGap:         CGFloat = 5
 
@@ -58,8 +58,10 @@ struct WeekGridView: View {
                 .padding(.bottom, 6)
 
             weekGrid
+
+            Spacer(minLength: 0)
         }
-        .frame(maxHeight: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Theme.appBackground)
         // Primary CTA — pinned to the bottom, hidden while a slot is selected
         // (the trash panel owns that space then).
@@ -91,7 +93,9 @@ struct WeekGridView: View {
         .sheet(item: $activeSheet) { kind in
             switch kind {
             case .calendar:
-                MonthCalendarView()
+                MonthCalendarView { date in
+                    withAnimation { viewModel.weekStart = date.startOfWeek }
+                }
             case .picker(let slot):
                 RecipePickerSheet(
                     recipes: Array(viewModel.recipes.values).sorted { $0.name < $1.name },
@@ -141,6 +145,20 @@ struct WeekGridView: View {
                         .font(.system(size: 17))
                         .foregroundColor(Theme.textSecondary)
                         .frame(width: 30, height: 30)
+                }
+            }
+
+            // One-tap return to the current week, only when navigated away
+            if !isCurrentWeek {
+                Button {
+                    withAnimation { viewModel.weekStart = Date().startOfWeek }
+                } label: {
+                    Text("Today")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(Theme.saffron)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Capsule().fill(Theme.saffron.opacity(0.12)))
                 }
             }
 
@@ -225,14 +243,23 @@ struct WeekGridView: View {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
                     VStack(alignment: .leading, spacing: cellGap) {
-                        // Day name header row
+                        // Day name header row — weekday letter + day-of-month number
                         HStack(spacing: cellGap) {
                             ForEach(viewModel.weekDays, id: \.self) { day in
-                                Text(shortDayName(day))
-                                    .font(Theme.Font.sectionHeader())
-                                    .foregroundColor(day.isToday ? Theme.saffron : Theme.textTertiary)
-                                    .frame(width: cellWidth, height: dayHeaderHeight)
-                                    .id(day)
+                                VStack(spacing: 2) {
+                                    Text(shortDayName(day))
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(day.isToday ? Theme.saffron : Theme.textTertiary)
+                                    Text(dayNumber(day))
+                                        .font(.system(size: 15, weight: day.isToday ? .bold : .regular))
+                                        .foregroundColor(day.isToday ? .white : Theme.navy)
+                                        .frame(width: 24, height: 24)
+                                        .background(
+                                            Circle().fill(day.isToday ? Theme.saffron : Color.clear)
+                                        )
+                                }
+                                .frame(width: cellWidth, height: dayHeaderHeight)
+                                .id(day)
                             }
                         }
 
@@ -412,6 +439,10 @@ struct WeekGridView: View {
         f.dateFormat = "E"
         return String(f.string(from: date).prefix(1))
     }
+
+    private func dayNumber(_ date: Date) -> String {
+        "\(Calendar.current.component(.day, from: date))"
+    }
 }
 
 // MARK: - SlotCell
@@ -451,8 +482,8 @@ struct SlotCell: View {
                 }
             } else {
                 Text("+")
-                    .font(.system(size: 16))
-                    .foregroundColor(isTargeted ? Theme.saffron : Theme.border)
+                    .font(.system(size: 20, weight: .light))
+                    .foregroundColor(isTargeted ? Theme.saffron : Theme.textTertiary)
             }
 
             if isTargeted && recipe != nil {

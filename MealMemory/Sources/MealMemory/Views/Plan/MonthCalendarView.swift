@@ -8,6 +8,9 @@ import SwiftUI
 struct MonthCalendarView: View {
     @Environment(\.dismiss) private var dismiss
 
+    // Called when the user taps a day — used to jump the plan to that week.
+    var onSelectDate: ((Date) -> Void)? = nil
+
     // 0 = current month, negative = past, positive = future
     @State private var monthOffset: Int = 0
 
@@ -32,8 +35,11 @@ struct MonthCalendarView: View {
                 // Horizontally-swipeable month pages
                 TabView(selection: $monthOffset) {
                     ForEach(-72...72, id: \.self) { offset in
-                        MonthGridContent(month: monthDate(for: offset), calendar: calendar)
-                            .tag(offset)
+                        MonthGridContent(month: monthDate(for: offset), calendar: calendar) { date in
+                            onSelectDate?(date)
+                            dismiss()
+                        }
+                        .tag(offset)
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
@@ -183,13 +189,16 @@ struct MonthCalendarView: View {
 struct MonthGridContent: View {
     let month: Date
     let calendar: Calendar
+    var onSelectDate: (Date) -> Void
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 7)
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: 0) {
             ForEach(Array(calendarDays.enumerated()), id: \.offset) { _, entry in
-                CalendarDayCell(date: entry.date, isCurrentMonth: entry.isCurrentMonth)
+                CalendarDayCell(date: entry.date, isCurrentMonth: entry.isCurrentMonth) {
+                    if let date = entry.date { onSelectDate(date) }
+                }
             }
         }
         .padding(.horizontal, 4)
@@ -236,6 +245,7 @@ struct MonthGridContent: View {
 struct CalendarDayCell: View {
     let date: Date?
     let isCurrentMonth: Bool
+    var onTap: (() -> Void)? = nil
 
     private var isToday: Bool {
         guard let date else { return false }
@@ -276,6 +286,8 @@ struct CalendarDayCell: View {
         }
         .padding(.vertical, 4)
         .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
+        .onTapGesture { if date != nil { onTap?() } }
     }
 
     private var textColor: Color {
