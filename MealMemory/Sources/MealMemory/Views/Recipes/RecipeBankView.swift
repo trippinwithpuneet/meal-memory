@@ -8,6 +8,8 @@ struct RecipeBankView: View {
     @State private var showArchived = false
     @State private var activeFilter: String? = nil
     @State private var searchText = ""
+    @State private var recentlyArchived: Recipe?
+    @State private var undoToken = 0
 
     private let recipeService = RecipeService()
 
@@ -47,6 +49,36 @@ struct RecipeBankView: View {
                 recipes.insert(newRecipe, at: 0)
             }
         }
+        .overlay(alignment: .bottom) {
+            if let archived = recentlyArchived {
+                archiveUndoToast(archived)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
+            }
+        }
+        .animation(.spring(response: 0.3, dampingFraction: 0.85), value: recentlyArchived != nil)
+    }
+
+    private func archiveUndoToast(_ recipe: Recipe) -> some View {
+        HStack(spacing: 12) {
+            Text("Archived \(recipe.name)")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.white)
+                .lineLimit(1)
+            Spacer(minLength: 8)
+            Button {
+                undoArchive(recipe)
+            } label: {
+                Text("Undo")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(Theme.saffron)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(RoundedRectangle(cornerRadius: 12).fill(Theme.navy))
+        .shadow(color: .black.opacity(0.2), radius: 10, y: 4)
     }
 
     private var filteredRecipes: [Recipe] {
@@ -130,7 +162,7 @@ struct RecipeBankView: View {
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    Button(role: .destructive) { archiveRecipe(recipe) } label: {
+                    Button { archiveRecipe(recipe) } label: {
                         Label("Archive", systemImage: "archivebox")
                     }
                     .tint(Theme.textTertiary)
@@ -189,6 +221,23 @@ struct RecipeBankView: View {
     private func archiveRecipe(_ recipe: Recipe) {
         recipes.removeAll { $0.id == recipe.id }
         Task { try? await recipeService.setArchived(true, recipeId: recipe.id) }
+
+        recentlyArchived = recipe
+        undoToken += 1
+        let token = undoToken
+        Task {
+            try? await Task.sleep(nanoseconds: 4_000_000_000)
+            if undoToken == token { withAnimation { recentlyArchived = nil } }
+        }
+    }
+
+    private func undoArchive(_ recipe: Recipe) {
+        undoToken += 1
+        withAnimation { recentlyArchived = nil }
+        if !recipes.contains(where: { $0.id == recipe.id }) {
+            recipes.insert(recipe, at: 0)
+        }
+        Task { try? await recipeService.setArchived(false, recipeId: recipe.id) }
     }
 }
 

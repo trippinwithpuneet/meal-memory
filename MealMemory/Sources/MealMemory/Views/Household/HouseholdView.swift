@@ -160,6 +160,10 @@ struct HouseholdView: View {
                         Button("Delete account", role: .destructive) {
                             showDeleteConfirmation = true
                         }
+                    } header: {
+                        Text("Account")
+                            .font(Theme.Font.sectionHeader())
+                            .foregroundColor(Theme.textTertiary)
                     }
                     .listRowBackground(Theme.cardFilled)
                 }
@@ -353,6 +357,6 @@ struct MemberEditSheet: View {
                 }
             }
         }
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .large])
     }
 }

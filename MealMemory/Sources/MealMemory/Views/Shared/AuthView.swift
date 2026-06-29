@@ -41,6 +41,13 @@ struct AuthView: View {
                     .background(Theme.cardFilled)
                     .cornerRadius(12)
 
+                if isSignUp && errorMessage == nil {
+                    Text("At least 6 characters")
+                        .font(Theme.Font.caption())
+                        .foregroundColor(Theme.textTertiary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
                 if let error = errorMessage {
                     Text(error)
                         .font(Theme.Font.caption())
@@ -93,7 +100,31 @@ struct AuthView: View {
                 try await authService.signIn(email: email, password: password)
             }
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = friendlyAuthError(error)
         }
+    }
+
+    // Map raw Supabase/network errors to copy a person can act on.
+    private func friendlyAuthError(_ error: Error) -> String {
+        let raw = error.localizedDescription.lowercased()
+        if raw.contains("invalid login") || raw.contains("invalid credentials") {
+            return "That email or password doesn't match. Give it another try."
+        }
+        if raw.contains("already registered") || raw.contains("already been registered") {
+            return "An account with this email already exists. Try signing in instead."
+        }
+        if raw.contains("password") && (raw.contains("least") || raw.contains("short") || raw.contains("6")) {
+            return "Your password needs to be at least 6 characters."
+        }
+        if raw.contains("email") && raw.contains("valid") {
+            return "That doesn't look like a valid email address."
+        }
+        if raw.contains("network") || raw.contains("offline") || raw.contains("connection") || raw.contains("timed out") {
+            return "Can't reach the server. Check your connection and try again."
+        }
+        if raw.contains("confirm") {
+            return "Check your inbox to confirm your email, then sign in."
+        }
+        return "Something went wrong. Please try again."
     }
 }
