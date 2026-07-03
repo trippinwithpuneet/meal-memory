@@ -15,7 +15,7 @@ We're going to make the app feel finished. It's still rough around the edges. Pl
 
 **Pre-TestFlight blockers still open (do before any external build):**
 1. ✅ Test password scrubbed from git-tracked files (2026-07-03). Still rotate the actual Supabase account password in the dashboard (old value remains in git history).
-2. ✅ Invite-token / membership RLS holes closed — migration `20260703000001_secure_invites_and_membership.sql` (redemption + creation now via SECURITY DEFINER functions). Must be applied to the live DB.
+2. ✅ Invite-token / membership RLS holes closed — migration `20260703000001_secure_invites_and_membership.sql` (redemption + creation now via SECURITY DEFINER functions). **Applied to the live/PRODUCTION DB via SQL Editor on 2026-07-03** (ran outside `db push`, so the `schema_migrations` table may not record it — the migration is idempotent, so a later `db push` re-run is safe).
 3. Flip `DemoData.isDemoMode = false` (leave ON for now while dogfooding; flip at TestFlight archive time).
 4. Apply pending migrations `20260628000001_recipe_prep_time.sql` and `20260628000002_recipe_prep_night_before.sql`.
 
