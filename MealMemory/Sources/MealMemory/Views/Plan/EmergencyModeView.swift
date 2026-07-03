@@ -72,7 +72,7 @@ struct EmergencyModeView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .background(Theme.navy)
+        .background(Theme.brandNavy)
     }
 
     // MARK: - Input

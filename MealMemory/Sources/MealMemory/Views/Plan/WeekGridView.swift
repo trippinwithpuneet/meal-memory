@@ -565,7 +565,7 @@ struct ReconnectingBanner: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8)
-        .background(Theme.navy)
+        .background(Theme.brandNavy)
     }
 }
 

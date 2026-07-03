@@ -77,7 +77,7 @@ struct RecipeBankView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .background(RoundedRectangle(cornerRadius: 12).fill(Theme.navy))
+        .background(RoundedRectangle(cornerRadius: 12).fill(Theme.brandNavy))
         .shadow(color: .black.opacity(0.2), radius: 10, y: 4)
     }
 

@@ -13,6 +13,7 @@ struct HouseholdView: View {
     @State private var isDeletingAccount = false
     @State private var editingMember: Member?
     @State private var fridayReminderOn = NotificationService.shared.isEnabled
+    @AppStorage("appearance_mode") private var appearanceMode: String = AppearanceMode.light.rawValue
 
     private let householdService = HouseholdService()
 
@@ -143,6 +144,24 @@ struct HouseholdView: View {
                     }
                 } header: {
                     Text("Reminders")
+                        .font(Theme.Font.sectionHeader())
+                        .foregroundColor(Theme.textTertiary)
+                }
+                .listRowBackground(Theme.cardFilled)
+
+                Section {
+                    Picker(selection: $appearanceMode) {
+                        ForEach(AppearanceMode.allCases) { mode in
+                            Text(mode.label).tag(mode.rawValue)
+                        }
+                    } label: {
+                        Text("Theme")
+                            .font(.system(size: 15))
+                            .foregroundColor(Theme.navy)
+                    }
+                    .pickerStyle(.segmented)
+                } header: {
+                    Text("Appearance")
                         .font(Theme.Font.sectionHeader())
                         .foregroundColor(Theme.textTertiary)
                 }

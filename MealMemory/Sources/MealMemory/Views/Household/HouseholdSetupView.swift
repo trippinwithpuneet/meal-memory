@@ -70,7 +70,7 @@ struct HouseholdSetupView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(Theme.navy)
+                .background(Theme.brandNavy)
                 .foregroundColor(.white)
                 .cornerRadius(14)
             }
