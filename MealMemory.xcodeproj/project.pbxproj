@@ -25,6 +25,7 @@
 		829C43C1202791AD321558FD /* MealPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3993AF8435EA3E831DFB891D /* MealPlanViewModel.swift */; };
 		8A8809B061EFB1494A8DE227 /* AddRecipeSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513CEF81F7C7D7C2519A0BC5 /* AddRecipeSheetView.swift */; };
 		90E782D8D4F6C51FE0B52764 /* RecipeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08A75C07AC2A4954C669AE0 /* RecipeService.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A69788796A5B4C /* ErrorMessage.swift */; };
 		AFE059F39432442CEFD06A81 /* AddRecipeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB538A9A4991CBAAEF20B84 /* AddRecipeViewModel.swift */; };
 		B6F88B9399F55BE2061F1743 /* EmergencyModeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A645EA0CF7F6966A8F2C9C /* EmergencyModeViewModel.swift */; };
 		B87849166BB3B874B53E20B7 /* WeekGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35ED6E7A2D17A428C492F462 /* WeekGridView.swift */; };
@@ -63,6 +64,7 @@
 		B87280D73E22420FDB125985 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CEB538A9A4991CBAAEF20B84 /* AddRecipeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecipeViewModel.swift; sourceTree = "<group>"; };
 		D08A75C07AC2A4954C669AE0 /* RecipeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeService.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A69788796A5B4C /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		D2C4260B0A5DC38F082798C9 /* PlanTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTabView.swift; sourceTree = "<group>"; };
 		E092FF4142BA25188AE7D6AC /* MealMemory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MealMemory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF40773AC1D85B66C6FFCC /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 				ECBF40773AC1D85B66C6FFCC /* NotificationService.swift */,
 				A94956DBAD0D1BB1EC4C231A /* RecipeImportService.swift */,
 				D08A75C07AC2A4954C669AE0 /* RecipeService.swift */,
+				F1E2D3C4B5A69788796A5B4C /* ErrorMessage.swift */,
 				79A97A23DCC3CAB44E53F910 /* SupabaseClient.swift */,
 			);
 			path = Services;
@@ -328,6 +331,7 @@
 				4F7E2CCF1EA06AD211096964 /* RecipeDetailView.swift in Sources */,
 				0CFB96F70B7A7BB66A992ED8 /* RecipeImportService.swift in Sources */,
 				90E782D8D4F6C51FE0B52764 /* RecipeService.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5C /* ErrorMessage.swift in Sources */,
 				E72CDEA5E68499F74B856066 /* SupabaseClient.swift in Sources */,
 				C3423DDA353A9F7BB6C6B301 /* Theme.swift in Sources */,
 				B87849166BB3B874B53E20B7 /* WeekGridView.swift in Sources */,

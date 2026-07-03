@@ -166,7 +166,7 @@ final class MealPlanViewModel: ObservableObject {
                 householdId: householdId, date: date, mealType: mealType, recipeId: recipeId)
             slots[updated.slotKey] = updated
         } catch {
-            self.error = error.localizedDescription
+            self.error = error.userMessage(fallback: "Couldn't update your plan. Please try again.")
         }
     }
 
@@ -186,7 +186,7 @@ final class MealPlanViewModel: ObservableObject {
             slots[a.slotKey] = a
             slots[b.slotKey] = b
         } catch {
-            self.error = error.localizedDescription
+            self.error = error.userMessage(fallback: "Couldn't update your plan. Please try again.")
         }
     }
 
@@ -206,7 +206,7 @@ final class MealPlanViewModel: ObservableObject {
                 householdId: householdId, date: date, mealType: mealType, recipeId: nil)
             slots[updated.slotKey] = updated
         } catch {
-            self.error = error.localizedDescription
+            self.error = error.userMessage(fallback: "Couldn't update your plan. Please try again.")
         }
     }
 

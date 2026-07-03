@@ -157,7 +157,7 @@ struct HouseholdSetupView: View {
             let householdId = try await householdService.createHousehold(name: householdName)
             appState.setHousehold(householdId)
         } catch {
-            errorMessage = friendlyError(error)
+            errorMessage = error.userMessage(fallback: "We couldn't finish setting up. Please try again.")
         }
     }
 
@@ -169,23 +169,8 @@ struct HouseholdSetupView: View {
             let householdId = try await householdService.claimInviteToken(inviteCode)
             appState.setHousehold(householdId)
         } catch {
-            errorMessage = friendlyError(error)
+            errorMessage = error.userMessage(fallback: "We couldn't finish setting up. Please try again.")
         }
     }
 
-    // Turn raw Postgres/network errors into plain, actionable copy.
-    private func friendlyError(_ error: Error) -> String {
-        if let appError = error as? AppError { return appError.errorDescription ?? "Something went wrong. Please try again." }
-        let raw = error.localizedDescription.lowercased()
-        if raw.contains("row-level security") || raw.contains("violates") || raw.contains("permission") {
-            return "We couldn't finish setting up. Try signing out and back in, then create your household again."
-        }
-        if raw.contains("network") || raw.contains("offline") || raw.contains("connection") || raw.contains("timed out") {
-            return "Can't reach the server. Check your connection and try again."
-        }
-        if raw.contains("duplicate") || raw.contains("already") {
-            return "You already have a household set up."
-        }
-        return "Something went wrong. Please try again."
-    }
 }

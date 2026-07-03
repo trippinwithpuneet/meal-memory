@@ -189,7 +189,7 @@ final class AddRecipeViewModel: ObservableObject {
                 )
             }
         } catch {
-            saveError = error.localizedDescription
+            saveError = error.userMessage(fallback: "Couldn't save your recipe. Please try again.")
             return nil
         }
     }
