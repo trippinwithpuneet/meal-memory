@@ -23,6 +23,12 @@ struct MealMemoryApp: App {
                     AuthView()
                 }
             }
+            // The app has a single fixed light palette (cream/navy/saffron).
+            // Without this, on a phone set to Dark Mode the system chrome
+            // (search bar, tab bar, toolbar) renders dark while content stays
+            // light — which is why it looked different on Rachel's phone vs the
+            // (light-mode) simulator. Lock to light until a real dark theme exists.
+            .preferredColorScheme(.light)
             .environmentObject(authService)
             .environmentObject(appState)
             .onAppear {
