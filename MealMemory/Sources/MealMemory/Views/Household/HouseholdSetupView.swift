@@ -70,7 +70,7 @@ struct HouseholdSetupView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(Theme.navy)
+                .background(Theme.brandNavy)
                 .foregroundColor(.white)
                 .cornerRadius(14)
             }
@@ -157,7 +157,7 @@ struct HouseholdSetupView: View {
             let householdId = try await householdService.createHousehold(name: householdName)
             appState.setHousehold(householdId)
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userMessage(fallback: "We couldn't finish setting up. Please try again.")
         }
     }
 
@@ -169,7 +169,8 @@ struct HouseholdSetupView: View {
             let householdId = try await householdService.claimInviteToken(inviteCode)
             appState.setHousehold(householdId)
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userMessage(fallback: "We couldn't finish setting up. Please try again.")
         }
     }
+
 }

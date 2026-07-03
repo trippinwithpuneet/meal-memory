@@ -2,8 +2,49 @@
 
 ## Resume Here
 
-**Last session:** 2026-06-28  
-**Status:** Demo polished, prep indicator shipped. Next: Apple Developer enrollment + apply 2 pending migrations.
+**Last session:** 2026-06-29  
+**Status:** App installed and running on Rachel's iPhone. Plan page redesigned and shipping on branch `plan-page-redesign` (PR open). Next up: a structured page-by-page bug bash.
+
+### NEXT STEP: Structured bug bash — page by page, major + minor
+
+We're going to make the app feel finished. It's still rough around the edges. Plan:
+- Go **page by page** (Plan → Recipes → Household → auth/onboarding → sheets), fixing all major and minor issues.
+- Track findings under two buckets: **UX issues** (flow, hierarchy, confusing states) and **UI issues** (spacing, alignment, color, legibility, touch targets).
+- **Base device:** iPhone 13 mini (smallest current screen — if it looks right there, it scales up). A first-pass QA bug list for the mini is in `docs/bug-bash-2026-06-29.md`.
+- Before each fix batch, build + install on Rachel's phone (UDID `00008110-0006383C3C78801E`) and verify on-device, not just simulator.
+
+**Pre-TestFlight blockers still open (do before any external build):**
+1. ✅ Test password scrubbed from git-tracked files (2026-07-03). Still rotate the actual Supabase account password in the dashboard (old value remains in git history).
+2. ✅ Invite-token / membership RLS holes closed — migration `20260703000001_secure_invites_and_membership.sql` (redemption + creation now via SECURITY DEFINER functions). **Applied to the live/PRODUCTION DB via SQL Editor on 2026-07-03** (ran outside `db push`, so the `schema_migrations` table may not record it — the migration is idempotent, so a later `db push` re-run is safe).
+3. Demo mode is now an INTENTIONAL onboarding, not a thing to turn off. Decision (2026-07-03): **explore-first → signup**. First launch opens straight into the tabs with `DemoData` dummy data (no auth); "Start with my own data" (Household tab) sets `demo_mode_active = false` → AuthView → HouseholdSetupView → empty real household. So: do NOT hardcode `isDemoMode = false` for TestFlight — ship with the default-on-first-run. New members start EMPTY (build recipes from scratch); seeding sample recipes into a real account is a possible future add, not chosen. The one path to QA on-device: demo → "Start with my own data" → signup → create household → add member → add recipe (demo bypasses auth, so verify the handoff).
+4. Apply pending migrations `20260628000001_recipe_prep_time.sql` and `20260628000002_recipe_prep_night_before.sql`.
+
+**Build + install command (signing works, run from project root):**
+```bash
+cd "/Users/puneetjain/Documents/Claude projects/meal-memory" && xcodebuild \
+  -project MealMemory.xcodeproj \
+  -scheme MealMemory \
+  -destination "id=00008110-0006383C3C78801E" \
+  DEVELOPMENT_TEAM=Q3JN42F5ST \
+  CODE_SIGN_STYLE=Automatic \
+  -allowProvisioningUpdates 2>&1 | grep -E "error:|BUILD (SUCCEEDED|FAILED)"
+# then:
+xcrun devicectl device install app --device 00008110-0006383C3C78801E \
+  "$HOME/Library/Developer/Xcode/DerivedData/MealMemory-fggwetyonilojuecihfbjlmnbeel/Build/Products/Debug-iphoneos/MealMemory.app"
+```
+
+**Signing reference:**
+- `MealMemory.entitlements` — APNs (`aps-environment`) stripped (push not set up yet; restore when APNs is configured)
+- Xcode project team: **Puneet Jain (Personal Team)**, Team ID `Q3JN42F5ST`
+- Rachel's phone: UDID `00008110-0006383C3C78801E`, Developer Mode ON
+
+### Session 5 additions (2026-06-29) — Plan page redesign
+
+- ✅ **Fridge Raid rebrand** — emergency mode renamed; header "Fridge Raid" / "What's in your fridge right now?", fridge (`refrigerator`) icon replaces fork.knife
+- ✅ **Solo-hero CTA layout** on Plan page — primary CTA is a full-width saffron **"What can I cook?"** hero pill pinned to the bottom (auto-hides when a slot is selected so the trash/view panel takes over); Add (solid navy) and Share (ghost) sit top-right with the week-nav cluster; calendar lives between the week arrows
+- ✅ **Horizontal-scroll week grid** — `WeekGridView` rebuilt: fixed thin B/L/D label column + horizontally scrolling day columns, square-ish cells (`cellWidth 80 / cellHeight 96`), auto-centers on today. Root bug fixed: `Color.clear` in the label column had no width and was eating half the screen (only ~1.5 days showed)
+- ✅ **MonthCalendarView** — tap the calendar icon to open a full month grid and jump to any week; registered in `project.pbxproj` (was missing → "cannot find in scope" build failure)
+- ✅ **iOS 26 fixes** — single `.sheet(item:)` via `SheetKind` enum (multiple `.sheet` modifiers fire unreliably on iOS 26, which is why the calendar never opened); toolbar buttons moved off `.cancellationAction`/`.confirmationAction` (dark glass capsules) to `.navigationBarLeading/Trailing`; `Section("Title")` → explicit colored `header:` (system headers get glass-washed); `.toolbar(.hidden, for: .navigationBar)` to collapse the top gap
 
 ### What's done (cumulative)
 
@@ -67,7 +108,7 @@
 ### Test account
 
 - **Email:** trippinwithpuneet@gmail.com
-- **Password:** MealMemory123!
+- **Password:** stored in the macOS keychain / password manager — NOT in git. (Old committed password was rotated 2026-07-03; rotate again in Supabase dashboard → Authentication → Users if ever re-exposed.)
 - **Household:** Puneet's Home (`b54c8fe7-3612-4422-8b00-10e3eef7d081`)
 
 ### Remaining (pre-TestFlight)

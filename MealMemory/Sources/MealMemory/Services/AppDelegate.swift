@@ -10,7 +10,31 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
     ) -> Bool {
         UNUserNotificationCenter.current().delegate = self
         requestNotificationPermission(application)
+        applyGlobalAppearance()
         return true
+    }
+
+    private func applyGlobalAppearance() {
+        let background = UIColor(red: 250/255, green: 248/255, blue: 244/255, alpha: 1)
+        let navy       = UIColor(red: 26/255,  green: 39/255,  blue: 68/255,  alpha: 1)
+
+        let nav = UINavigationBarAppearance()
+        nav.configureWithOpaqueBackground()
+        nav.backgroundColor = background
+        nav.titleTextAttributes      = [.foregroundColor: navy]
+        nav.largeTitleTextAttributes = [.foregroundColor: navy]
+        UINavigationBar.appearance().standardAppearance  = nav
+        UINavigationBar.appearance().scrollEdgeAppearance = nav
+        UINavigationBar.appearance().compactAppearance   = nav
+        UINavigationBar.appearance().tintColor           = UIColor(red: 232/255, green: 136/255, blue: 58/255, alpha: 1)
+
+        UITableView.appearance().backgroundColor = background
+        UITableViewCell.appearance().backgroundColor = .clear
+
+        // iOS 26: TextField text inherits vibrancy tint without this explicit override.
+        UITextField.appearance().textColor = navy
+        // Section header labels in UITableView (List) also get glass-tinted without this.
+        UILabel.appearance(whenContainedInInstancesOf: [UITableViewHeaderFooterView.self]).textColor = UIColor(red: 138/255, green: 127/255, blue: 114/255, alpha: 1)
     }
 
     // MARK: - Permission request

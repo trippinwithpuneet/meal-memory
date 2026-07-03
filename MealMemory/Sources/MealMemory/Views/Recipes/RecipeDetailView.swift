@@ -91,7 +91,7 @@ struct RecipeDetailView: View {
                                         .font(.system(size: 13, weight: .bold))
                                         .foregroundColor(.white)
                                         .frame(width: 24, height: 24)
-                                        .background(Theme.navy)
+                                        .background(Theme.brandNavy)
                                         .clipShape(Circle())
                                     Text(recipe.steps[i].text)
                                         .font(.system(size: 15))
@@ -128,6 +128,8 @@ struct RecipeDetailView: View {
         }
         .background(Theme.appBackground)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Theme.appBackground, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Edit") { showEdit = true }

@@ -56,10 +56,10 @@ struct EmergencyModeView: View {
     private var emergencyHeader: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text("🚨 What can I cook?")
+                Text("Fridge Raid")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.white)
-                Text("Tell me what you have")
+                Text("What's in your fridge right now?")
                     .font(.system(size: 13))
                     .foregroundColor(.white.opacity(0.7))
             }
@@ -72,7 +72,7 @@ struct EmergencyModeView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .background(Theme.navy)
+        .background(Theme.brandNavy)
     }
 
     // MARK: - Input

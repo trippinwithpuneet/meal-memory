@@ -13,13 +13,14 @@ struct HouseholdView: View {
     @State private var isDeletingAccount = false
     @State private var editingMember: Member?
     @State private var fridayReminderOn = NotificationService.shared.isEnabled
+    @AppStorage("appearance_mode") private var appearanceMode: String = AppearanceMode.light.rawValue
 
     private let householdService = HouseholdService()
 
     var body: some View {
         NavigationStack {
             List {
-                Section("Members") {
+                Section {
                     ForEach(members) { member in
                         HStack(spacing: 12) {
                             Circle()
@@ -48,6 +49,10 @@ struct HouseholdView: View {
                         .contentShape(Rectangle())
                         .onTapGesture { editingMember = member }
                     }
+                } header: {
+                    Text("Members")
+                        .font(Theme.Font.sectionHeader())
+                        .foregroundColor(Theme.textTertiary)
                 }
                 .listRowBackground(Theme.cardFilled)
 
@@ -68,12 +73,14 @@ struct HouseholdView: View {
                         }
                     } header: {
                         Text("Demo Mode")
+                            .font(Theme.Font.sectionHeader())
+                            .foregroundColor(Theme.textTertiary)
                     } footer: {
                         Text("You're exploring with sample data. Your demo recipes and meal plan will be replaced by your own once you sign up.")
                     }
                     .listRowBackground(Theme.cardFilled)
                 } else {
-                    Section("Invite") {
+                    Section {
                         if let code = inviteCode {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text(code)
@@ -105,11 +112,15 @@ struct HouseholdView: View {
                             }
                             .foregroundColor(Theme.saffron)
                         }
+                    } header: {
+                        Text("Invite")
+                            .font(Theme.Font.sectionHeader())
+                            .foregroundColor(Theme.textTertiary)
                     }
                     .listRowBackground(Theme.cardFilled)
                 }
 
-                Section("Reminders") {
+                Section {
                     Toggle(isOn: $fridayReminderOn) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Friday planning reminder")
@@ -131,6 +142,28 @@ struct HouseholdView: View {
                             }
                         }
                     }
+                } header: {
+                    Text("Reminders")
+                        .font(Theme.Font.sectionHeader())
+                        .foregroundColor(Theme.textTertiary)
+                }
+                .listRowBackground(Theme.cardFilled)
+
+                Section {
+                    Picker(selection: $appearanceMode) {
+                        ForEach(AppearanceMode.allCases) { mode in
+                            Text(mode.label).tag(mode.rawValue)
+                        }
+                    } label: {
+                        Text("Theme")
+                            .font(.system(size: 15))
+                            .foregroundColor(Theme.navy)
+                    }
+                    .pickerStyle(.segmented)
+                } header: {
+                    Text("Appearance")
+                        .font(Theme.Font.sectionHeader())
+                        .foregroundColor(Theme.textTertiary)
                 }
                 .listRowBackground(Theme.cardFilled)
 
@@ -146,6 +179,10 @@ struct HouseholdView: View {
                         Button("Delete account", role: .destructive) {
                             showDeleteConfirmation = true
                         }
+                    } header: {
+                        Text("Account")
+                            .font(Theme.Font.sectionHeader())
+                            .foregroundColor(Theme.textTertiary)
                     }
                     .listRowBackground(Theme.cardFilled)
                 }
@@ -154,6 +191,9 @@ struct HouseholdView: View {
             .scrollContentBackground(.hidden)
             .background(Theme.appBackground)
             .navigationTitle("Household")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Theme.appBackground, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
         }
         .task { await loadMembers() }
         .sheet(item: $editingMember) { member in
@@ -161,13 +201,11 @@ struct HouseholdView: View {
                 if let idx = members.firstIndex(where: { $0.id == updated.id }) {
                     members[idx] = updated
                 }
-                // Propagate to AppState so PlanTabView picks up restriction changes immediately.
                 if let idx = appState.members.firstIndex(where: { $0.id == updated.id }) {
                     appState.members[idx] = updated
                 } else {
                     appState.members = members
                 }
-                // Persist locally so edits survive relaunch even if DB write fails.
                 appState.saveLocalMemberData()
                 Task { try? await householdService.updateMember(
                     memberId: updated.id,
@@ -222,19 +260,16 @@ struct HouseholdView: View {
             return
         }
         members = (try? await householdService.fetchMembers(householdId: householdId)) ?? []
-        // Push to AppState and apply any locally-persisted restrictions.
         if !members.isEmpty {
             appState.members = members
             appState.applyLocalRestrictions()
-            members = appState.members   // reflect merged state in local list
+            members = appState.members
         }
     }
 
     private func generateInvite() async {
         inviteCode = try? await householdService.generateInviteToken(householdId: householdId)
     }
-
-    // MARK: - Member Edit Sheet
 
     private func deleteAccount() async {
         isDeletingAccount = true
@@ -255,7 +290,6 @@ struct HouseholdView: View {
               (response as? HTTPURLResponse)?.statusCode == 200
         else { return }
 
-        // Account deleted server-side — clear local state
         try? await authService.signOut()
         appState.clearHousehold()
     }
@@ -279,12 +313,17 @@ struct MemberEditSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Name") {
+                Section {
                     TextField("Display name", text: $member.displayName)
+                        .foregroundColor(Theme.textPrimary)
+                } header: {
+                    Text("Name")
+                        .font(Theme.Font.sectionHeader())
+                        .foregroundColor(Theme.textTertiary)
                 }
                 .listRowBackground(Theme.cardFilled)
 
-                Section("Cannot eat") {
+                Section {
                     ForEach(allRestrictions, id: \.self) { tag in
                         let isOn = member.dietaryRestrictions.contains(tag)
                         Button {
@@ -307,6 +346,10 @@ struct MemberEditSheet: View {
                         }
                         .buttonStyle(.plain)
                     }
+                } header: {
+                    Text("Cannot eat")
+                        .font(Theme.Font.sectionHeader())
+                        .foregroundColor(Theme.textTertiary)
                 }
                 .listRowBackground(Theme.cardFilled)
             }
@@ -314,19 +357,25 @@ struct MemberEditSheet: View {
             .background(Theme.appBackground)
             .navigationTitle("Edit Member")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Theme.appBackground, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
+                // .navigationBarLeading/.Trailing avoid iOS 26's dark glass capsule
+                // that appears on .cancellationAction / .confirmationAction placements
+                ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }
+                        .foregroundColor(Theme.saffron)
                 }
-                ToolbarItem(placement: .confirmationAction) {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
                         onSave(member)
                         dismiss()
                     }
                     .fontWeight(.semibold)
+                    .foregroundColor(Theme.saffron)
                 }
             }
         }
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .large])
     }
 }

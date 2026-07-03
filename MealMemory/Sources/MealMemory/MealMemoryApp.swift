@@ -6,6 +6,7 @@ struct MealMemoryApp: App {
     @StateObject private var authService = AuthService.shared
     @StateObject private var appState = AppState()
     @AppStorage("demo_mode_active") private var demoModeActive: Bool = true
+    @AppStorage("appearance_mode") private var appearanceMode: String = AppearanceMode.light.rawValue
 
     var body: some Scene {
         WindowGroup {
@@ -23,6 +24,9 @@ struct MealMemoryApp: App {
                     AuthView()
                 }
             }
+            // User-chosen appearance (System / Light / Dark). Light is the
+            // default; Theme tokens are adaptive so both modes render correctly.
+            .preferredColorScheme(AppearanceMode(rawValue: appearanceMode)?.colorScheme)
             .environmentObject(authService)
             .environmentObject(appState)
             .onAppear {

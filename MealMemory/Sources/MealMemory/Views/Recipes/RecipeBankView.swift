@@ -6,6 +6,10 @@ struct RecipeBankView: View {
     @State private var isLoading = false
     @State private var showAddRecipe = false
     @State private var showArchived = false
+    @State private var activeFilter: String? = nil
+    @State private var searchText = ""
+    @State private var recentlyArchived: Recipe?
+    @State private var undoToken = 0
 
     private let recipeService = RecipeService()
 
@@ -18,12 +22,18 @@ struct RecipeBankView: View {
                 } else if recipes.isEmpty {
                     recipeBankEmptyState
                 } else {
-                    recipeList
+                    VStack(spacing: 0) {
+                        filterBar
+                        recipeList
+                    }
                 }
             }
             .background(Theme.appBackground)
             .navigationTitle("Recipes")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Theme.appBackground, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search recipes & ingredients")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button { showAddRecipe = true } label: {
@@ -39,11 +49,104 @@ struct RecipeBankView: View {
                 recipes.insert(newRecipe, at: 0)
             }
         }
+        .overlay(alignment: .bottom) {
+            if let archived = recentlyArchived {
+                archiveUndoToast(archived)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
+            }
+        }
+        .animation(.spring(response: 0.3, dampingFraction: 0.85), value: recentlyArchived != nil)
+    }
+
+    private func archiveUndoToast(_ recipe: Recipe) -> some View {
+        HStack(spacing: 12) {
+            Text("Archived \(recipe.name)")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.white)
+                .lineLimit(1)
+            Spacer(minLength: 8)
+            Button {
+                undoArchive(recipe)
+            } label: {
+                Text("Undo")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(Theme.saffron)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(RoundedRectangle(cornerRadius: 12).fill(Theme.brandNavy))
+        .shadow(color: .black.opacity(0.2), radius: 10, y: 4)
+    }
+
+    private var filteredRecipes: [Recipe] {
+        var result = recipes
+
+        // Substring search across name + ingredients (all tokens must match somewhere)
+        let query = searchText.trimmingCharacters(in: .whitespaces)
+        if !query.isEmpty {
+            let tokens = query.lowercased().split(separator: " ").map(String.init)
+            result = result.filter { recipe in
+                let haystack = (recipe.name + " " + recipe.ingredients.joined(separator: " ")).lowercased()
+                return tokens.allSatisfy { haystack.contains($0) }
+            }
+        }
+
+        if let filter = activeFilter {
+            if filter == "quick" { result = result.filter { ($0.prepTimeMinutes ?? 999) <= 20 } }
+            else { result = result.filter { $0.safeForTags.contains(filter) } }
+        }
+
+        return result
+    }
+
+    private var availableDietaryTags: [String] {
+        let mealTypes = Set(["Breakfast", "Lunch", "Dinner", "Snack"])
+        return Array(Set(recipes.flatMap { $0.safeForTags }).subtracting(mealTypes)).sorted()
+    }
+
+    private var filterBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                filterChip("All", key: nil)
+                filterChip("⚡ Quick", key: "quick")
+                filterChip("🌅 Breakfast", key: "Breakfast")
+                filterChip("☀️ Lunch", key: "Lunch")
+                filterChip("🌙 Dinner", key: "Dinner")
+                ForEach(availableDietaryTags, id: \.self) { tag in
+                    filterChip(tag, key: tag)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+        }
+    }
+
+    private func filterChip(_ label: String, key: String?) -> some View {
+        let isActive = activeFilter == key
+        return Button {
+            activeFilter = isActive ? nil : key
+        } label: {
+            Text(label)
+                .font(.system(size: 13, weight: .medium))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 7)
+                .background(isActive ? Theme.saffron : Theme.cardFilled)
+                .foregroundColor(isActive ? .white : Theme.textSecondary)
+                .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(isActive ? Theme.saffron : Theme.border, lineWidth: 1)
+                )
+        }
+        .buttonStyle(.plain)
     }
 
     private var recipeList: some View {
         List {
-            ForEach(recipes) { recipe in
+            ForEach(filteredRecipes) { recipe in
                 NavigationLink {
                     RecipeDetailView(recipe: recipe) {
                         recipes.removeAll { $0.id == recipe.id }
@@ -59,13 +162,23 @@ struct RecipeBankView: View {
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    Button(role: .destructive) {
-                        archiveRecipe(recipe)
-                    } label: {
+                    Button { archiveRecipe(recipe) } label: {
                         Label("Archive", systemImage: "archivebox")
                     }
                     .tint(Theme.textTertiary)
                 }
+            }
+            if filteredRecipes.isEmpty && (activeFilter != nil || !searchText.isEmpty) {
+                VStack(spacing: 8) {
+                    Text(searchText.isEmpty ? "No recipes match this filter" : "No recipes found for \"\(searchText)\"")
+                        .font(.system(size: 15))
+                        .foregroundColor(Theme.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
             }
         }
         .listStyle(.plain)
@@ -108,6 +221,23 @@ struct RecipeBankView: View {
     private func archiveRecipe(_ recipe: Recipe) {
         recipes.removeAll { $0.id == recipe.id }
         Task { try? await recipeService.setArchived(true, recipeId: recipe.id) }
+
+        recentlyArchived = recipe
+        undoToken += 1
+        let token = undoToken
+        Task {
+            try? await Task.sleep(nanoseconds: 4_000_000_000)
+            if undoToken == token { withAnimation { recentlyArchived = nil } }
+        }
+    }
+
+    private func undoArchive(_ recipe: Recipe) {
+        undoToken += 1
+        withAnimation { recentlyArchived = nil }
+        if !recipes.contains(where: { $0.id == recipe.id }) {
+            recipes.insert(recipe, at: 0)
+        }
+        Task { try? await recipeService.setArchived(false, recipeId: recipe.id) }
     }
 }
 
@@ -153,9 +283,6 @@ struct RecipeRowView: View {
             }
 
             Spacer()
-
-            Image(systemName: "line.3.horizontal")
-                .foregroundColor(Theme.textTertiary)
         }
         .padding(12)
         .background(Theme.cardFilled)

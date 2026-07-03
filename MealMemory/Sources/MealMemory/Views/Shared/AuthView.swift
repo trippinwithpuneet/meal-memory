@@ -41,6 +41,13 @@ struct AuthView: View {
                     .background(Theme.cardFilled)
                     .cornerRadius(12)
 
+                if isSignUp && errorMessage == nil {
+                    Text("At least 6 characters")
+                        .font(Theme.Font.caption())
+                        .foregroundColor(Theme.textTertiary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
                 if let error = errorMessage {
                     Text(error)
                         .font(Theme.Font.caption())
@@ -93,7 +100,7 @@ struct AuthView: View {
                 try await authService.signIn(email: email, password: password)
             }
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userMessage()
         }
     }
 }

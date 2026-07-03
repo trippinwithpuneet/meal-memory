@@ -33,3 +33,6 @@ tasks-*.jsonl
 # Supabase local
 supabase/.branches/
 supabase/.temp/
+
+# Local simulator/device build output
+build/
