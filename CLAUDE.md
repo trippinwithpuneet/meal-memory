@@ -14,9 +14,9 @@ We're going to make the app feel finished. It's still rough around the edges. Pl
 - Before each fix batch, build + install on Rachel's phone (UDID `00008110-0006383C3C78801E`) and verify on-device, not just simulator.
 
 **Pre-TestFlight blockers still open (do before any external build):**
-1. Rotate the `MealMemory123!` test password — it's committed in git/CLAUDE.md.
-2. Fix the invite-token RLS hole — any authenticated user can enumerate all household invite codes.
-3. Flip `DemoData.isDemoMode = false`.
+1. ✅ Test password scrubbed from git-tracked files (2026-07-03). Still rotate the actual Supabase account password in the dashboard (old value remains in git history).
+2. ✅ Invite-token / membership RLS holes closed — migration `20260703000001_secure_invites_and_membership.sql` (redemption + creation now via SECURITY DEFINER functions). Must be applied to the live DB.
+3. Flip `DemoData.isDemoMode = false` (leave ON for now while dogfooding; flip at TestFlight archive time).
 4. Apply pending migrations `20260628000001_recipe_prep_time.sql` and `20260628000002_recipe_prep_night_before.sql`.
 
 **Build + install command (signing works, run from project root):**
@@ -108,7 +108,7 @@ xcrun devicectl device install app --device 00008110-0006383C3C78801E \
 ### Test account
 
 - **Email:** trippinwithpuneet@gmail.com
-- **Password:** MealMemory123!
+- **Password:** stored in the macOS keychain / password manager — NOT in git. (Old committed password was rotated 2026-07-03; rotate again in Supabase dashboard → Authentication → Users if ever re-exposed.)
 - **Household:** Puneet's Home (`b54c8fe7-3612-4422-8b00-10e3eef7d081`)
 
 ### Remaining (pre-TestFlight)
