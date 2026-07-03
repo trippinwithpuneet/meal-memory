@@ -16,7 +16,7 @@ We're going to make the app feel finished. It's still rough around the edges. Pl
 **Pre-TestFlight blockers still open (do before any external build):**
 1. ✅ Test password scrubbed from git-tracked files (2026-07-03). Still rotate the actual Supabase account password in the dashboard (old value remains in git history).
 2. ✅ Invite-token / membership RLS holes closed — migration `20260703000001_secure_invites_and_membership.sql` (redemption + creation now via SECURITY DEFINER functions). **Applied to the live/PRODUCTION DB via SQL Editor on 2026-07-03** (ran outside `db push`, so the `schema_migrations` table may not record it — the migration is idempotent, so a later `db push` re-run is safe).
-3. Flip `DemoData.isDemoMode = false` (leave ON for now while dogfooding; flip at TestFlight archive time).
+3. Demo mode is now an INTENTIONAL onboarding, not a thing to turn off. Decision (2026-07-03): **explore-first → signup**. First launch opens straight into the tabs with `DemoData` dummy data (no auth); "Start with my own data" (Household tab) sets `demo_mode_active = false` → AuthView → HouseholdSetupView → empty real household. So: do NOT hardcode `isDemoMode = false` for TestFlight — ship with the default-on-first-run. New members start EMPTY (build recipes from scratch); seeding sample recipes into a real account is a possible future add, not chosen. The one path to QA on-device: demo → "Start with my own data" → signup → create household → add member → add recipe (demo bypasses auth, so verify the handoff).
 4. Apply pending migrations `20260628000001_recipe_prep_time.sql` and `20260628000002_recipe_prep_night_before.sql`.
 
 **Build + install command (signing works, run from project root):**
