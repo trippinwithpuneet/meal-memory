@@ -117,8 +117,9 @@ struct WeekGridView: View {
 
     // MARK: - Week header
 
-    // Solo-hero layout: title + secondary actions (Add #2, Share #3) + week-nav
-    // cluster up top. The primary CTA (Fridge Raid) lives in the bottom hero pill.
+    // Header: "This Week" title with the Share icon beside it on the left,
+    // week-nav cluster (+ a "Today" button when navigated away) on the right.
+    // The primary CTA (Fridge Raid) lives in the centered bottom hero pill.
     private var weekHeader: some View {
         HStack(spacing: 8) {
             Text(viewModel.weekTitle)
@@ -127,18 +128,8 @@ struct WeekGridView: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
 
-            Spacer(minLength: 8)
-
-            // #2 — Add recipe: solid navy, the most prominent action up top
-            Button { onAddRecipeTapped?() } label: {
-                Image(systemName: "plus")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.white)
-                    .frame(width: 32, height: 32)
-                    .background(Circle().fill(Theme.navy))
-            }
-
-            // #3 — Share: ghost weight, only when there's something to share
+            // Share: ghost weight, right beside the title, only when there's
+            // something to share.
             if !viewModel.recipes.isEmpty {
                 ShareLink(item: viewModel.weeklyGroceryList()) {
                     Image(systemName: "square.and.arrow.up")
@@ -147,6 +138,8 @@ struct WeekGridView: View {
                         .frame(width: 30, height: 30)
                 }
             }
+
+            Spacer(minLength: 8)
 
             // One-tap return to the current week, only when navigated away
             if !isCurrentWeek {
@@ -200,23 +193,26 @@ struct WeekGridView: View {
     // MARK: - Fridge Raid hero pill (primary CTA)
 
     private var fridgeRaidPill: some View {
-        Button { onEmergencyTapped?() } label: {
-            HStack(spacing: 10) {
-                Image(systemName: "refrigerator")
-                    .font(.system(size: 20, weight: .semibold))
-                Text("What can I cook?")
-                    .font(.system(size: 17, weight: .semibold))
+        HStack {
+            Spacer()
+            Button { onEmergencyTapped?() } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: "refrigerator")
+                        .font(.system(size: 20, weight: .semibold))
+                    Text("What can I cook?")
+                        .font(.system(size: 17, weight: .semibold))
+                }
+                .foregroundColor(.white)
+                .padding(.vertical, 15)
+                .padding(.horizontal, 26)
+                .background(
+                    Capsule()
+                        .fill(Theme.saffron)
+                        .shadow(color: Theme.saffron.opacity(0.4), radius: 12, y: 4)
+                )
             }
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                Capsule()
-                    .fill(Theme.saffron)
-                    .shadow(color: Theme.saffron.opacity(0.4), radius: 12, y: 4)
-            )
+            Spacer()
         }
-        .padding(.horizontal, 16)
         .padding(.bottom, 6)
     }
 
