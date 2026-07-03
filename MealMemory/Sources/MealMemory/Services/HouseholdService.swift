@@ -10,19 +10,15 @@ final class HouseholdService: ObservableObject {
     func createHousehold(name: String) async throws -> UUID {
         guard AuthService.shared.userId != nil else { throw AppError.notAuthenticated }
 
-        // Generate UUID client-side so we can insert without .select() — inserting
-        // with return=representation would fail because the SELECT policy requires
-        // the user to already be a member, but we haven't added them yet.
-        let householdId = UUID()
-        try await client
-            .from("households")
-            .insert(["id": householdId.uuidString, "name": name])
+        // Creation + creator membership happen atomically in a SECURITY DEFINER
+        // function so no permissive client-side members INSERT policy is needed.
+        return try await client
+            .rpc("create_household", params: [
+                "p_name": name,
+                "p_display_name": defaultDisplayName()
+            ])
             .execute()
-
-        // Add creator as member — now the SELECT policy will pass
-        try await joinHousehold(householdId: householdId, displayName: defaultDisplayName())
-
-        return householdId
+            .value
     }
 
     func fetchHousehold(id: UUID) async throws -> Household {
@@ -86,25 +82,21 @@ final class HouseholdService: ObservableObject {
     func claimInviteToken(_ token: String) async throws -> UUID {
         guard AuthService.shared.userId != nil else { throw AppError.notAuthenticated }
 
-        let invite: InviteToken = try await client
-            .from("invite_tokens")
-            .select()
-            .eq("token", value: token.uppercased())
-            .is("used_at", value: nil)
-            .gt("expires_at", value: ISO8601DateFormatter().string(from: Date()))
-            .single()
-            .execute()
-            .value
-
-        try await joinHousehold(householdId: invite.householdId, displayName: defaultDisplayName())
-
-        try await client
-            .from("invite_tokens")
-            .update(["used_at": ISO8601DateFormatter().string(from: Date())])
-            .eq("id", value: invite.id)
-            .execute()
-
-        return invite.householdId
+        // Validation, membership, and burning the token happen atomically in a
+        // SECURITY DEFINER function — the client never reads invite tokens, so
+        // there's nothing to enumerate.
+        do {
+            return try await client
+                .rpc("redeem_invite_token", params: [
+                    "p_token": token.uppercased(),
+                    "p_display_name": defaultDisplayName()
+                ])
+                .execute()
+                .value
+        } catch {
+            // The function raises for a missing / expired / used token.
+            throw AppError.invalidInviteToken
+        }
     }
 
     // MARK: - Private
@@ -115,17 +107,6 @@ final class HouseholdService: ObservableObject {
         return prefix.prefix(1).uppercased() + prefix.dropFirst()
     }
 
-    private func joinHousehold(householdId: UUID, displayName: String) async throws {
-        guard let userId = AuthService.shared.userId else { throw AppError.notAuthenticated }
-        try await client
-            .from("members")
-            .insert([
-                "household_id": householdId.uuidString,
-                "user_id": userId.uuidString,
-                "display_name": displayName
-            ])
-            .execute()
-    }
 }
 
 enum AppError: LocalizedError {
