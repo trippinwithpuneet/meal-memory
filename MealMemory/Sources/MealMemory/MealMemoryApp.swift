@@ -6,12 +6,21 @@ struct MealMemoryApp: App {
     @StateObject private var authService = AuthService.shared
     @StateObject private var appState = AppState()
     @AppStorage("demo_mode_active") private var demoModeActive: Bool = true
+    @AppStorage("has_seen_onboarding") private var hasSeenOnboarding: Bool = false
     @AppStorage("appearance_mode") private var appearanceMode: String = AppearanceMode.light.rawValue
 
     var body: some Scene {
         WindowGroup {
             Group {
-                if demoModeActive {
+                if !hasSeenOnboarding {
+                    OnboardingFlowView(
+                        onExplore: { hasSeenOnboarding = true },
+                        onExistingAccount: {
+                            hasSeenOnboarding = true
+                            demoModeActive = false
+                        }
+                    )
+                } else if demoModeActive {
                     MainTabView(householdId: DemoData.householdId)
                 } else if authService.isSignedIn {
                     if let householdId = appState.householdId {

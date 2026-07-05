@@ -36,6 +36,8 @@
 		E6EE001CF9D52FF7E054C1AD /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF40773AC1D85B66C6FFCC /* NotificationService.swift */; };
 		E72CDEA5E68499F74B856066 /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A97A23DCC3CAB44E53F910 /* SupabaseClient.swift */; };
 		F2A6ED9CED84021330F15531 /* OnboardingEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83EE8E6FA978997C0C063C9F /* OnboardingEmptyStateView.swift */; };
+		A1B2C3D4E5F6A0B1C2D30001 /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A0B1C2D30002 /* OnboardingFlowView.swift */; };
+		A1B2C3D4E5F6A0B1C2D30003 /* CoachMarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A0B1C2D30004 /* CoachMarkView.swift */; };
 		F9BF2FDA701D9989F706D61F /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E00481A9208E46B0A42345 /* AuthService.swift */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +59,8 @@
 		5C3FA85D038817EBE3CF4A4B /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		79A97A23DCC3CAB44E53F910 /* SupabaseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClient.swift; sourceTree = "<group>"; };
 		83EE8E6FA978997C0C063C9F /* OnboardingEmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingEmptyStateView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A0B1C2D30002 /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A0B1C2D30004 /* CoachMarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachMarkView.swift; sourceTree = "<group>"; };
 		975A3DA03F6C73928EF1EEE3 /* MealMemoryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealMemoryApp.swift; sourceTree = "<group>"; };
 		A94956DBAD0D1BB1EC4C231A /* RecipeImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportService.swift; sourceTree = "<group>"; };
 		A977A6951BF79DA45AAF6618 /* HouseholdSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdSetupView.swift; sourceTree = "<group>"; };
@@ -160,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				21950E6A5485F09BDB1D3C71 /* Household */,
+				A1B2C3D4E5F6A0B1C2D30005 /* Onboarding */,
 				F0C4B411858CC7095703E78B /* Plan */,
 				B8E33DE0622977AC0F27A01D /* Recipes */,
 				C7835842217BD387B9C50B38 /* Shared */,
@@ -230,6 +235,15 @@
 				35ED6E7A2D17A428C492F462 /* WeekGridView.swift */,
 			);
 			path = Plan;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F6A0B1C2D30005 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F6A0B1C2D30004 /* CoachMarkView.swift */,
+				A1B2C3D4E5F6A0B1C2D30002 /* OnboardingFlowView.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -326,6 +340,8 @@
 				667077BE09F4B606E0BF2107 /* Models.swift in Sources */,
 				E6EE001CF9D52FF7E054C1AD /* NotificationService.swift in Sources */,
 				F2A6ED9CED84021330F15531 /* OnboardingEmptyStateView.swift in Sources */,
+				A1B2C3D4E5F6A0B1C2D30001 /* OnboardingFlowView.swift in Sources */,
+				A1B2C3D4E5F6A0B1C2D30003 /* CoachMarkView.swift in Sources */,
 				DD407F5DCAB69183812FF544 /* PlanTabView.swift in Sources */,
 				D74C9C6387D9043583C4C1E2 /* RecipeBankView.swift in Sources */,
 				4F7E2CCF1EA06AD211096964 /* RecipeDetailView.swift in Sources */,

@@ -12,8 +12,16 @@
 
 ## Resume Here
 
-**Last session:** 2026-06-29  
-**Status:** App installed and running on Rachel's iPhone. Plan page redesigned and shipping on branch `plan-page-redesign` (PR open). Next up: a structured page-by-page bug bash.
+**Last session:** 2026-07-05  
+**Status:** Working TRI-5 (first-run onboarding) on branch `tri-5-onboarding`. Committed, not pushed. Design-route-first mockups in `docs/mockups/onboarding/index.html`; user picked Option A (illustration-led value props) + Style 2 (ring + bottom-callout coach marks).
+
+### TRI-5 onboarding — built (branch `tri-5-onboarding`)
+- **New:** `Views/Onboarding/OnboardingFlowView.swift` (value-prop carousel, gated by `has_seen_onboarding`), `Views/Onboarding/CoachMarkView.swift` (`coachAnchor` preference + Style-2 overlay; steps: grid → hero → share, gated by `has_seen_coachmarks`, demo-only).
+- **Changed:** `MealMemoryApp.swift` (first-run routing), `PlanTabView.swift` (hosts coach overlay + `DemoModeBanner` "Make it yours"), `WeekGridView.swift` (coach anchors), `DemoData.swift` (re-skinned to Western meals — Alex/Jordan, gluten+dairy conflict preserved), `AuthView`/`HouseholdSetupView`/`OnboardingEmptyStateView` (🍛→🍳, neutral copy, auth defaults to sign-up), `project.pbxproj` (new `Onboarding` group).
+- **Verified (iPhone 13 mini sim):** build clean; slide 1, demo banner, coach step 1 render; dark-mode banner contrast fixed. NOT yet: interactive tap-through of slides 2–4 / coach steps 2–3 (sim defaults flaky), and install on Rachel's physical device.
+- **Coach/onboarding reset gotcha:** `simctl spawn <sim> defaults write/delete com.puneetjain.mealmemory <key>` is unreliable for resetting `has_seen_onboarding`/`has_seen_coachmarks` between runs; writing YES took effect but delete/NO didn't consistently. To truly retest first-run, prefer erasing the sim or verify on-device.
+
+### Earlier (2026-06-29): Plan page redesign shipped on `plan-page-redesign` (PR open). A structured page-by-page bug bash was the prior next-step.
 
 ### NEXT STEP: Structured bug bash — page by page, major + minor
 
