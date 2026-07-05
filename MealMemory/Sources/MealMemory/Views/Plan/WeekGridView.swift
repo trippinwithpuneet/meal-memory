@@ -58,6 +58,7 @@ struct WeekGridView: View {
                 .padding(.bottom, 6)
 
             weekGrid
+                .coachAnchor(.grid)
 
             Spacer(minLength: 0)
         }
@@ -68,6 +69,7 @@ struct WeekGridView: View {
         .safeAreaInset(edge: .bottom) {
             if selectedSlot == nil && !viewModel.recipes.isEmpty {
                 fridgeRaidPill
+                    .coachAnchor(.hero)
             }
         }
         .overlay(alignment: .bottom) {
@@ -137,6 +139,7 @@ struct WeekGridView: View {
                         .foregroundColor(Theme.textSecondary)
                         .frame(width: 30, height: 30)
                 }
+                .coachAnchor(.share)
             }
 
             Spacer(minLength: 8)

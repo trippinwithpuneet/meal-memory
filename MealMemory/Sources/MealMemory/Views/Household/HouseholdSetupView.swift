@@ -27,7 +27,7 @@ struct HouseholdSetupView: View {
                     .foregroundColor(Theme.navy)
                     .padding(.bottom, 8)
 
-                Text("You and your partner will share recipes\nand plan meals together.")
+                Text("Your shared space to plan meals and\nkeep everyone in sync.")
                     .font(.system(size: 15))
                     .foregroundColor(Theme.textSecondary)
                     .multilineTextAlignment(.center)
