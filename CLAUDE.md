@@ -1,5 +1,15 @@
 # Meal Memory — Project State
 
+## Product positioning (updated 2026-07-05)
+
+**Target user:** busy people in Western markets (US / UK / CA / AU) who **cook for themselves at home** and are willing to pay for organization. NOT Indian households with domestic cooks (earlier framing — retired).
+
+**Implications for the product:**
+- Sharing = keeping **household members** in sync on the week's plan (spouse/partner/roommates), NOT briefing a cook. Drop all "cook-briefing" language in UI/copy.
+- Value props: one household in sync on the week, no nightly "what's for dinner?", always know what to cook.
+- Pricing in **$** (regional/PPP as a secondary pass); ASO/GTM target Western App Stores and English queries — no Hindi/Hinglish.
+- Backlog + GTM live in Linear (project TRI). See `docs/linear-backlog-plan.md` for the current issue set (TRI-5..TRI-12).
+
 ## Resume Here
 
 **Last session:** 2026-06-29  
