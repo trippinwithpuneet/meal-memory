@@ -29,6 +29,7 @@
 		AFE059F39432442CEFD06A81 /* AddRecipeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB538A9A4991CBAAEF20B84 /* AddRecipeViewModel.swift */; };
 		B6F88B9399F55BE2061F1743 /* EmergencyModeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A645EA0CF7F6966A8F2C9C /* EmergencyModeViewModel.swift */; };
 		B87849166BB3B874B53E20B7 /* WeekGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35ED6E7A2D17A428C492F462 /* WeekGridView.swift */; };
+		B1C2D3E4F5A60718293A6001 /* WeekPlanShareCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60718293A6002 /* WeekPlanShareCard.swift */; };
 		BDE12FA7717D234E2C59A94E /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F77DD065E03E607E2ADC54 /* AuthView.swift */; };
 		C3423DDA353A9F7BB6C6B301 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E35AC7191F88D48F7CDD97 /* Theme.swift */; };
 		D74C9C6387D9043583C4C1E2 /* RecipeBankView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A333AABE1850352793010B4 /* RecipeBankView.swift */; };
@@ -48,6 +49,7 @@
 		5EE8DEECC0E744AAA22FC5AC /* MonthCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCalendarView.swift; sourceTree = "<group>"; };
 		25E35AC7191F88D48F7CDD97 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		35ED6E7A2D17A428C492F462 /* WeekGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekGridView.swift; sourceTree = "<group>"; };
+		B1C2D3E4F5A60718293A6002 /* WeekPlanShareCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekPlanShareCard.swift; sourceTree = "<group>"; };
 		3993AF8435EA3E831DFB891D /* MealPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanViewModel.swift; sourceTree = "<group>"; };
 		4857CB5FAD2F24EEA22F09DB /* HouseholdService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdService.swift; sourceTree = "<group>"; };
 		4988882AA1A929AA79887D15 /* MealPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanService.swift; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 				83EE8E6FA978997C0C063C9F /* OnboardingEmptyStateView.swift */,
 				D2C4260B0A5DC38F082798C9 /* PlanTabView.swift */,
 				35ED6E7A2D17A428C492F462 /* WeekGridView.swift */,
+				B1C2D3E4F5A60718293A6002 /* WeekPlanShareCard.swift */,
 			);
 			path = Plan;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 				E72CDEA5E68499F74B856066 /* SupabaseClient.swift in Sources */,
 				C3423DDA353A9F7BB6C6B301 /* Theme.swift in Sources */,
 				B87849166BB3B874B53E20B7 /* WeekGridView.swift in Sources */,
+				B1C2D3E4F5A60718293A6001 /* WeekPlanShareCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meal Memory — Share mockups (TRI-6)</title>
+<style>
+  :root{
+    --bg:#faf8f4; --card:#fff8f0; --cardEmpty:#f4f2ee;
+    --navy:#1a2744; --saffron:#e8883a; --terracotta:#c8553a;
+    --tPrimary:#1a1a1a; --tSecondary:#6b6b6b; --tTertiary:#9a9a9a;
+    --border:#e8e4de; --sage:#7a9e7e;
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:#efece6;color:var(--tPrimary);line-height:1.4}
+  header.top{position:sticky;top:0;z-index:50;background:var(--navy);color:#fff;padding:14px 24px;display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+  header.top h1{font-size:16px;font-weight:700}
+  header.top .pill{font-size:11px;background:var(--saffron);color:#fff;padding:3px 9px;border-radius:20px;font-weight:600}
+  .wrap{max-width:1180px;margin:0 auto;padding:34px 24px 80px}
+  .note{background:#fff;border:1px solid var(--border);border-left:4px solid var(--saffron);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--tSecondary);margin-bottom:32px}
+  .note b{color:var(--navy)}
+  .row{display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start}
+  .col{flex:1;min-width:320px}
+  .option-label{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .option-label .badge{background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:8px}
+  .option-label .desc{font-size:13px;color:var(--tSecondary)}
+  .frame-cap{font-size:12px;color:var(--tTertiary);margin-top:10px;font-weight:600;text-align:center}
+
+  /* Shared image card — portrait, what gets rendered by ImageRenderer */
+  .share-card{width:360px;background:var(--card);border-radius:24px;overflow:hidden;box-shadow:0 16px 40px rgba(26,39,68,.16);border:1px solid var(--border)}
+  .sc-head{background:linear-gradient(135deg,#e8883a,#c8553a);color:#fff;padding:22px 24px 20px}
+  .sc-head .brand{font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;opacity:.9;margin-bottom:8px}
+  .sc-head h2{font-size:26px;font-weight:800;line-height:1.1}
+  .sc-head .range{font-size:13px;opacity:.9;margin-top:3px}
+  .sc-foot{padding:14px 24px;text-align:center;font-size:12px;color:var(--tTertiary);border-top:1px solid var(--border)}
+  .sc-foot b{color:var(--saffron)}
+
+  /* Layout A: vertical day list */
+  .daylist{padding:6px 0}
+  .day-block{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .day-block:last-child{border-bottom:none}
+  .day-name{font-size:13px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+  .meal{display:flex;align-items:baseline;gap:8px;padding:3px 0}
+  .meal .tag{font-size:10px;font-weight:800;color:var(--saffron);width:16px;flex:0 0 16px}
+  .meal .emoji{font-size:15px}
+  .meal .name{font-size:14px;color:var(--tPrimary)}
+
+  /* Layout B: compact week board */
+  .board{padding:16px 14px}
+  .board table{border-collapse:separate;border-spacing:5px;width:100%}
+  .board th{font-size:11px;font-weight:800;color:var(--navy);padding-bottom:2px}
+  .board th .num{display:block;font-size:10px;color:var(--tTertiary);font-weight:600}
+  .board td{background:#fff;border:1px solid var(--border);border-radius:10px;height:74px;width:20%;vertical-align:middle;text-align:center;padding:4px}
+  .board td.empty{background:var(--cardEmpty)}
+  .board td .e{font-size:17px;display:block}
+  .board td .n{font-size:8.5px;color:var(--tSecondary);line-height:1.15;margin-top:3px;display:block}
+  .board .rowlabel{font-size:9px;font-weight:800;color:var(--tTertiary);width:14px;text-align:center}
+
+  /* Text message mock (phone chat bubble) */
+  .phone{width:300px;height:600px;background:#0b141a;border-radius:34px;border:9px solid #12100d;position:relative;overflow:hidden;box-shadow:0 12px 34px rgba(0,0,0,.28)}
+  .wa{position:absolute;inset:0;background:#0b141a;display:flex;flex-direction:column}
+  .wa-top{background:#1f2c34;color:#e9edef;padding:44px 16px 12px;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600}
+  .wa-top .av{width:30px;height:30px;border-radius:50%;background:var(--saffron);display:flex;align-items:center;justify-content:center;font-size:15px}
+  .wa-body{flex:1;padding:16px 12px;background:#0b141a;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;overflow:hidden}
+  .bubble{align-self:flex-end;max-width:88%;background:#005c4b;color:#e9edef;border-radius:12px 12px 4px 12px;padding:8px 10px;font-size:12.5px}
+  .bubble .img{background:linear-gradient(135deg,#e8883a,#c8553a);border-radius:8px;height:92px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;opacity:.95}
+  .bubble pre{font-family:var(--font);white-space:pre-wrap;font-size:12px;line-height:1.5}
+  .bubble .time{font-size:9px;opacity:.6;text-align:right;margin-top:3px}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Meal Memory — Plan share</h1>
+  <span class="pill">TRI-6 · mockups</span>
+</header>
+
+<div class="wrap">
+  <p class="note">
+    <b>Pick a card layout (A or B) for the shared image.</b> The image renders in the fixed warm/light style (same for every recipient),
+    and goes out <b>together with the day-wise text</b> shown on the right. Grocery list is intentionally gone (that's TRI-11).
+    Data is the real demo week.
+  </p>
+
+  <div class="row">
+    <!-- Layout A -->
+    <div class="col">
+      <div class="option-label"><span class="badge">Option A</span><span class="desc">Vertical day list — scannable, roomy, great as a tall image</span></div>
+      <div class="share-card">
+        <div class="sc-head">
+          <div class="brand">🍳 Meal Memory</div>
+          <h2>This Week</h2>
+          <div class="range">Mon Jul 6 – Fri Jul 10</div>
+        </div>
+        <div class="daylist">
+          <div class="day-block">
+            <div class="day-name">Monday</div>
+            <div class="meal"><span class="tag">B</span><span class="emoji">🍓</span><span class="name">Greek Yogurt Berry Bowl</span></div>
+            <div class="meal"><span class="tag">L</span><span class="emoji">🥗</span><span class="name">Chickpea Salad</span></div>
+            <div class="meal"><span class="tag">D</span><span class="emoji">🍗</span><span class="name">Sheet-Pan Chicken &amp; Veg</span></div>
+          </div>
+          <div class="day-block">
+            <div class="day-name">Tuesday</div>
+            <div class="meal"><span class="tag">B</span><span class="emoji">🥞</span><span class="name">Pancakes</span></div>
+            <div class="meal"><span class="tag">L</span><span class="emoji">🥣</span><span class="name">Quinoa Beetroot Bowl</span></div>
+            <div class="meal"><span class="tag">D</span><span class="emoji">🍝</span><span class="name">Spaghetti Aglio e Olio</span></div>
+          </div>
+          <div class="day-block">
+            <div class="day-name">Wednesday</div>
+            <div class="meal"><span class="tag">L</span><span class="emoji">🌯</span><span class="name">Burrito Bowl</span></div>
+            <div class="meal"><span class="tag">D</span><span class="emoji">🍱</span><span class="name">Tofu Stir Fry</span></div>
+          </div>
+          <div class="day-block">
+            <div class="day-name">Thursday</div>
+            <div class="meal"><span class="tag">L</span><span class="emoji">🐟</span><span class="name">Tuna &amp; Egg Salad</span></div>
+            <div class="meal"><span class="tag">D</span><span class="emoji">🍗</span><span class="name">Sheet-Pan Chicken &amp; Veg</span></div>
+          </div>
+          <div class="day-block">
+            <div class="day-name">Friday</div>
+            <div class="meal"><span class="tag">B</span><span class="emoji">🥪</span><span class="name">Egg Sandwich</span></div>
+            <div class="meal"><span class="tag">D</span><span class="emoji">🌯</span><span class="name">Burrito Bowl</span></div>
+          </div>
+        </div>
+        <div class="sc-foot">Made with <b>Meal Memory</b></div>
+      </div>
+      <div class="frame-cap">Shared image · Option A</div>
+    </div>
+
+    <!-- Layout B -->
+    <div class="col">
+      <div class="option-label"><span class="badge">Option B</span><span class="desc">Compact week board — mirrors the in-app grid, denser</span></div>
+      <div class="share-card">
+        <div class="sc-head">
+          <div class="brand">🍳 Meal Memory</div>
+          <h2>This Week</h2>
+          <div class="range">Mon Jul 6 – Fri Jul 10</div>
+        </div>
+        <div class="board">
+          <table>
+            <tr>
+              <th></th>
+              <th>Mon<span class="num">6</span></th>
+              <th>Tue<span class="num">7</span></th>
+              <th>Wed<span class="num">8</span></th>
+              <th>Thu<span class="num">9</span></th>
+              <th>Fri<span class="num">10</span></th>
+            </tr>
+            <tr>
+              <td class="rowlabel">B</td>
+              <td><span class="e">🍓</span><span class="n">Yogurt Bowl</span></td>
+              <td><span class="e">🥞</span><span class="n">Pancakes</span></td>
+              <td class="empty"></td>
+              <td class="empty"></td>
+              <td><span class="e">🥪</span><span class="n">Egg Sandwich</span></td>
+            </tr>
+            <tr>
+              <td class="rowlabel">L</td>
+              <td><span class="e">🥗</span><span class="n">Chickpea Salad</span></td>
+              <td><span class="e">🥣</span><span class="n">Quinoa Bowl</span></td>
+              <td><span class="e">🌯</span><span class="n">Burrito Bowl</span></td>
+              <td><span class="e">🐟</span><span class="n">Tuna Salad</span></td>
+              <td class="empty"></td>
+            </tr>
+            <tr>
+              <td class="rowlabel">D</td>
+              <td><span class="e">🍗</span><span class="n">Sheet-Pan</span></td>
+              <td><span class="e">🍝</span><span class="n">Spaghetti</span></td>
+              <td><span class="e">🍱</span><span class="n">Tofu Fry</span></td>
+              <td><span class="e">🍗</span><span class="n">Sheet-Pan</span></td>
+              <td><span class="e">🌯</span><span class="n">Burrito Bowl</span></td>
+            </tr>
+          </table>
+        </div>
+        <div class="sc-foot">Made with <b>Meal Memory</b></div>
+      </div>
+      <div class="frame-cap">Shared image · Option B</div>
+    </div>
+
+    <!-- Text message -->
+    <div class="col" style="flex:0 0 300px">
+      <div class="option-label"><span class="badge">+ Text</span><span class="desc">Sent with either image</span></div>
+      <div class="phone">
+        <div class="wa">
+          <div class="wa-top"><span class="av">🍳</span>Home</div>
+          <div class="wa-body">
+            <div class="bubble">
+              <div class="img">🖼️ week-plan.png</div>
+              <pre>🍽️ This Week · Jul 6–10
+
+Mon
+🍓 B: Greek Yogurt Berry Bowl
+🥗 L: Chickpea Salad
+🍗 D: Sheet-Pan Chicken & Veg
+
+Tue
+🥞 B: Pancakes
+🥣 L: Quinoa Beetroot Bowl
+🍝 D: Spaghetti Aglio e Olio
+
+Wed
+🌯 L: Burrito Bowl
+🍱 D: Tofu Stir Fry
+
+…
+
+Sent from Meal Memory</pre>
+              <div class="time">9:41 AM ✓✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="frame-cap">Accompanying text (WhatsApp)</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
