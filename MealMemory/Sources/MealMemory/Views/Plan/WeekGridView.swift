@@ -1,9 +1,26 @@
 import SwiftUI
+import UIKit
 
 private struct PickerSlot: Identifiable {
     let date: Date
     let mealType: MealType
     var id: String { "\(date.timeIntervalSince1970)\(mealType.rawValue)" }
+}
+
+// Rendered plan image + accompanying day-wise text, shared together (TRI-6).
+private struct SharePayload: Identifiable {
+    let id = UUID()
+    let image: UIImage
+    let text: String
+}
+
+// Wraps UIActivityViewController so the image + text go out in one share sheet.
+private struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    }
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
 }
 
 private struct SlotSelection {
@@ -18,12 +35,14 @@ private enum SheetKind: Identifiable {
     case calendar
     case picker(PickerSlot)
     case recipeDetail(Recipe)
+    case share(SharePayload)
 
     var id: String {
         switch self {
         case .calendar:            return "calendar"
         case .picker(let s):       return "picker-\(s.id)"
         case .recipeDetail(let r): return "detail-\(r.id)"
+        case .share(let p):        return "share-\(p.id)"
         }
     }
 }
@@ -111,8 +130,20 @@ struct WeekGridView: View {
                         viewModel.recipes[updated.id] = updated
                     }
                 }
+            case .share(let payload):
+                ShareSheet(items: [payload.image, payload.text])
             }
         }
+    }
+
+    // Render the week as an image and share it together with the day-wise text.
+    @MainActor
+    private func shareCurrentWeek() {
+        let card = WeekPlanShareCard(title: viewModel.weekTitle, days: viewModel.weeklyPlan())
+        let renderer = ImageRenderer(content: card)
+        renderer.scale = 3  // crisp on retina / when re-shared
+        guard let image = renderer.uiImage else { return }
+        activeSheet = .share(SharePayload(image: image, text: viewModel.weeklyPlanText()))
     }
 
     // MARK: - Week header
@@ -129,9 +160,11 @@ struct WeekGridView: View {
                 .minimumScaleFactor(0.7)
 
             // Share: ghost weight, right beside the title, only when there's
-            // something to share.
+            // something to share. Renders the week as an image + day-wise text.
             if !viewModel.recipes.isEmpty {
-                ShareLink(item: viewModel.weeklyGroceryList()) {
+                Button {
+                    shareCurrentWeek()
+                } label: {
                     Image(systemName: "square.and.arrow.up")
                         .font(.system(size: 17))
                         .foregroundColor(Theme.textSecondary)
