@@ -4,14 +4,21 @@ import Vision
 
 struct AddRecipeSheetView: View {
     let householdId: UUID
+    let autoImportURL: URL?
     let onSave: (Recipe) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @StateObject private var vm: AddRecipeViewModel
     @State private var selectedDetent: PresentationDetent = .fraction(0.45)
 
-    init(householdId: UUID, editing recipe: Recipe? = nil, onSave: @escaping (Recipe) -> Void) {
+    init(
+        householdId: UUID,
+        editing recipe: Recipe? = nil,
+        autoImportURL: URL? = nil,
+        onSave: @escaping (Recipe) -> Void
+    ) {
         self.householdId = householdId
+        self.autoImportURL = autoImportURL
         self.onSave = onSave
         _vm = StateObject(wrappedValue: AddRecipeViewModel(editing: recipe))
     }
@@ -28,6 +35,13 @@ struct AddRecipeSheetView: View {
             vm.isEditing || vm.entryMethod != nil ? [.large] : [.fraction(0.45), .large],
             selection: $selectedDetent
         )
+        // Share-extension handoff: jump straight into URL import.
+        .task {
+            if let url = autoImportURL, vm.name.isEmpty, !vm.isImporting {
+                selectedDetent = .large
+                await vm.import(from: url)
+            }
+        }
     }
 
     // MARK: - Method picker (bottom sheet, compact)
@@ -64,8 +78,8 @@ struct AddRecipeSheetView: View {
                 )
                 methodCard(
                     icon: "🔗",
-                    title: "Import from URL",
-                    subtitle: "Paste a link from any cooking website",
+                    title: "Import from a link",
+                    subtitle: "Recipe sites, Pinterest, Instagram, TikTok, YouTube",
                     method: .url
                 )
                 methodCard(
@@ -230,7 +244,7 @@ struct URLEntryView: View {
         ScrollView {
             VStack(spacing: 16) {
                 HStack {
-                    TextField("Paste recipe URL or Pinterest link", text: $urlText)
+                    TextField("Paste any link — web, Pinterest, IG, TikTok, YouTube", text: $urlText)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                         .keyboardType(.URL)

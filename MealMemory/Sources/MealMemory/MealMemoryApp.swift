@@ -5,6 +5,8 @@ struct MealMemoryApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var authService = AuthService.shared
     @StateObject private var appState = AppState()
+    @StateObject private var importCoordinator = ImportCoordinator()
+    @Environment(\.scenePhase) private var scenePhase
     @AppStorage("demo_mode_active") private var demoModeActive: Bool = true
     @AppStorage("appearance_mode") private var appearanceMode: String = AppearanceMode.light.rawValue
 
@@ -29,12 +31,18 @@ struct MealMemoryApp: App {
             .preferredColorScheme(AppearanceMode(rawValue: appearanceMode)?.colorScheme)
             .environmentObject(authService)
             .environmentObject(appState)
+            .environmentObject(importCoordinator)
             .onAppear {
                 if demoModeActive {
                     appState.members = DemoData.members
                 } else {
                     appState.loadHousehold()
                 }
+            }
+            // Link shared from another app via the Share Extension.
+            .onOpenURL { importCoordinator.handle($0) }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active { importCoordinator.checkAppGroupPending() }
             }
         }
     }

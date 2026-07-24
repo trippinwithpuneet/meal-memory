@@ -11,64 +11,100 @@
 		0CFB96F70B7A7BB66A992ED8 /* RecipeImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A94956DBAD0D1BB1EC4C231A /* RecipeImportService.swift */; };
 		140D6C4ECBF03C8710287815 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B87280D73E22420FDB125985 /* Assets.xcassets */; };
 		16CBF8F761954EF94AFEDDF1 /* HouseholdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BF0298D9733DE8F2E2235 /* HouseholdView.swift */; };
+		26297B9DC1021FD5A9C5BD25 /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3BAD1968A93374F220B961 /* ErrorMessage.swift */; };
 		29222DC99805E86E29359D31 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA969A0CA627A1BDB36468A /* MainTabView.swift */; };
+		2CD9915B4BCA651DD00C6B05 /* WeekPlanShareCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA26918D1BC168E12C01C36F /* WeekPlanShareCard.swift */; };
+		2E9DFF4EAC1492B4E1E2605D /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0764876032A6C6971AF529AF /* ShareViewController.swift */; };
 		3E4A811A5ED9BF7C47CB5E94 /* HouseholdService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4857CB5FAD2F24EEA22F09DB /* HouseholdService.swift */; };
 		4F7E2CCF1EA06AD211096964 /* RecipeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F44657A8DDE730A3F1FA12 /* RecipeDetailView.swift */; };
 		519D2DAB7B3FCD5E4E46FB25 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 76EC64D9774EAAF9793DE3A9 /* Supabase */; };
 		5CFCFFEC2BA4E4355B935470 /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E78B930539764DF3FA0635 /* DemoData.swift */; };
 		64739792580FE5C1A14C0EE0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE99649A756381B0ED3FC78A /* AppDelegate.swift */; };
+		659CB0397B5FECD7631124ED /* MealMemoryShareExt.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D8ED39686E27578D9010492D /* MealMemoryShareExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		667077BE09F4B606E0BF2107 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C3FA85D038817EBE3CF4A4B /* Models.swift */; };
+		6D5B61BFFF7F2996566AF503 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A3C299FE35A6497139C46736 /* PrivacyInfo.xcprivacy */; };
 		6ED137B393533933F9698997 /* EmergencyModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1866F7A431EABE8CA1285D3A /* EmergencyModeView.swift */; };
-		E7DC1096DE9E4CD38E218432 /* MonthCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE8DEECC0E744AAA22FC5AC /* MonthCalendarView.swift */; };
 		6FBBD6AB52F0DA4804CC648B /* HouseholdSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A977A6951BF79DA45AAF6618 /* HouseholdSetupView.swift */; };
 		7C9383F099E8155EFECD3A12 /* MealMemoryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 975A3DA03F6C73928EF1EEE3 /* MealMemoryApp.swift */; };
+		7EEC9ED114A30F9922A0D479 /* MonthCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B55CC004A9307E34A7691A5 /* MonthCalendarView.swift */; };
 		829C43C1202791AD321558FD /* MealPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3993AF8435EA3E831DFB891D /* MealPlanViewModel.swift */; };
 		8A8809B061EFB1494A8DE227 /* AddRecipeSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513CEF81F7C7D7C2519A0BC5 /* AddRecipeSheetView.swift */; };
 		90E782D8D4F6C51FE0B52764 /* RecipeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08A75C07AC2A4954C669AE0 /* RecipeService.swift */; };
-		A1B2C3D4E5F60718293A4B5C /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A69788796A5B4C /* ErrorMessage.swift */; };
 		AFE059F39432442CEFD06A81 /* AddRecipeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB538A9A4991CBAAEF20B84 /* AddRecipeViewModel.swift */; };
 		B6F88B9399F55BE2061F1743 /* EmergencyModeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A645EA0CF7F6966A8F2C9C /* EmergencyModeViewModel.swift */; };
 		B87849166BB3B874B53E20B7 /* WeekGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35ED6E7A2D17A428C492F462 /* WeekGridView.swift */; };
-		B1C2D3E4F5A60718293A6001 /* WeekPlanShareCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60718293A6002 /* WeekPlanShareCard.swift */; };
 		BDE12FA7717D234E2C59A94E /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F77DD065E03E607E2ADC54 /* AuthView.swift */; };
 		C3423DDA353A9F7BB6C6B301 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E35AC7191F88D48F7CDD97 /* Theme.swift */; };
 		D74C9C6387D9043583C4C1E2 /* RecipeBankView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A333AABE1850352793010B4 /* RecipeBankView.swift */; };
 		DD407F5DCAB69183812FF544 /* PlanTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2C4260B0A5DC38F082798C9 /* PlanTabView.swift */; };
+		E01D20664E39DE83211BAA8F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5138B1293AA3BD46C2F878F6 /* PrivacyInfo.xcprivacy */; };
 		E6EE001CF9D52FF7E054C1AD /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF40773AC1D85B66C6FFCC /* NotificationService.swift */; };
 		E72CDEA5E68499F74B856066 /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A97A23DCC3CAB44E53F910 /* SupabaseClient.swift */; };
+		ED5C8A991C6FFC1E49F43471 /* ImportCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA64266A592E2D54D4ECE35 /* ImportCoordinator.swift */; };
 		F2A6ED9CED84021330F15531 /* OnboardingEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83EE8E6FA978997C0C063C9F /* OnboardingEmptyStateView.swift */; };
 		F9BF2FDA701D9989F706D61F /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E00481A9208E46B0A42345 /* AuthService.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		0097A413492F6723016F5270 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3C58C568CEE53B44FE61F37 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3A78C73C898F0BFD776E662;
+			remoteInfo = MealMemoryShareExt;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C90D521A35C282CE45EBFB35 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				659CB0397B5FECD7631124ED /* MealMemoryShareExt.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		01E00481A9208E46B0A42345 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		0764876032A6C6971AF529AF /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		15F77DD065E03E607E2ADC54 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		16A645EA0CF7F6966A8F2C9C /* EmergencyModeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyModeViewModel.swift; sourceTree = "<group>"; };
 		16E78B930539764DF3FA0635 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
 		1866F7A431EABE8CA1285D3A /* EmergencyModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyModeView.swift; sourceTree = "<group>"; };
-		5EE8DEECC0E744AAA22FC5AC /* MonthCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCalendarView.swift; sourceTree = "<group>"; };
 		25E35AC7191F88D48F7CDD97 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		2B55CC004A9307E34A7691A5 /* MonthCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCalendarView.swift; sourceTree = "<group>"; };
 		35ED6E7A2D17A428C492F462 /* WeekGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekGridView.swift; sourceTree = "<group>"; };
-		B1C2D3E4F5A60718293A6002 /* WeekPlanShareCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekPlanShareCard.swift; sourceTree = "<group>"; };
 		3993AF8435EA3E831DFB891D /* MealPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanViewModel.swift; sourceTree = "<group>"; };
+		3A935638D9A1C6A1EFD5BFF8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4857CB5FAD2F24EEA22F09DB /* HouseholdService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdService.swift; sourceTree = "<group>"; };
 		4988882AA1A929AA79887D15 /* MealPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanService.swift; sourceTree = "<group>"; };
 		4A333AABE1850352793010B4 /* RecipeBankView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeBankView.swift; sourceTree = "<group>"; };
+		5138B1293AA3BD46C2F878F6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		513CEF81F7C7D7C2519A0BC5 /* AddRecipeSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecipeSheetView.swift; sourceTree = "<group>"; };
 		51F44657A8DDE730A3F1FA12 /* RecipeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailView.swift; sourceTree = "<group>"; };
 		5C3FA85D038817EBE3CF4A4B /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		79A97A23DCC3CAB44E53F910 /* SupabaseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClient.swift; sourceTree = "<group>"; };
 		83EE8E6FA978997C0C063C9F /* OnboardingEmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingEmptyStateView.swift; sourceTree = "<group>"; };
+		8B50D7A8C6946947C782F4E2 /* MealMemoryShareExt.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MealMemoryShareExt.entitlements; sourceTree = "<group>"; };
+		8F3BAD1968A93374F220B961 /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		975A3DA03F6C73928EF1EEE3 /* MealMemoryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealMemoryApp.swift; sourceTree = "<group>"; };
+		A3C299FE35A6497139C46736 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A94956DBAD0D1BB1EC4C231A /* RecipeImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportService.swift; sourceTree = "<group>"; };
 		A977A6951BF79DA45AAF6618 /* HouseholdSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdSetupView.swift; sourceTree = "<group>"; };
+		AA26918D1BC168E12C01C36F /* WeekPlanShareCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekPlanShareCard.swift; sourceTree = "<group>"; };
 		AD7BF0298D9733DE8F2E2235 /* HouseholdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdView.swift; sourceTree = "<group>"; };
 		B87280D73E22420FDB125985 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CEB538A9A4991CBAAEF20B84 /* AddRecipeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecipeViewModel.swift; sourceTree = "<group>"; };
 		D08A75C07AC2A4954C669AE0 /* RecipeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeService.swift; sourceTree = "<group>"; };
-		F1E2D3C4B5A69788796A5B4C /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		D2C4260B0A5DC38F082798C9 /* PlanTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTabView.swift; sourceTree = "<group>"; };
-		E092FF4142BA25188AE7D6AC /* MealMemory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MealMemory.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8ED39686E27578D9010492D /* MealMemoryShareExt.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = MealMemoryShareExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAA64266A592E2D54D4ECE35 /* ImportCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportCoordinator.swift; sourceTree = "<group>"; };
+		E092FF4142BA25188AE7D6AC /* MealMemory.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MealMemory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF40773AC1D85B66C6FFCC /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		EE99649A756381B0ED3FC78A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FBA969A0CA627A1BDB36468A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -100,12 +136,13 @@
 			children = (
 				EE99649A756381B0ED3FC78A /* AppDelegate.swift */,
 				01E00481A9208E46B0A42345 /* AuthService.swift */,
+				8F3BAD1968A93374F220B961 /* ErrorMessage.swift */,
 				4857CB5FAD2F24EEA22F09DB /* HouseholdService.swift */,
+				DAA64266A592E2D54D4ECE35 /* ImportCoordinator.swift */,
 				4988882AA1A929AA79887D15 /* MealPlanService.swift */,
 				ECBF40773AC1D85B66C6FFCC /* NotificationService.swift */,
 				A94956DBAD0D1BB1EC4C231A /* RecipeImportService.swift */,
 				D08A75C07AC2A4954C669AE0 /* RecipeService.swift */,
-				F1E2D3C4B5A69788796A5B4C /* ErrorMessage.swift */,
 				79A97A23DCC3CAB44E53F910 /* SupabaseClient.swift */,
 			);
 			path = Services;
@@ -137,8 +174,20 @@
 			isa = PBXGroup;
 			children = (
 				E092FF4142BA25188AE7D6AC /* MealMemory.app */,
+				D8ED39686E27578D9010492D /* MealMemoryShareExt.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		67A8A80172B28B1CBA9E8880 /* ShareExtension */ = {
+			isa = PBXGroup;
+			children = (
+				3A935638D9A1C6A1EFD5BFF8 /* Info.plist */,
+				8B50D7A8C6946947C782F4E2 /* MealMemoryShareExt.entitlements */,
+				5138B1293AA3BD46C2F878F6 /* PrivacyInfo.xcprivacy */,
+				0764876032A6C6971AF529AF /* ShareViewController.swift */,
+			);
+			path = ShareExtension;
 			sourceTree = "<group>";
 		};
 		69B13CECDF16CF03A69CE032 /* MealMemory */ = {
@@ -154,6 +203,7 @@
 			isa = PBXGroup;
 			children = (
 				B87280D73E22420FDB125985 /* Assets.xcassets */,
+				A3C299FE35A6497139C46736 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -183,6 +233,7 @@
 			isa = PBXGroup;
 			children = (
 				69B13CECDF16CF03A69CE032 /* MealMemory */,
+				67A8A80172B28B1CBA9E8880 /* ShareExtension */,
 				479FBC7AFE134A2C83382641 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -226,11 +277,11 @@
 			isa = PBXGroup;
 			children = (
 				1866F7A431EABE8CA1285D3A /* EmergencyModeView.swift */,
-				5EE8DEECC0E744AAA22FC5AC /* MonthCalendarView.swift */,
+				2B55CC004A9307E34A7691A5 /* MonthCalendarView.swift */,
 				83EE8E6FA978997C0C063C9F /* OnboardingEmptyStateView.swift */,
 				D2C4260B0A5DC38F082798C9 /* PlanTabView.swift */,
 				35ED6E7A2D17A428C492F462 /* WeekGridView.swift */,
-				B1C2D3E4F5A60718293A6002 /* WeekPlanShareCard.swift */,
+				AA26918D1BC168E12C01C36F /* WeekPlanShareCard.swift */,
 			);
 			path = Plan;
 			sourceTree = "<group>";
@@ -245,10 +296,12 @@
 				3704A19B1FF06E12A0760BFC /* Sources */,
 				2084642FD3647B85C4C0C867 /* Resources */,
 				5DEB3827948202CAD3727024 /* Frameworks */,
+				C90D521A35C282CE45EBFB35 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F83A357E3B472CCD5439ACEE /* PBXTargetDependency */,
 			);
 			name = MealMemory;
 			packageProductDependencies = (
@@ -257,6 +310,24 @@
 			productName = MealMemory;
 			productReference = E092FF4142BA25188AE7D6AC /* MealMemory.app */;
 			productType = "com.apple.product-type.application";
+		};
+		F3A78C73C898F0BFD776E662 /* MealMemoryShareExt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB859A96A06A3728F97F7240 /* Build configuration list for PBXNativeTarget "MealMemoryShareExt" */;
+			buildPhases = (
+				5E61897C45A4C906B3080E14 /* Sources */,
+				5493FC1EC20E24F495D64DAE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MealMemoryShareExt;
+			packageProductDependencies = (
+			);
+			productName = MealMemoryShareExt;
+			productReference = D8ED39686E27578D9010492D /* MealMemoryShareExt.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -268,6 +339,10 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					E5AA79FC30F7610E8FA33BD5 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					F3A78C73C898F0BFD776E662 = {
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -290,6 +365,7 @@
 			projectRoot = "";
 			targets = (
 				E5AA79FC30F7610E8FA33BD5 /* MealMemory */,
+				F3A78C73C898F0BFD776E662 /* MealMemoryShareExt */,
 			);
 		};
 /* End PBXProject section */
@@ -300,6 +376,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				140D6C4ECBF03C8710287815 /* Assets.xcassets in Resources */,
+				6D5B61BFFF7F2996566AF503 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5493FC1EC20E24F495D64DAE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E01D20664E39DE83211BAA8F /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,16 +402,18 @@
 				BDE12FA7717D234E2C59A94E /* AuthView.swift in Sources */,
 				5CFCFFEC2BA4E4355B935470 /* DemoData.swift in Sources */,
 				6ED137B393533933F9698997 /* EmergencyModeView.swift in Sources */,
-				E7DC1096DE9E4CD38E218432 /* MonthCalendarView.swift in Sources */,
 				B6F88B9399F55BE2061F1743 /* EmergencyModeViewModel.swift in Sources */,
+				26297B9DC1021FD5A9C5BD25 /* ErrorMessage.swift in Sources */,
 				3E4A811A5ED9BF7C47CB5E94 /* HouseholdService.swift in Sources */,
 				6FBBD6AB52F0DA4804CC648B /* HouseholdSetupView.swift in Sources */,
 				16CBF8F761954EF94AFEDDF1 /* HouseholdView.swift in Sources */,
+				ED5C8A991C6FFC1E49F43471 /* ImportCoordinator.swift in Sources */,
 				29222DC99805E86E29359D31 /* MainTabView.swift in Sources */,
 				7C9383F099E8155EFECD3A12 /* MealMemoryApp.swift in Sources */,
 				08752885347FC3108991CF95 /* MealPlanService.swift in Sources */,
 				829C43C1202791AD321558FD /* MealPlanViewModel.swift in Sources */,
 				667077BE09F4B606E0BF2107 /* Models.swift in Sources */,
+				7EEC9ED114A30F9922A0D479 /* MonthCalendarView.swift in Sources */,
 				E6EE001CF9D52FF7E054C1AD /* NotificationService.swift in Sources */,
 				F2A6ED9CED84021330F15531 /* OnboardingEmptyStateView.swift in Sources */,
 				DD407F5DCAB69183812FF544 /* PlanTabView.swift in Sources */,
@@ -334,17 +421,76 @@
 				4F7E2CCF1EA06AD211096964 /* RecipeDetailView.swift in Sources */,
 				0CFB96F70B7A7BB66A992ED8 /* RecipeImportService.swift in Sources */,
 				90E782D8D4F6C51FE0B52764 /* RecipeService.swift in Sources */,
-				A1B2C3D4E5F60718293A4B5C /* ErrorMessage.swift in Sources */,
 				E72CDEA5E68499F74B856066 /* SupabaseClient.swift in Sources */,
 				C3423DDA353A9F7BB6C6B301 /* Theme.swift in Sources */,
 				B87849166BB3B874B53E20B7 /* WeekGridView.swift in Sources */,
-				B1C2D3E4F5A60718293A6001 /* WeekPlanShareCard.swift in Sources */,
+				2CD9915B4BCA651DD00C6B05 /* WeekPlanShareCard.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E61897C45A4C906B3080E14 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2E9DFF4EAC1492B4E1E2605D /* ShareViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		F83A357E3B472CCD5439ACEE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3A78C73C898F0BFD776E662 /* MealMemoryShareExt */;
+			targetProxy = 0097A413492F6723016F5270 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		0CA1BF7F32DE7624444B3918 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/MealMemoryShareExt.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puneetjain.mealmemory.ShareExt;
+				PRODUCT_NAME = MealMemoryShareExt;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		11C6C61B5DFD136ECAD73E21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/MealMemoryShareExt.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puneetjain.mealmemory.ShareExt;
+				PRODUCT_NAME = MealMemoryShareExt;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		2402A602F76A2E6716391634 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -416,7 +562,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Q3JN42F5ST;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = MealMemory/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -440,7 +586,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Q3JN42F5ST;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = MealMemory/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -520,6 +666,15 @@
 			buildConfigurations = (
 				2402A602F76A2E6716391634 /* Debug */,
 				5F658AF5F891D35626D3FE2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AB859A96A06A3728F97F7240 /* Build configuration list for PBXNativeTarget "MealMemoryShareExt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CA1BF7F32DE7624444B3918 /* Debug */,
+				11C6C61B5DFD136ECAD73E21 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

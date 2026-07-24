@@ -12,10 +12,33 @@
 
 ## Resume Here
 
-**Last session:** 2026-06-29  
-**Status:** App installed and running on Rachel's iPhone. Plan page redesigned and shipping on branch `plan-page-redesign` (PR open). Next up: a structured page-by-page bug bash.
+**Last session:** 2026-07-24 — TRI-15 universal recipe import + Share Extension + App Store prep. Repo moved to `~/Documents/Claude projects/side-projects/meal-memory`. Work committed on branch `tri-15-universal-import` (stacked on `tri-6-share`, which has an open PR). Builds green for simulator.
 
-### NEXT STEP: Structured bug bash — page by page, major + minor
+### TRI-15 universal import — status
+The `fetch-recipe` Edge Function is now a host router + per-source resolvers + a shared **Claude Haiku (`claude-haiku-4-5`)** parse tail (raw HTTP, `output_config.format` JSON schema). JSON-LD stays LLM-free.
+- **Validated against real links:** Web + Pinterest (pin → source blog → JSON-LD), YouTube (3 tiers: follows a recipe-blog link in the description → JSON-LD; else parses a recipe written in the description; else best-effort transcript — YouTube blocks most server-side, so description-less spoken Shorts fall back gracefully). Bugs fixed along the way: JSON-LD `<script>` regex now allows extra attrs (Yoast/WPRM), `HowToSection` steps flattened, plural "RECIPES:" label match.
+- **Not yet validated:** Instagram + TikTok resolvers (best-effort selectors, untested against real captions). **NEXT: user will send one real IG Reel + one TikTok link → validate + fix, same method.**
+- **Deploy prereqs (both user-scoped):** set edge secret `ANTHROPIC_API_KEY`, then `supabase functions deploy fetch-recipe`. The function is NOT deployed yet; no API key was available locally this session (couldn't run the Haiku step — extraction inputs verified, LLM output projected).
+
+### Share Extension (built, simulator-verified)
+New `MealMemoryShareExt` target: captures a shared link → App Group `group.com.puneetjain.mealmemory` + `mealmemory://import?url=` scheme → main app `.onOpenURL` (`ImportCoordinator`) opens Add Recipe and auto-imports. **App Groups need a paid Apple Developer account to sign on device/TestFlight** (step zero, still open).
+
+### App Store prep done this session
+- Added `PrivacyInfo.xcprivacy` for the app AND the extension (UserDefaults reasons CA92.1 + 1C8F.1; tracking=false). Required since 2024.
+- `ITSAppUsesNonExemptEncryption = false` (skips export-compliance nag).
+- `CFBundleDisplayName = "Meal Memory"`. Cleared `.DS_Store` cruft.
+- Note: `.xcodeproj` is git-tracked *and* XcodeGen-generated — regenerate with `xcodegen generate`, then restore the two `SUPABASE_URL`/`SUPABASE_ANON_KEY` values in `MealMemory/Info.plist` (xcodegen overwrites them with the empty placeholders in `project.yml`).
+
+### Open decisions parked for the user
+- **Source-link UI** (embed the original blog/video link in Recipe Detail) — design mockup done, Option B (a "Source" card) recommended; needs a DB migration to persist `source_url`/`source_type` before coding. Awaiting go.
+- Import currently drops: dish photo, prep time, dietary tags, source URL, and custom emoji on the JSON-LD path (defaults 🍽). All editable post-import; auto-fill is a small follow-up.
+
+### Linear (project TRI) — new issues this session
+TRI-13 security(/cso) · TRI-14 RevenueCat · TRI-15 universal import (In Progress) · TRI-16 PostHog · TRI-17 App Store creative · TRI-18 UGC videos · TRI-19 evals · TRI-24 video-only extraction (Gemini/Whisper, Pro-gated, post-launch) · TRI-26 multi-recipe import (P0). Pricing DECIDED in TRI-7: $2.99mo/$14.99yr/$29.99life.
+
+---
+
+### NEXT STEP (older): Structured bug bash — page by page, major + minor
 
 We're going to make the app feel finished. It's still rough around the edges. Plan:
 - Go **page by page** (Plan → Recipes → Household → auth/onboarding → sheets), fixing all major and minor issues.

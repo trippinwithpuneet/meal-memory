@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MainTabView: View {
     let householdId: UUID
+    @EnvironmentObject private var importCoordinator: ImportCoordinator
 
     var body: some View {
         TabView {
@@ -21,5 +22,9 @@ struct MainTabView: View {
                 }
         }
         .tint(Theme.saffron)
+        // A link shared into the app opens Add Recipe and auto-imports it.
+        .sheet(item: $importCoordinator.pending) { item in
+            AddRecipeSheetView(householdId: householdId, autoImportURL: item.url) { _ in }
+        }
     }
 }
