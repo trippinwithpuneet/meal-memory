@@ -194,7 +194,7 @@ async function fetchYouTubeTranscript(watchHtml: string): Promise<string> {
   if (!base) return "";
   const ctUrl = base.replace(/\\u0026/g, "&").replace(/\\\//g, "/") + "&fmt=json3";
   try {
-    const res = await fetch(ctUrl, { headers: { "User-Agent": BROWSER_UA } });
+    const res = await timedFetch(ctUrl, { headers: { "User-Agent": BROWSER_UA } }, 8000);
     if (!res.ok) return "";
     const body = await res.text();
     if (!body) return ""; // YouTube commonly returns 200 + empty for ASR tracks
@@ -214,7 +214,7 @@ async function parseWithClaude(text: string, source: SourceType): Promise<Recipe
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY not set");
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
+  const res = await timedFetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -223,7 +223,7 @@ async function parseWithClaude(text: string, source: SourceType): Promise<Recipe
     },
     body: JSON.stringify({
       model: "claude-haiku-4-5",
-      max_tokens: 1024,
+      max_tokens: 2048, // headroom so a long recipe doesn't truncate → invalid JSON
       output_config: {
         format: {
           type: "json_schema",
@@ -247,7 +247,7 @@ async function parseWithClaude(text: string, source: SourceType): Promise<Recipe
         'return {"name":"","emoji":"","ingredients":[],"steps":[]}.',
       messages: [{ role: "user", content: `Source: ${source}\n\n${text}` }],
     }),
-  });
+  }, 20000);
 
   if (!res.ok) throw new Error(`anthropic ${res.status}: ${await res.text()}`);
   const data = await res.json();
@@ -286,14 +286,26 @@ function extractJSONLD(html: string): Recipe | null {
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
+// All outbound fetches are time-bounded so a slow/hanging source can't stall
+// the function until the platform hard-timeout.
+async function timedFetch(url: string, init: RequestInit, ms: number): Promise<Response> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, { ...init, signal: ctrl.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function fetchText(url: string, ua: string): Promise<string> {
-  const res = await fetch(url, { headers: { "User-Agent": ua }, redirect: "follow" });
+  const res = await timedFetch(url, { headers: { "User-Agent": ua }, redirect: "follow" }, 12000);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.text();
 }
 
 async function fetchJSON(url: string): Promise<any> {
-  const res = await fetch(url, { headers: { "User-Agent": BROWSER_UA } });
+  const res = await timedFetch(url, { headers: { "User-Agent": BROWSER_UA } }, 10000);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
