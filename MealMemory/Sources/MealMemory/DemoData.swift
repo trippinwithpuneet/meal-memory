@@ -14,13 +14,17 @@ enum DemoData {
     static let userId      = UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
 
     // MARK: - Members
+    //
+    // Two members with one common restriction so the demo still shows how the
+    // plan flags meals that don't work for everyone. Alex is gluten-free + no
+    // milk; Jordan eats everything.
 
     static let members: [Member] = [
         Member(
             id: UUID(uuidString: "00000000-0000-0000-0001-000000000001")!,
             householdId: householdId,
             userId: userId,
-            displayName: "Puneet",
+            displayName: "Alex",
             dietaryRestrictions: ["Gluten-free", "No milk"],
             apnsDeviceTokens: [],
             joinedAt: Date()
@@ -29,7 +33,7 @@ enum DemoData {
             id: UUID(uuidString: "00000000-0000-0000-0001-000000000002")!,
             householdId: householdId,
             userId: UUID(uuidString: "00000000-0000-0000-0000-000000000003")!,
-            displayName: "Rachel",
+            displayName: "Jordan",
             dietaryRestrictions: [],
             apnsDeviceTokens: [],
             joinedAt: Date()
@@ -38,79 +42,79 @@ enum DemoData {
 
     // MARK: - Recipes
     //
-    // Recipe index reference (used in slot assignments below):
-    //   0  Burrito Bowl          — both safe ✅
-    //   1  Chana Salad           — both safe ✅
-    //   2  Quinoa Beetroot Bowl  — both safe ✅
-    //   3  Spaghetti Aglio e Olio — Puneet conflict (gluten) ❌
-    //   4  Egg Sandwich          — Puneet conflict (gluten) ❌
-    //   5  Moong Dal Chilla      — both safe ✅
-    //   6  Paneer Bhurji         — Puneet conflict (milk) ❌
-    //   7  Pancakes              — Puneet conflict (gluten + milk) ❌
-    //   8  Tofu Stir Fry         — both safe ✅
-    //   9  Tuna & Egg Salad      — both safe ✅
+    // Western-familiar demo set. Recipe index reference (used in slots below):
+    //   0  Burrito Bowl              — both safe ✅
+    //   1  Chickpea Salad            — both safe ✅
+    //   2  Quinoa Beetroot Bowl      — both safe ✅
+    //   3  Spaghetti Aglio e Olio    — Alex conflict (gluten) ❌
+    //   4  Egg Sandwich              — Alex conflict (gluten) ❌
+    //   5  Sheet-Pan Chicken & Veg   — both safe ✅
+    //   6  Greek Yogurt Berry Bowl   — Alex conflict (milk) ❌
+    //   7  Pancakes                  — Alex conflict (gluten + milk) ❌
+    //   8  Tofu Stir Fry             — both safe ✅
+    //   9  Tuna & Egg Salad          — both safe ✅
 
     static let recipes: [Recipe] = [
 
         // ── Both safe ──────────────────────────────────────────────────────────
 
         make(id: 1, name: "Burrito Bowl", emoji: "🌯", prepTime: 30, nightBefore: true,
-             ingredients: ["1 cup basmati rice",
+             ingredients: ["1 cup rice",
                            "1 can black beans, drained",
                            "1 cup frozen corn",
                            "1 ripe avocado",
                            "1 cup cherry tomatoes",
                            "2 limes",
-                           "small bunch coriander",
+                           "small bunch cilantro",
                            "1 tsp cumin, salt, olive oil"],
              steps: ["Cook rice with cumin and salt until fluffy",
                      "Warm black beans and corn in a pan for 3 min",
-                     "Halve tomatoes, dice avocado, roughly chop coriander",
+                     "Halve tomatoes, dice avocado, roughly chop cilantro",
                      "Assemble bowls: rice base, then beans, corn",
-                     "Top with avocado, tomatoes, coriander and a good squeeze of lime"],
+                     "Top with avocado, tomatoes, cilantro and a good squeeze of lime"],
              safeFor: ["Vegan", "Vegetarian", "Gluten-free", "No milk", "Dairy-free"]),
 
-        make(id: 2, name: "Chana Salad", emoji: "🥗", prepTime: 15,
+        make(id: 2, name: "Chickpea Salad", emoji: "🥗", prepTime: 15,
              ingredients: ["1 can chickpeas, drained",
-                           "2 mandarin oranges, segmented",
+                           "1 orange, segmented",
                            "1 cucumber, diced",
                            "½ red onion, finely diced",
                            "3 tbsp mayo",
                            "1 lemon, juiced",
-                           "small bunch coriander, chilli flakes"],
-             steps: ["Drain and rinse chickpeas; dice cucumber; segment mandarins",
+                           "small bunch parsley, chili flakes"],
+             steps: ["Drain and rinse chickpeas; dice cucumber; segment orange",
                      "Whisk mayo with lemon juice, salt and pepper",
                      "Toss chickpeas, cucumber and onion with dressing",
-                     "Top with mandarin segments, coriander and a pinch of chilli flakes"],
+                     "Top with orange segments, parsley and a pinch of chili flakes"],
              safeFor: ["Vegetarian", "Gluten-free", "No milk", "Dairy-free"]),
 
         make(id: 3, name: "Quinoa Beetroot Bowl", emoji: "🥣", prepTime: 35,
              ingredients: ["1 cup quinoa",
-                           "250g pre-cooked beetroot",
+                           "250g pre-cooked beets",
                            "2 handfuls baby spinach",
                            "3 tbsp tahini",
                            "1 lemon, juiced",
                            "1 garlic clove, minced",
                            "2 tbsp pumpkin seeds, toasted"],
              steps: ["Rinse quinoa; cook in 2 cups water for 15 min until fluffy, then rest 5 min",
-                     "Slice beetroot into wedges",
+                     "Slice beets into wedges",
                      "Whisk tahini with lemon, garlic and 2 tbsp water until smooth",
-                     "Assemble: quinoa, spinach, beetroot; drizzle dressing, scatter seeds"],
+                     "Assemble: quinoa, spinach, beets; drizzle dressing, scatter seeds"],
              safeFor: ["Vegan", "Vegetarian", "Gluten-free", "No milk", "Dairy-free"]),
 
-        // ── Puneet conflict: gluten ────────────────────────────────────────────
+        // ── Alex conflict: gluten ──────────────────────────────────────────────
 
         make(id: 4, name: "Spaghetti Aglio e Olio", emoji: "🍝", prepTime: 25,
              ingredients: ["300g spaghetti",
                            "6 garlic cloves, thinly sliced",
                            "4 tbsp olive oil",
-                           "1 tsp red chilli flakes",
+                           "1 tsp red chili flakes",
                            "small bunch parsley, chopped",
                            "salt",
                            "reserved pasta water"],
              steps: ["Boil spaghetti in well-salted water until al dente; reserve 1 cup pasta water",
                      "Gently sauté garlic in olive oil over low heat until golden — don't let it burn",
-                     "Add chilli flakes, then drained pasta and a splash of pasta water",
+                     "Add chili flakes, then drained pasta and a splash of pasta water",
                      "Toss vigorously until silky; finish with parsley and season to taste"],
              safeFor: ["Vegan", "Vegetarian", "No milk", "Dairy-free"]),
 
@@ -127,42 +131,38 @@ enum DemoData {
                      "Toast bread; layer with lettuce, egg mix and sliced tomatoes"],
              safeFor: ["Vegetarian", "No milk", "Dairy-free"]),
 
-        // ── Both safe: Rachel's Indian proteins ───────────────────────────────
+        // ── Both safe ──────────────────────────────────────────────────────────
 
-        make(id: 6, name: "Moong Dal Chilla", emoji: "🫓", prepTime: 25, nightBefore: true,
-             ingredients: ["1 cup split green moong dal",
-                           "1 tsp grated ginger",
-                           "1 green chilli, finely chopped",
-                           "½ onion, finely diced",
-                           "small bunch coriander, chopped",
-                           "½ tsp cumin",
-                           "salt and oil for cooking"],
-             steps: ["Soak dal overnight (or at least 4 hours); drain well",
-                     "Blend soaked dal with ginger, cumin, salt and just enough water for a pourable batter",
-                     "Stir in diced onion, green chilli and coriander",
-                     "Ladle onto a hot oiled pan; spread thin like a crepe; cook 2 min per side until golden"],
-             safeFor: ["Vegan", "Vegetarian", "Gluten-free", "No milk", "Dairy-free"]),
+        make(id: 6, name: "Sheet-Pan Chicken & Veg", emoji: "🍗", prepTime: 40, nightBefore: false,
+             ingredients: ["4 chicken thighs",
+                           "1 lb baby potatoes, halved",
+                           "2 bell peppers, chunked",
+                           "1 red onion, wedged",
+                           "3 tbsp olive oil",
+                           "2 tsp paprika",
+                           "1 tsp garlic powder",
+                           "salt, pepper, lemon"],
+             steps: ["Heat oven to 425°F (220°C)",
+                     "Toss potatoes, peppers and onion with 2 tbsp oil, paprika, garlic powder, salt",
+                     "Nestle chicken among the veg; rub with remaining oil and season",
+                     "Roast 35–40 min until chicken is cooked and potatoes are golden; squeeze lemon over"],
+             safeFor: ["Gluten-free", "No milk", "Dairy-free"]),
 
-        // ── Puneet conflict: milk ──────────────────────────────────────────────
+        // ── Alex conflict: milk ────────────────────────────────────────────────
 
-        make(id: 7, name: "Paneer Bhurji", emoji: "🧀", prepTime: 25,
-             ingredients: ["250g paneer, crumbled",
-                           "1 onion, finely diced",
-                           "2 tomatoes, chopped",
-                           "2 garlic cloves, minced",
-                           "1 tsp grated ginger",
-                           "1 green chilli, chopped",
-                           "½ tsp turmeric",
-                           "1 tsp cumin seeds",
-                           "1 tsp garam masala",
-                           "coriander and oil to finish"],
-             steps: ["Sauté cumin seeds in oil; add onion and cook until golden",
-                     "Add garlic, ginger, chilli and cook 2 min; add tomatoes and cook until oil separates",
-                     "Add turmeric and garam masala; stir well",
-                     "Add crumbled paneer, fold gently and cook 3 min; finish with coriander"],
+        make(id: 7, name: "Greek Yogurt Berry Bowl", emoji: "🍓", prepTime: 10,
+             ingredients: ["1½ cups Greek yogurt",
+                           "1 cup mixed berries",
+                           "2 tbsp honey",
+                           "¼ cup granola",
+                           "1 tbsp chia seeds",
+                           "handful sliced almonds"],
+             steps: ["Spoon yogurt into two bowls",
+                     "Top with berries, granola, chia seeds and almonds",
+                     "Drizzle with honey and serve"],
              safeFor: ["Vegetarian", "Gluten-free"]),
 
-        // ── Puneet conflict: gluten + milk ─────────────────────────────────────
+        // ── Alex conflict: gluten + milk ───────────────────────────────────────
 
         make(id: 8, name: "Pancakes", emoji: "🥞", prepTime: 20,
              ingredients: ["1 cup all-purpose flour",
@@ -223,17 +223,17 @@ enum DemoData {
 
         let r = recipes
         let assignments: [(offset: Int, meal: MealType, recipeIndex: Int)] = [
-            (0, .breakfast, 5),   // Mon breakfast: Moong Dal Chilla ✅ both
-            (0, .lunch,     1),   // Mon lunch:     Chana Salad ✅ both
-            (0, .dinner,    6),   // Mon dinner:    Paneer Bhurji ❌ Puneet (milk)
-            (1, .breakfast, 7),   // Tue breakfast: Pancakes ❌ Puneet (gluten + milk)
+            (0, .breakfast, 6),   // Mon breakfast: Greek Yogurt Berry Bowl ❌ Alex (milk)
+            (0, .lunch,     1),   // Mon lunch:     Chickpea Salad ✅ both
+            (0, .dinner,    5),   // Mon dinner:    Sheet-Pan Chicken & Veg ✅ both
+            (1, .breakfast, 7),   // Tue breakfast: Pancakes ❌ Alex (gluten + milk)
             (1, .lunch,     2),   // Tue lunch:     Quinoa Beetroot Bowl ✅ both
-            (1, .dinner,    3),   // Tue dinner:    Spaghetti Aglio e Olio ❌ Puneet (gluten)
+            (1, .dinner,    3),   // Tue dinner:    Spaghetti Aglio e Olio ❌ Alex (gluten)
             (2, .lunch,     0),   // Wed lunch:     Burrito Bowl ✅ both
             (2, .dinner,    8),   // Wed dinner:    Tofu Stir Fry ✅ both
             (3, .lunch,     9),   // Thu lunch:     Tuna & Egg Salad ✅ both
-            (3, .dinner,    5),   // Thu dinner:    Moong Dal Chilla ✅ both
-            (4, .breakfast, 4),   // Fri breakfast: Egg Sandwich ❌ Puneet (gluten)
+            (3, .dinner,    5),   // Thu dinner:    Sheet-Pan Chicken & Veg ✅ both
+            (4, .breakfast, 4),   // Fri breakfast: Egg Sandwich ❌ Alex (gluten)
             (4, .dinner,    0),   // Fri dinner:    Burrito Bowl ✅ both
         ]
 

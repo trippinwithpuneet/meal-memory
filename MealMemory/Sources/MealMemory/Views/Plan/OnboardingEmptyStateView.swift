@@ -22,7 +22,7 @@ struct OnboardingEmptyStateView: View {
                     .frame(width: 120, height: 120)
                     .shadow(color: Theme.saffron.opacity(0.15), radius: 20, x: 0, y: 4)
 
-                Text("🍛")
+                Text("🍳")
                     .font(.system(size: 56))
             }
             .padding(.bottom, 24)
@@ -55,15 +55,6 @@ struct OnboardingEmptyStateView: View {
                 .cornerRadius(14)
             }
             .padding(.horizontal, 32)
-
-            Button {
-                // TODO: Show example recipes
-            } label: {
-                Text("or browse examples to get started")
-                    .font(.system(size: 13))
-                    .foregroundColor(Theme.textTertiary)
-            }
-            .padding(.top, 14)
 
             Spacer()
         }

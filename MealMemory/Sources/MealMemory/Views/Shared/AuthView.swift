@@ -6,7 +6,7 @@ struct AuthView: View {
 
     @State private var email = ""
     @State private var password = ""
-    @State private var isSignUp = false
+    @State private var isSignUp = true
     @State private var errorMessage: String?
 
     var body: some View {
@@ -15,12 +15,12 @@ struct AuthView: View {
 
             // Logo
             VStack(spacing: 8) {
-                Text("🍛")
+                Text("🍳")
                     .font(.system(size: 56))
                 Text("Meal Memory")
                     .font(.system(size: 28, weight: .bold))
                     .foregroundColor(Theme.navy)
-                Text("Your household recipe bank")
+                Text("Plan the week for your household")
                     .font(.system(size: 15))
                     .foregroundColor(Theme.textSecondary)
             }

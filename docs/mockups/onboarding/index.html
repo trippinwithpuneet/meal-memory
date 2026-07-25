@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meal Memory — Onboarding mockups (TRI-5)</title>
+<style>
+  :root{
+    --bg:#faf8f4; --card:#fff8f0; --cardEmpty:#f4f2ee;
+    --navy:#1a2744; --saffron:#e8883a; --terracotta:#c8553a;
+    --tPrimary:#1a1a1a; --tSecondary:#6b6b6b; --tTertiary:#9a9a9a;
+    --border:#e8e4de; --sage:#7a9e7e;
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:#efece6;color:var(--tPrimary);line-height:1.4}
+  header.top{position:sticky;top:0;z-index:50;background:var(--navy);color:#fff;padding:14px 24px;display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+  header.top h1{font-size:16px;font-weight:700;letter-spacing:.2px}
+  header.top .pill{font-size:11px;background:var(--saffron);color:#fff;padding:3px 9px;border-radius:20px;font-weight:600}
+  header.top nav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+  header.top nav a{color:#fff;text-decoration:none;font-size:12px;opacity:.85;padding:4px 10px;border:1px solid rgba(255,255,255,.25);border-radius:20px}
+  header.top nav a:hover{opacity:1;background:rgba(255,255,255,.1)}
+  .wrap{max-width:1180px;margin:0 auto;padding:36px 24px 80px}
+  section{margin-bottom:56px;scroll-margin-top:70px}
+  .section-head{margin-bottom:8px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .section-head h2{font-size:22px;color:var(--navy);font-weight:800}
+  .section-head .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--saffron)}
+  .section-sub{color:var(--tSecondary);font-size:14px;max-width:720px;margin-bottom:22px}
+  .option-label{display:flex;align-items:center;gap:10px;margin:26px 0 14px}
+  .option-label .badge{background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:8px}
+  .option-label .desc{font-size:13px;color:var(--tSecondary)}
+  .frames{display:flex;gap:22px;overflow-x:auto;padding:6px 2px 18px}
+  /* iPhone 13 mini ≈ 375×812 pt; scaled to 260 wide */
+  .phone{flex:0 0 auto;width:260px;height:563px;background:var(--bg);border-radius:34px;border:9px solid #12100d;position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+  .phone .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:110px;height:22px;background:#12100d;border-radius:0 0 16px 16px;z-index:20}
+  .screen{position:absolute;inset:0;display:flex;flex-direction:column}
+  .frame-cap{text-align:center;font-size:12px;color:var(--tTertiary);margin-top:8px;font-weight:600}
+  /* --- value prop slide --- */
+  .vp{padding:54px 26px 24px;display:flex;flex-direction:column;height:100%;text-align:center}
+  .vp .art{margin:8px auto 26px;width:150px;height:150px;border-radius:36px;display:flex;align-items:center;justify-content:center;font-size:72px;
+    background:linear-gradient(140deg,#fff8f0,#fdecd8);box-shadow:0 8px 26px rgba(232,136,58,.18)}
+  .vp h3{font-size:23px;color:var(--navy);font-weight:800;margin-bottom:12px;line-height:1.2}
+  .vp p{font-size:14.5px;color:var(--tSecondary);line-height:1.5;padding:0 4px}
+  .vp .spacer{flex:1}
+  .dots{display:flex;gap:7px;justify-content:center;margin:20px 0 16px}
+  .dots i{width:7px;height:7px;border-radius:10px;background:var(--border);display:block}
+  .dots i.on{width:22px;background:var(--saffron)}
+  .btn{display:block;width:100%;padding:15px;border-radius:15px;font-size:15px;font-weight:700;border:none;text-align:center}
+  .btn.primary{background:var(--saffron);color:#fff}
+  .btn.ghost{background:transparent;color:var(--tTertiary);font-weight:600;font-size:13px;padding:12px}
+  .skip{position:absolute;top:52px;right:22px;font-size:13px;color:var(--tTertiary);font-weight:600;z-index:15}
+  /* --- card-led variant --- */
+  .vpB{padding:54px 22px 24px;display:flex;flex-direction:column;height:100%}
+  .vpB .kicker{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--saffron);text-align:center;margin-bottom:auto;padding-top:6px}
+  .vpB .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:26px 22px;box-shadow:0 8px 24px rgba(26,39,68,.07)}
+  .vpB .card .ic{width:56px;height:56px;border-radius:16px;background:#fdecd8;display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:18px}
+  .vpB .card h3{font-size:21px;color:var(--navy);font-weight:800;margin-bottom:10px;line-height:1.2}
+  .vpB .card p{font-size:14px;color:var(--tSecondary);line-height:1.5}
+  /* --- mock plan tab (for coach marks) --- */
+  .plan{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column}
+  .plan .nav{padding:50px 16px 10px;display:flex;align-items:center;gap:8px}
+  .plan .nav .title{font-size:20px;font-weight:800;color:var(--navy)}
+  .plan .nav .spacer{flex:1}
+  .plan .chip{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .plan .chip.add{background:var(--navy);color:#fff}
+  .plan .chip.share{background:transparent;border:1.5px solid var(--border);color:var(--navy)}
+  .plan .weeknav{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--navy);font-size:13px;font-weight:600;padding:4px 0 10px}
+  .grid{flex:1;margin:0 12px;border-radius:16px;overflow:hidden;border:1px solid var(--border);background:#fff;display:flex}
+  .grid .lblcol{width:30px;background:var(--cardEmpty);display:flex;flex-direction:column}
+  .grid .lblcol span{flex:1;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:var(--tTertiary);writing-mode:vertical-rl;transform:rotate(180deg)}
+  .grid .days{flex:1;display:flex}
+  .grid .day{flex:1;border-left:1px solid var(--border);display:flex;flex-direction:column}
+  .grid .day .dh{font-size:8px;text-align:center;padding:4px 0;color:var(--tTertiary);font-weight:700;background:var(--cardEmpty)}
+  .grid .cell{flex:1;border-top:1px solid var(--border);margin:0;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .grid .cell.f{background:#fff8f0}
+  .hero{margin:12px;padding:15px;border-radius:16px;background:var(--saffron);color:#fff;text-align:center;font-weight:700;font-size:15px;box-shadow:0 6px 18px rgba(232,136,58,.3)}
+  .tabbar{height:52px;border-top:1px solid var(--border);background:#fff;display:flex}
+  .tabbar div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:9px;color:var(--tTertiary)}
+  .tabbar div.on{color:var(--saffron)}
+  .tabbar div .i{font-size:16px}
+  /* coach overlay style 1: spotlight + tooltip */
+  .overlay{position:absolute;inset:0;z-index:30}
+  .scrim{position:absolute;inset:0;background:rgba(20,25,40,.62)}
+  .spot{position:absolute;border-radius:14px;box-shadow:0 0 0 9999px rgba(20,25,40,.62);border:2.5px solid var(--saffron)}
+  .tip{position:absolute;background:#fff;border-radius:14px;padding:13px 15px;width:180px;box-shadow:0 10px 30px rgba(0,0,0,.28)}
+  .tip h4{font-size:14px;color:var(--navy);font-weight:800;margin-bottom:4px}
+  .tip p{font-size:12px;color:var(--tSecondary);line-height:1.4;margin-bottom:10px}
+  .tip .row{display:flex;align-items:center;justify-content:space-between}
+  .tip .step{font-size:11px;color:var(--tTertiary);font-weight:700}
+  .tip .next{background:var(--saffron);color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:9px}
+  .tip::after{content:"";position:absolute;width:14px;height:14px;background:#fff;transform:rotate(45deg)}
+  .tip.below::after{top:-6px;left:28px}
+  .tip.above::after{bottom:-6px;left:28px}
+  /* coach overlay style 2: bottom callout card + pointer ring */
+  .ring{position:absolute;border:2.5px solid var(--saffron);border-radius:14px;box-shadow:0 0 0 4px rgba(232,136,58,.25)}
+  .callout{position:absolute;left:12px;right:12px;bottom:64px;background:var(--navy);color:#fff;border-radius:18px;padding:16px 18px;box-shadow:0 12px 34px rgba(0,0,0,.35)}
+  .callout .step{font-size:11px;color:var(--saffron);font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+  .callout h4{font-size:16px;font-weight:800;margin-bottom:5px}
+  .callout p{font-size:13px;opacity:.8;line-height:1.45;margin-bottom:14px}
+  .callout .row{display:flex;align-items:center;gap:12px}
+  .callout .prog{flex:1;height:5px;border-radius:5px;background:rgba(255,255,255,.18);position:relative;overflow:hidden}
+  .callout .prog i{position:absolute;left:0;top:0;bottom:0;width:50%;background:var(--saffron);border-radius:5px}
+  .callout .next{background:var(--saffron);color:#fff;font-size:13px;font-weight:700;padding:8px 18px;border-radius:11px}
+  /* handoff */
+  .banner{margin:0 12px 10px;background:linear-gradient(135deg,#fff8f0,#fdecd8);border:1px solid #f2d9bb;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px}
+  .banner .t{flex:1}
+  .banner .t b{font-size:12.5px;color:var(--navy);display:block}
+  .banner .t span{font-size:11px;color:var(--tSecondary)}
+  .banner .go{background:var(--saffron);color:#fff;font-size:12px;font-weight:700;padding:7px 12px;border-radius:10px;white-space:nowrap}
+  .auth{padding:70px 26px 26px;display:flex;flex-direction:column;height:100%;text-align:center}
+  .auth .logo{width:64px;height:64px;border-radius:18px;background:linear-gradient(140deg,#fff8f0,#fdecd8);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 18px}
+  .auth h3{font-size:22px;color:var(--navy);font-weight:800;margin-bottom:6px}
+  .auth p{font-size:13px;color:var(--tSecondary);margin-bottom:26px;line-height:1.5}
+  .auth .field{background:#fff;border:1px solid var(--border);border-radius:12px;padding:13px 14px;font-size:13px;color:var(--tTertiary);text-align:left;margin-bottom:11px}
+  .auth .apple{background:#111;color:#fff;border-radius:12px;padding:13px;font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px}
+  .anno{font-size:12px;color:var(--tSecondary);max-width:230px;margin:10px auto 0;text-align:center}
+  .flow-arrow{flex:0 0 auto;align-self:center;font-size:26px;color:var(--saffron);font-weight:800;display:flex;align-items:center}
+  .note{background:#fff;border:1px solid var(--border);border-left:4px solid var(--saffron);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--tSecondary);max-width:760px;margin-top:10px}
+  .note b{color:var(--navy)}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Meal Memory — Onboarding</h1>
+  <span class="pill">TRI-5 · mockups</span>
+  <nav>
+    <a href="#valueprops">Value props</a>
+    <a href="#coach">Coach marks</a>
+    <a href="#handoff">Handoff</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <p class="note" style="margin-bottom:34px">
+    <b>Pick a direction for each section.</b> Warm saffron/navy palette (matches the built app), Western self-cooking persona,
+    demo data re-skinned to familiar meals. Frames are iPhone-13-mini proportioned. Tell me which value-prop layout (A or B)
+    and which coach-mark style (1 or 2) to build — then I move to SwiftUI.
+  </p>
+
+  <!-- ============ VALUE PROPS ============ -->
+  <section id="valueprops">
+    <div class="section-head"><span class="tag">First launch</span><h2>Value-prop carousel</h2></div>
+    <p class="section-sub">Three promise slides + a "get started" slide, shown once on first launch, then it drops the user into the demo playground.</p>
+
+    <div class="option-label"><span class="badge">Option A</span><span class="desc">Illustration-led · full-bleed, big warm icon, one promise per screen</span></div>
+    <div class="frames">
+      <!-- A slide 1 -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="skip">Skip</div>
+        <div class="vp">
+          <div class="art">🗓️</div>
+          <h3>One household,<br>one plan</h3>
+          <p>Everyone at home sees the same weekly plan, synced instantly. No more group texts about dinner.</p>
+          <div class="spacer"></div>
+          <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
+          <button class="btn primary">Continue</button>
+        </div>
+      </div></div>
+      <!-- A slide 2 -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="skip">Skip</div>
+        <div class="vp">
+          <div class="art">🍽️</div>
+          <h3>No more<br>“what’s for dinner?”</h3>
+          <p>Plan breakfast, lunch and dinner for the week in a glanceable grid — decided once, not every night.</p>
+          <div class="spacer"></div>
+          <div class="dots"><i></i><i class="on"></i><i></i><i></i></div>
+          <button class="btn primary">Continue</button>
+        </div>
+      </div></div>
+      <!-- A slide 3 -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="skip">Skip</div>
+        <div class="vp">
+          <div class="art">🧑‍🍳</div>
+          <h3>Always know<br>what to cook</h3>
+          <p>Tell us what’s in your fridge and get instant ideas from your own recipes. Plus a tidy weekly grocery list.</p>
+          <div class="spacer"></div>
+          <div class="dots"><i></i><i></i><i class="on"></i><i></i></div>
+          <button class="btn primary">Continue</button>
+        </div>
+      </div></div>
+      <!-- A slide 4 -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="vp">
+          <div class="art">✨</div>
+          <h3>Have a look<br>around</h3>
+          <p>We’ve loaded a sample week so you can explore. Make it your own whenever you’re ready.</p>
+          <div class="spacer"></div>
+          <div class="dots"><i></i><i></i><i></i><i class="on"></i></div>
+          <button class="btn primary">Explore the app</button>
+          <button class="btn ghost">I already have an account</button>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="option-label"><span class="badge">Option B</span><span class="desc">Card-led · floating card on a warm field, kicker label, roomier for longer copy</span></div>
+    <div class="frames">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="skip">Skip</div>
+        <div class="vpB">
+          <div class="kicker">Meal Memory</div>
+          <div style="flex:1"></div>
+          <div class="card"><div class="ic">🗓️</div><h3>One household, one plan</h3><p>Everyone at home sees the same weekly plan, synced instantly. No more group texts about dinner.</p></div>
+          <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
+          <button class="btn primary">Continue</button>
+        </div>
+      </div></div>
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="skip">Skip</div>
+        <div class="vpB">
+          <div class="kicker">Meal Memory</div>
+          <div style="flex:1"></div>
+          <div class="card"><div class="ic">🍽️</div><h3>No more “what’s for dinner?”</h3><p>Plan breakfast, lunch and dinner for the whole week in a glanceable grid — decided once, not every night.</p></div>
+          <div class="dots"><i></i><i class="on"></i><i></i><i></i></div>
+          <button class="btn primary">Continue</button>
+        </div>
+      </div></div>
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="skip">Skip</div>
+        <div class="vpB">
+          <div class="kicker">Meal Memory</div>
+          <div style="flex:1"></div>
+          <div class="card"><div class="ic">🧑‍🍳</div><h3>Always know what to cook</h3><p>Tell us what’s in your fridge and get instant ideas from your own recipes — plus a tidy weekly grocery list.</p></div>
+          <div class="dots"><i></i><i></i><i class="on"></i><i></i></div>
+          <button class="btn primary">Continue</button>
+        </div>
+      </div></div>
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="vpB">
+          <div class="kicker">Meal Memory</div>
+          <div style="flex:1"></div>
+          <div class="card"><div class="ic">✨</div><h3>Have a look around</h3><p>We’ve loaded a sample week so you can explore. Make it your own whenever you’re ready.</p></div>
+          <div class="dots"><i></i><i></i><i></i><i class="on"></i></div>
+          <button class="btn primary">Explore the app</button>
+          <button class="btn ghost">I already have an account</button>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ COACH MARKS ============ -->
+  <section id="coach">
+    <div class="section-head"><span class="tag">First demo view</span><h2>Coach-mark tour</h2></div>
+    <p class="section-sub">A short guided sequence over the Plan tab — grid → “What can I cook?” → Add → Share. All four targets live on one screen. Two treatments below.</p>
+
+    <div class="option-label"><span class="badge">Style 1</span><span class="desc">Spotlight cutout + small tooltip anchored to the element (focused, precise)</span></div>
+    <div class="frames">
+      <!-- style1 step: grid -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="plan">
+          <div class="nav"><div class="title">This week</div><div class="spacer"></div><div class="chip add">＋</div><div class="chip share">⬆</div></div>
+          <div class="weeknav">‹ &nbsp;Mon Jul 6 – Sun Jul 12&nbsp; ›</div>
+          <div class="grid">
+            <div class="lblcol"><span>Break</span><span>Lunch</span><span>Dinner</span></div>
+            <div class="days">
+              <div class="day"><div class="dh">M</div><div class="cell f">🥣</div><div class="cell f">🌯</div><div class="cell f">🌮</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell f">🥞</div><div class="cell f">🥗</div><div class="cell f">🍝</div></div>
+              <div class="day"><div class="dh">W</div><div class="cell"></div><div class="cell f">🍱</div><div class="cell f">🍗</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell"></div><div class="cell f">🐟</div><div class="cell f">🌯</div></div>
+            </div>
+          </div>
+          <div class="hero">🥕 &nbsp;What can I cook?</div>
+          <div class="tabbar"><div class="on"><span class="i">📅</span>Plan</div><div><span class="i">📖</span>Recipes</div><div><span class="i">👥</span>Household</div></div>
+        </div>
+        <div class="overlay">
+          <div class="spot" style="top:96px;left:12px;right:12px;height:250px"></div>
+          <div class="tip below" style="top:356px;left:26px">
+            <h4>Your week at a glance</h4>
+            <p>Breakfast, lunch and dinner for every day — tap a slot to fill it.</p>
+            <div class="row"><span class="step">1 of 4</span><span class="next">Next →</span></div>
+          </div>
+        </div>
+      </div></div>
+      <!-- style1 step: hero -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="plan">
+          <div class="nav"><div class="title">This week</div><div class="spacer"></div><div class="chip add">＋</div><div class="chip share">⬆</div></div>
+          <div class="weeknav">‹ &nbsp;Mon Jul 6 – Sun Jul 12&nbsp; ›</div>
+          <div class="grid">
+            <div class="lblcol"><span>Break</span><span>Lunch</span><span>Dinner</span></div>
+            <div class="days">
+              <div class="day"><div class="dh">M</div><div class="cell f">🥣</div><div class="cell f">🌯</div><div class="cell f">🌮</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell f">🥞</div><div class="cell f">🥗</div><div class="cell f">🍝</div></div>
+              <div class="day"><div class="dh">W</div><div class="cell"></div><div class="cell f">🍱</div><div class="cell f">🍗</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell"></div><div class="cell f">🐟</div><div class="cell f">🌯</div></div>
+            </div>
+          </div>
+          <div class="hero">🥕 &nbsp;What can I cook?</div>
+          <div class="tabbar"><div class="on"><span class="i">📅</span>Plan</div><div><span class="i">📖</span>Recipes</div><div><span class="i">👥</span>Household</div></div>
+        </div>
+        <div class="overlay">
+          <div class="spot" style="bottom:60px;left:12px;right:12px;height:50px"></div>
+          <div class="tip above" style="bottom:120px;left:26px">
+            <h4>Stuck for ideas?</h4>
+            <p>Tell us what’s in your fridge and get instant recipe matches.</p>
+            <div class="row"><span class="step">2 of 4</span><span class="next">Next →</span></div>
+          </div>
+        </div>
+      </div></div>
+      <!-- style1 step: share -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="plan">
+          <div class="nav"><div class="title">This week</div><div class="spacer"></div><div class="chip add">＋</div><div class="chip share">⬆</div></div>
+          <div class="weeknav">‹ &nbsp;Mon Jul 6 – Sun Jul 12&nbsp; ›</div>
+          <div class="grid">
+            <div class="lblcol"><span>Break</span><span>Lunch</span><span>Dinner</span></div>
+            <div class="days">
+              <div class="day"><div class="dh">M</div><div class="cell f">🥣</div><div class="cell f">🌯</div><div class="cell f">🌮</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell f">🥞</div><div class="cell f">🥗</div><div class="cell f">🍝</div></div>
+              <div class="day"><div class="dh">W</div><div class="cell"></div><div class="cell f">🍱</div><div class="cell f">🍗</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell"></div><div class="cell f">🐟</div><div class="cell f">🌯</div></div>
+            </div>
+          </div>
+          <div class="hero">🥕 &nbsp;What can I cook?</div>
+          <div class="tabbar"><div class="on"><span class="i">📅</span>Plan</div><div><span class="i">📖</span>Recipes</div><div><span class="i">👥</span>Household</div></div>
+        </div>
+        <div class="overlay">
+          <div class="spot" style="top:52px;right:12px;width:44px;height:44px"></div>
+          <div class="tip below" style="top:104px;right:16px">
+            <h4>Share the plan</h4>
+            <p>Send the week as an image + text so everyone’s in sync.</p>
+            <div class="row"><span class="step">4 of 4</span><span class="next">Got it</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="option-label"><span class="badge">Style 2</span><span class="desc">Persistent bottom callout card + a highlight ring on the target (roomier copy, progress bar)</span></div>
+    <div class="frames">
+      <!-- style2 step: grid -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="plan">
+          <div class="nav"><div class="title">This week</div><div class="spacer"></div><div class="chip add">＋</div><div class="chip share">⬆</div></div>
+          <div class="weeknav">‹ &nbsp;Mon Jul 6 – Sun Jul 12&nbsp; ›</div>
+          <div class="grid">
+            <div class="lblcol"><span>Break</span><span>Lunch</span><span>Dinner</span></div>
+            <div class="days">
+              <div class="day"><div class="dh">M</div><div class="cell f">🥣</div><div class="cell f">🌯</div><div class="cell f">🌮</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell f">🥞</div><div class="cell f">🥗</div><div class="cell f">🍝</div></div>
+              <div class="day"><div class="dh">W</div><div class="cell"></div><div class="cell f">🍱</div><div class="cell f">🍗</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell"></div><div class="cell f">🐟</div><div class="cell f">🌯</div></div>
+            </div>
+          </div>
+          <div class="hero">🥕 &nbsp;What can I cook?</div>
+          <div class="tabbar"><div class="on"><span class="i">📅</span>Plan</div><div><span class="i">📖</span>Recipes</div><div><span class="i">👥</span>Household</div></div>
+        </div>
+        <div class="overlay">
+          <div class="scrim" style="background:rgba(20,25,40,.35)"></div>
+          <div class="ring" style="top:96px;left:12px;right:12px;height:250px"></div>
+          <div class="callout">
+            <div class="step">Step 1 of 4 · The grid</div>
+            <h4>Your week at a glance</h4>
+            <p>Every day’s breakfast, lunch and dinner in one view. Tap any slot to add a meal.</p>
+            <div class="row"><div class="prog"><i style="width:25%"></i></div><span class="next">Next</span></div>
+          </div>
+        </div>
+      </div></div>
+      <!-- style2 step: hero -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="plan">
+          <div class="nav"><div class="title">This week</div><div class="spacer"></div><div class="chip add">＋</div><div class="chip share">⬆</div></div>
+          <div class="weeknav">‹ &nbsp;Mon Jul 6 – Sun Jul 12&nbsp; ›</div>
+          <div class="grid">
+            <div class="lblcol"><span>Break</span><span>Lunch</span><span>Dinner</span></div>
+            <div class="days">
+              <div class="day"><div class="dh">M</div><div class="cell f">🥣</div><div class="cell f">🌯</div><div class="cell f">🌮</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell f">🥞</div><div class="cell f">🥗</div><div class="cell f">🍝</div></div>
+              <div class="day"><div class="dh">W</div><div class="cell"></div><div class="cell f">🍱</div><div class="cell f">🍗</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell"></div><div class="cell f">🐟</div><div class="cell f">🌯</div></div>
+            </div>
+          </div>
+          <div class="hero">🥕 &nbsp;What can I cook?</div>
+          <div class="tabbar"><div class="on"><span class="i">📅</span>Plan</div><div><span class="i">📖</span>Recipes</div><div><span class="i">👥</span>Household</div></div>
+        </div>
+        <div class="overlay">
+          <div class="scrim" style="background:rgba(20,25,40,.35)"></div>
+          <div class="ring" style="bottom:114px;left:12px;right:12px;height:50px"></div>
+          <div class="callout">
+            <div class="step">Step 2 of 4 · What can I cook?</div>
+            <h4>Stuck for ideas?</h4>
+            <p>Tell us what’s in your fridge and get instant matches from your own recipes.</p>
+            <div class="row"><div class="prog"><i style="width:50%"></i></div><span class="next">Next</span></div>
+          </div>
+        </div>
+      </div></div>
+      <!-- style2 step: add -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="plan">
+          <div class="nav"><div class="title">This week</div><div class="spacer"></div><div class="chip add">＋</div><div class="chip share">⬆</div></div>
+          <div class="weeknav">‹ &nbsp;Mon Jul 6 – Sun Jul 12&nbsp; ›</div>
+          <div class="grid">
+            <div class="lblcol"><span>Break</span><span>Lunch</span><span>Dinner</span></div>
+            <div class="days">
+              <div class="day"><div class="dh">M</div><div class="cell f">🥣</div><div class="cell f">🌯</div><div class="cell f">🌮</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell f">🥞</div><div class="cell f">🥗</div><div class="cell f">🍝</div></div>
+              <div class="day"><div class="dh">W</div><div class="cell"></div><div class="cell f">🍱</div><div class="cell f">🍗</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell"></div><div class="cell f">🐟</div><div class="cell f">🌯</div></div>
+            </div>
+          </div>
+          <div class="hero">🥕 &nbsp;What can I cook?</div>
+          <div class="tabbar"><div class="on"><span class="i">📅</span>Plan</div><div><span class="i">📖</span>Recipes</div><div><span class="i">👥</span>Household</div></div>
+        </div>
+        <div class="overlay">
+          <div class="scrim" style="background:rgba(20,25,40,.35)"></div>
+          <div class="ring" style="top:50px;right:52px;width:38px;height:38px"></div>
+          <div class="callout">
+            <div class="step">Step 3 of 4 · Add</div>
+            <h4>Build your library</h4>
+            <p>Add recipes by hand, from a photo, or paste a link — then drop them into the week.</p>
+            <div class="row"><div class="prog"><i style="width:75%"></i></div><span class="next">Next</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ HANDOFF ============ -->
+  <section id="handoff">
+    <div class="section-head"><span class="tag">Demo → real account</span><h2>“Make it yours” handoff</h2></div>
+    <p class="section-sub">Today this is a single button buried in the Household tab. Plan: surface it (final coach step + a slim persistent demo banner), then keep the existing sign-up → create-household path with tightened copy so it reads as one flow. Not a variant pick — this is the target sequence.</p>
+    <div class="frames" style="align-items:center">
+      <!-- demo banner -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="plan">
+          <div class="nav"><div class="title">This week</div><div class="spacer"></div><div class="chip add">＋</div><div class="chip share">⬆</div></div>
+          <div class="banner"><div class="t"><b>You’re exploring a sample week</b><span>Your data stays private when you sign up.</span></div><div class="go">Make it yours →</div></div>
+          <div class="weeknav">‹ &nbsp;Mon Jul 6 – Sun Jul 12&nbsp; ›</div>
+          <div class="grid">
+            <div class="lblcol"><span>Break</span><span>Lunch</span><span>Dinner</span></div>
+            <div class="days">
+              <div class="day"><div class="dh">M</div><div class="cell f">🥣</div><div class="cell f">🌯</div><div class="cell f">🌮</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell f">🥞</div><div class="cell f">🥗</div><div class="cell f">🍝</div></div>
+              <div class="day"><div class="dh">W</div><div class="cell"></div><div class="cell f">🍱</div><div class="cell f">🍗</div></div>
+              <div class="day"><div class="dh">T</div><div class="cell"></div><div class="cell f">🐟</div><div class="cell f">🌯</div></div>
+            </div>
+          </div>
+          <div class="hero">🥕 &nbsp;What can I cook?</div>
+          <div class="tabbar"><div class="on"><span class="i">📅</span>Plan</div><div><span class="i">📖</span>Recipes</div><div><span class="i">👥</span>Household</div></div>
+        </div>
+      </div></div>
+      <div class="flow-arrow">→</div>
+      <!-- auth -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="auth">
+          <div class="logo">🍳</div>
+          <h3>Make it yours</h3>
+          <p>Create a free account to save your own recipes and plan — your sample week won’t carry over.</p>
+          <div class="apple"> Sign in with Apple</div>
+          <div class="field">Continue with Google</div>
+          <div class="field">Email address</div>
+          <button class="btn primary" style="margin-top:4px">Continue</button>
+        </div>
+      </div></div>
+      <div class="flow-arrow">→</div>
+      <!-- create household -->
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="auth">
+          <div class="logo">🏡</div>
+          <h3>Name your household</h3>
+          <p>This is the shared space you’ll plan meals in. Invite others anytime.</p>
+          <div class="field">e.g. The Miller Kitchen</div>
+          <button class="btn primary" style="margin-top:4px">Create household</button>
+          <div class="anno">Lands on an empty, real Plan — ready for your first recipe.</div>
+        </div>
+      </div></div>
+    </div>
+    <div class="note"><b>Behavior:</b> tapping “Make it yours” sets <code>demo_mode_active=false</code> and clears demo data (<code>AppState.clearHousehold()</code>), so the new household starts empty. The banner shows only in demo mode; once real, it’s replaced by the normal invite UI.</div>
+  </section>
+
+</div>
+</body>
+</html>

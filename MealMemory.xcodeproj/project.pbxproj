@@ -33,6 +33,7 @@
 		8A8809B061EFB1494A8DE227 /* AddRecipeSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513CEF81F7C7D7C2519A0BC5 /* AddRecipeSheetView.swift */; };
 		90E782D8D4F6C51FE0B52764 /* RecipeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08A75C07AC2A4954C669AE0 /* RecipeService.swift */; };
 		9B2AA3A9CA3A74F18AD062E3 /* GroceryTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF6D219C7C66FBAD25A2F81 /* GroceryTabView.swift */; };
+		9DC376C20986CAD8300FC108 /* CoachMarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76570DA4549F1270ADF46F69 /* CoachMarkView.swift */; };
 		AFE059F39432442CEFD06A81 /* AddRecipeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB538A9A4991CBAAEF20B84 /* AddRecipeViewModel.swift */; };
 		B6F88B9399F55BE2061F1743 /* EmergencyModeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A645EA0CF7F6966A8F2C9C /* EmergencyModeViewModel.swift */; };
 		B87849166BB3B874B53E20B7 /* WeekGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35ED6E7A2D17A428C492F462 /* WeekGridView.swift */; };
@@ -45,6 +46,7 @@
 		E72CDEA5E68499F74B856066 /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A97A23DCC3CAB44E53F910 /* SupabaseClient.swift */; };
 		ED5C8A991C6FFC1E49F43471 /* ImportCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA64266A592E2D54D4ECE35 /* ImportCoordinator.swift */; };
 		F2A6ED9CED84021330F15531 /* OnboardingEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83EE8E6FA978997C0C063C9F /* OnboardingEmptyStateView.swift */; };
+		F78DF981C31AC4E00B5970D0 /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540FC30F9E88DFEF1297BE36 /* OnboardingFlowView.swift */; };
 		F9BF2FDA701D9989F706D61F /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E00481A9208E46B0A42345 /* AuthService.swift */; };
 /* End PBXBuildFile section */
 
@@ -92,7 +94,9 @@
 		5138B1293AA3BD46C2F878F6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		513CEF81F7C7D7C2519A0BC5 /* AddRecipeSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecipeSheetView.swift; sourceTree = "<group>"; };
 		51F44657A8DDE730A3F1FA12 /* RecipeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailView.swift; sourceTree = "<group>"; };
+		540FC30F9E88DFEF1297BE36 /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
 		5C3FA85D038817EBE3CF4A4B /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		76570DA4549F1270ADF46F69 /* CoachMarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachMarkView.swift; sourceTree = "<group>"; };
 		79A97A23DCC3CAB44E53F910 /* SupabaseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClient.swift; sourceTree = "<group>"; };
 		83EE8E6FA978997C0C063C9F /* OnboardingEmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingEmptyStateView.swift; sourceTree = "<group>"; };
 		8B50D7A8C6946947C782F4E2 /* MealMemoryShareExt.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MealMemoryShareExt.entitlements; sourceTree = "<group>"; };
@@ -219,6 +223,7 @@
 			children = (
 				E50AD534EA8437E024AB112D /* Grocery */,
 				21950E6A5485F09BDB1D3C71 /* Household */,
+				E28122064D107C25763815F9 /* Onboarding */,
 				F0C4B411858CC7095703E78B /* Plan */,
 				B8E33DE0622977AC0F27A01D /* Recipes */,
 				C7835842217BD387B9C50B38 /* Shared */,
@@ -279,6 +284,15 @@
 				FBA969A0CA627A1BDB36468A /* MainTabView.swift */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		E28122064D107C25763815F9 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				76570DA4549F1270ADF46F69 /* CoachMarkView.swift */,
+				540FC30F9E88DFEF1297BE36 /* OnboardingFlowView.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 		E50AD534EA8437E024AB112D /* Grocery */ = {
@@ -417,6 +431,7 @@
 				64739792580FE5C1A14C0EE0 /* AppDelegate.swift in Sources */,
 				F9BF2FDA701D9989F706D61F /* AuthService.swift in Sources */,
 				BDE12FA7717D234E2C59A94E /* AuthView.swift in Sources */,
+				9DC376C20986CAD8300FC108 /* CoachMarkView.swift in Sources */,
 				5CFCFFEC2BA4E4355B935470 /* DemoData.swift in Sources */,
 				6ED137B393533933F9698997 /* EmergencyModeView.swift in Sources */,
 				B6F88B9399F55BE2061F1743 /* EmergencyModeViewModel.swift in Sources */,
@@ -435,6 +450,7 @@
 				7EEC9ED114A30F9922A0D479 /* MonthCalendarView.swift in Sources */,
 				E6EE001CF9D52FF7E054C1AD /* NotificationService.swift in Sources */,
 				F2A6ED9CED84021330F15531 /* OnboardingEmptyStateView.swift in Sources */,
+				F78DF981C31AC4E00B5970D0 /* OnboardingFlowView.swift in Sources */,
 				DD407F5DCAB69183812FF544 /* PlanTabView.swift in Sources */,
 				D74C9C6387D9043583C4C1E2 /* RecipeBankView.swift in Sources */,
 				4F7E2CCF1EA06AD211096964 /* RecipeDetailView.swift in Sources */,
