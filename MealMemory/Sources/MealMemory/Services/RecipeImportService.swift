@@ -21,11 +21,8 @@ final class RecipeImportService {
         }
         lastImportDate = Date()
 
-        // Resolve Pinterest links (follow redirects to source blog URL)
-        let resolvedURL = url.host?.contains("pinterest") == true
-            ? try await resolveRedirects(url)
-            : url
-
+        // Any link (recipe site, Pinterest, Instagram, TikTok, YouTube) goes
+        // straight to the Edge Function, which routes by host and resolves it.
         // Call Supabase Edge Function (bypasses mobile CORS)
         guard
             let supabaseURL = Bundle.main.object(forInfoDictionaryKey: "SUPABASE_URL") as? String,
@@ -41,11 +38,17 @@ final class RecipeImportService {
             request.setValue("Bearer \(session.accessToken)", forHTTPHeaderField: "Authorization")
         }
 
-        let body = try JSONSerialization.data(withJSONObject: ["url": resolvedURL.absoluteString])
-        request.httpBody = body
+        request.httpBody = try JSONSerialization.data(withJSONObject: ["url": url.absoluteString])
 
         let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        guard let httpResponse = response as? HTTPURLResponse else { throw ImportError.fetchFailed }
+        guard httpResponse.statusCode == 200 else {
+            // Surface the source-specific message the function returns (e.g.
+            // "Couldn't read a recipe from that TikTok…").
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let message = json["error"] as? String {
+                throw ImportError.serverMessage(message)
+            }
             throw ImportError.fetchFailed
         }
 
@@ -59,28 +62,29 @@ final class RecipeImportService {
             throw ImportError.parseFailed
         }
         let name        = json["name"] as? String ?? ""
+        let emoji       = json["emoji"] as? String
         let ingredients = json["ingredients"] as? [String] ?? []
         let steps       = json["steps"] as? [String] ?? []
         guard !name.isEmpty else { throw ImportError.parseFailed }
-        return ImportedRecipe(name: name, emoji: nil, ingredients: ingredients, steps: steps)
-    }
-
-    private func resolveRedirects(_ url: URL) async throws -> URL {
-        var request = URLRequest(url: url)
-        request.httpMethod = "HEAD"
-        let (_, response) = try await URLSession.shared.data(for: request)
-        return response.url ?? url
+        return ImportedRecipe(
+            name: name,
+            emoji: (emoji?.isEmpty == false) ? emoji : nil,
+            ingredients: ingredients,
+            steps: steps,
+        )
     }
 
     enum ImportError: LocalizedError {
         case rateLimited, configuration, fetchFailed, parseFailed
+        case serverMessage(String)
 
         var errorDescription: String? {
             switch self {
             case .rateLimited:   return "Please wait a moment before importing another recipe."
             case .configuration: return "App configuration error — missing Supabase URL."
-            case .fetchFailed:   return "Couldn't reach that recipe URL."
-            case .parseFailed:   return "Couldn't extract a recipe from that page."
+            case .fetchFailed:   return "Couldn't reach the import service. Check your connection."
+            case .parseFailed:   return "Couldn't extract a recipe from that link."
+            case .serverMessage(let m): return m
             }
         }
     }

@@ -102,6 +102,13 @@ final class AddRecipeViewModel: ObservableObject {
 
     // MARK: - URL Import
 
+    /// Entry point for the Share Extension handoff: switch to URL mode and run
+    /// the import automatically for a link shared from another app.
+    func `import`(from url: URL) async {
+        entryMethod = .url
+        await importURL(url.absoluteString)
+    }
+
     func importURL(_ urlString: String) async {
         if DemoData.isDemoMode {
             importError = "URL import requires signing in. Tap \"Start fresh\" in the Household tab to create your account."
@@ -124,7 +131,8 @@ final class AddRecipeViewModel: ObservableObject {
                 ? [RecipeStep(text: "", hoursBefore: 0)]
                 : result.steps.map { RecipeStep(text: $0, hoursBefore: 0) }
         } catch {
-            importError = "Couldn't fetch that recipe. Try copying the text manually."
+            // Surface the source-specific message from the import service.
+            importError = error.localizedDescription
         }
     }
 

@@ -20,6 +20,8 @@ targets:
       - path: MealMemory/Sources/MealMemory
       - path: MealMemory/Resources/Assets.xcassets
         buildPhase: resources
+      - path: MealMemory/Resources/PrivacyInfo.xcprivacy
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.puneetjain.mealmemory
@@ -39,16 +41,47 @@ targets:
           UIColorName: ""
         UISupportedInterfaceOrientations~iphone:
           - UIInterfaceOrientationPortrait
+        CFBundleDisplayName: "Meal Memory"
         NSCameraUsageDescription: "Meal Memory uses the camera to scan recipe cards and ingredient lists."
         NSPhotoLibraryUsageDescription: "Meal Memory reads photos so you can import recipe photos from your library."
+        ITSAppUsesNonExemptEncryption: false
         SUPABASE_URL: ""             # Fill in before build
         SUPABASE_ANON_KEY: ""        # Fill in before build
         UIBackgroundModes:
           - remote-notification
+        CFBundleURLTypes:
+          - CFBundleURLName: com.puneetjain.mealmemory
+            CFBundleURLSchemes:
+              - mealmemory
     entitlements:
       path: MealMemory/MealMemory.entitlements
       properties:
         aps-environment: development
+        com.apple.security.application-groups:
+          - group.com.puneetjain.mealmemory
     dependencies:
       - package: Supabase
         product: Supabase
+      - target: MealMemoryShareExt
+
+  MealMemoryShareExt:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: ShareExtension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.puneetjain.mealmemory.ShareExt
+        SWIFT_VERSION: "5.9"
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1"
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        INFOPLIST_FILE: ShareExtension/Info.plist
+        PRODUCT_NAME: MealMemoryShareExt
+    entitlements:
+      path: ShareExtension/MealMemoryShareExt.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.puneetjain.mealmemory

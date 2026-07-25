@@ -48,15 +48,16 @@ struct RecipeDetailView: View {
                         ].compactMap { $0 }.joined(separator: " · "))
                             .font(Theme.Font.caption())
                             .foregroundColor(Theme.textSecondary)
-                        if let url = recipe.sourceUrl, !url.isEmpty {
-                            Text("From a recipe link")
-                                .font(Theme.Font.caption())
-                                .foregroundColor(Theme.saffron)
-                        }
                     }
                     Spacer()
                 }
                 .padding(.top, 8)
+
+                // Imported-recipe source link (TRI-27)
+                if let source = RecipeSource.detect(from: recipe.sourceUrl),
+                   let url = recipe.sourceUrl {
+                    SourceLinkButton(source: source, urlString: url)
+                }
 
                 // Dietary tags
                 if !recipe.safeForTags.isEmpty {

@@ -280,6 +280,10 @@ struct RecipeRowView: View {
                 ].compactMap { $0 }.joined(separator: " · "))
                     .font(Theme.Font.caption())
                     .foregroundColor(Theme.textSecondary)
+
+                if let source = RecipeSource.detect(from: recipe.sourceUrl) {
+                    SourceChip(source: source)
+                }
             }
 
             Spacer()

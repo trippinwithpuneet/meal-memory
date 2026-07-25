@@ -48,45 +48,84 @@ final class MealPlanViewModel: ObservableObject {
         return "\(f.string(from: first)) – \(lastF.string(from: last))"
     }
 
+    // MARK: - Weekly plan (shared)
+
+    /// A planned meal within a day.
+    struct PlannedMeal { let type: MealType; let recipe: Recipe }
+    /// A day that has at least one filled meal, meals in breakfast→lunch→dinner order.
+    struct PlannedDay { let date: Date; let meals: [PlannedMeal] }
+
+    /// Structured week plan — only days that have ≥1 filled meal.
+    /// Backs both the share image (TRI-6) and the text/grocery exports.
+    func weeklyPlan() -> [PlannedDay] {
+        weekDays.compactMap { day in
+            let meals: [PlannedMeal] = MealType.allCases.compactMap { mealType in
+                let key = "\(DateFormatter.isoDate.string(from: day))-\(mealType.rawValue)"
+                guard let slot = slots[key], let id = slot.recipeId, let recipe = recipes[id] else { return nil }
+                return PlannedMeal(type: mealType, recipe: recipe)
+            }
+            return meals.isEmpty ? nil : PlannedDay(date: day, meals: meals)
+        }
+    }
+
+    /// Day-wise plan as WhatsApp-friendly text — shared alongside the image (TRI-6).
+    /// Deliberately excludes the grocery list (that's the standalone TRI-11 feature).
+    func weeklyPlanText() -> String {
+        let dayName = DateFormatter()
+        dayName.dateFormat = "EEEE"
+
+        let plan = weeklyPlan()
+        var text = "🍽️ \(weekTitle)\n"
+        if plan.isEmpty {
+            text += "\n(nothing planned yet)\n"
+        } else {
+            for day in plan {
+                text += "\n\(dayName.string(from: day.date))\n"
+                for meal in day.meals {
+                    text += "\(meal.recipe.emoji) \(meal.type.shortLabel): \(meal.recipe.name)\n"
+                }
+            }
+        }
+        text += "\nSent from Meal Memory"
+        return text
+    }
+
     // MARK: - Grocery list
+    //
+    // Still used by the current share button until TRI-11 lands the standalone,
+    // categorized grocery-list feature. Reuses `weeklyPlan()` for the plan lines.
 
     func weeklyGroceryList() -> String {
         let dayFormatter = DateFormatter()
         dayFormatter.dateFormat = "EEE"
 
-        var planLines: [String] = []
-        for day in weekDays {
-            for mealType in MealType.allCases {
-                let key = "\(DateFormatter.isoDate.string(from: day))-\(mealType.rawValue)"
-                if let slot = slots[key], let id = slot.recipeId, let recipe = recipes[id] {
-                    planLines.append("\(dayFormatter.string(from: day)) \(mealType.shortLabel): \(recipe.emoji) \(recipe.name)")
+        let plan = weeklyPlan()
+
+        var text = "📅 \(weekTitle)\n"
+        if plan.isEmpty {
+            text += "(nothing planned yet)\n"
+        } else {
+            for day in plan {
+                for meal in day.meals {
+                    text += "\(dayFormatter.string(from: day.date)) \(meal.type.shortLabel): \(meal.recipe.emoji) \(meal.recipe.name)\n"
                 }
             }
         }
 
         var seen = Set<String>()
         var ingredients: [String] = []
-        for day in weekDays {
-            for mealType in MealType.allCases {
-                let key = "\(DateFormatter.isoDate.string(from: day))-\(mealType.rawValue)"
-                if let slot = slots[key], let id = slot.recipeId, let recipe = recipes[id] {
-                    for ingredient in recipe.ingredients {
-                        let normalised = ingredient.trimmingCharacters(in: .whitespaces)
-                        guard !normalised.isEmpty else { continue }
-                        if seen.insert(normalised.lowercased()).inserted {
-                            ingredients.append(normalised)
-                        }
+        for day in plan {
+            for meal in day.meals {
+                for ingredient in meal.recipe.ingredients {
+                    let normalised = ingredient.trimmingCharacters(in: .whitespaces)
+                    guard !normalised.isEmpty else { continue }
+                    if seen.insert(normalised.lowercased()).inserted {
+                        ingredients.append(normalised)
                     }
                 }
             }
         }
 
-        var text = "📅 \(weekTitle)\n"
-        if planLines.isEmpty {
-            text += "(nothing planned yet)\n"
-        } else {
-            text += planLines.joined(separator: "\n") + "\n"
-        }
         text += "\n🛒 Groceries\n"
         if ingredients.isEmpty {
             text += "(no ingredients to list)\n"
