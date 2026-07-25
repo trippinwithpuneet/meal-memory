@@ -16,6 +16,11 @@ struct MainTabView: View {
                     Label("Recipes", systemImage: "book.closed")
                 }
 
+            GroceryTabView(householdId: householdId)
+                .tabItem {
+                    Label("Shop", systemImage: "cart")
+                }
+
             HouseholdView(householdId: householdId)
                 .tabItem {
                     Label("Household", systemImage: "person.2")
