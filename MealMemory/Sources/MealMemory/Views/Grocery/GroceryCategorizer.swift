@@ -49,15 +49,8 @@ enum GroceryCategorizer {
             "cream", "bread", "sourdough", "bun", "tortilla", "naan", "pita",
             "mozzarella", "parmesan", "feta", "bagel"
         ]),
-        (.fruitVeg, [
-            "tomato", "avocado", "onion", "shallot", "scallion", "garlic", "ginger",
-            "bell pepper", "red pepper", "green pepper", "peppers", "chilli", "chili",
-            "broccoli", "spinach", "lettuce", "cucumber", "lime", "lemon", "orange",
-            "mandarin", "apple", "banana", "berry", "berries", "carrot", "celery",
-            "potato", "beet", "mushroom", "zucchini", "courgette", "corn", "pea",
-            "cilantro", "coriander", "parsley", "basil", "herb", "kale", "cabbage",
-            "greens", "salad", "lime", "cauliflower", "asparagus", "leek"
-        ]),
+        // Pantry is checked BEFORE produce so canned legumes (chickpeas, beans,
+        // lentils) don't get caught by the produce "pea"/"bean" substrings.
         (.dryPantry, [
             "rice", "pasta", "spaghetti", "noodle", "flour", "sugar", "oil", "salt",
             "black pepper", "peppercorn", "bean", "chickpea", "lentil", "dal",
@@ -66,6 +59,15 @@ enum GroceryCategorizer {
             "baking powder", "honey", "syrup", "chia", "seed", "almond", "nut",
             "canned", "can ", "tomato paste", "coconut", "sauce", "mustard", "mayo",
             "ketchup", "sesame", "spice", "stock cube", "couscous", "tinned"
+        ]),
+        (.fruitVeg, [
+            "tomato", "avocado", "onion", "shallot", "scallion", "garlic", "ginger",
+            "bell pepper", "red pepper", "green pepper", "peppers", "chilli", "chili",
+            "broccoli", "spinach", "lettuce", "cucumber", "lime", "lemon", "orange",
+            "mandarin", "apple", "banana", "berry", "berries", "carrot", "celery",
+            "potato", "beet", "mushroom", "zucchini", "courgette", "corn", "pea",
+            "cilantro", "coriander", "parsley", "basil", "herb", "kale", "cabbage",
+            "greens", "salad", "lime", "cauliflower", "asparagus", "leek"
         ])
     ]
 
