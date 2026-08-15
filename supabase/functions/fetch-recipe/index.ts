@@ -1,15 +1,27 @@
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+// Pure helpers live in lib.ts so the eval suite can import them without booting
+// the Deno server. See evals/backend/.
+import {
+  assertPublicHost,
+  BROWSER_UA,
+  buildClaudeRequestBody,
+  classify,
+  decodeText,
+  extractJSONLD,
+  instagramCaptionFromEmbed,
+  instagramShortcode,
+  type Recipe,
+  recipeLinkCandidates,
+  type SourceType,
+  sourceMessage,
+  SsrfError,
+  stripToText,
+  tiktokDescriptionFromHtml,
+} from "./lib.ts";
 
 const RATE_LIMIT_SECONDS = 5;
 const lastImportByHousehold = new Map<string, number>();
-
-// Browser-like UA — social sites serve minimal/blocked HTML to bot UAs.
-const BROWSER_UA =
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15";
-
-type Recipe = { name: string; emoji: string; ingredients: string[]; steps: string[] };
-type SourceType = "instagram" | "tiktok" | "youtube" | "pinterest" | "web";
 
 serve(async (req) => {
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
@@ -70,15 +82,6 @@ serve(async (req) => {
 });
 
 // ─── Router ──────────────────────────────────────────────────────────────────
-function classify(host: string): SourceType {
-  const h = host.replace(/^www\./, "").toLowerCase();
-  if (h.endsWith("instagram.com") || h === "instagr.am") return "instagram";
-  if (h.endsWith("tiktok.com")) return "tiktok";
-  if (h.endsWith("youtube.com") || h === "youtu.be") return "youtube";
-  if (h.endsWith("pinterest.com") || h.endsWith("pin.it")) return "pinterest";
-  return "web";
-}
-
 async function resolve(source: SourceType, url: URL): Promise<Recipe | null> {
   switch (source) {
     case "instagram": return parseWithClaude(await resolveInstagram(url), "instagram");
@@ -115,14 +118,12 @@ async function resolvePinterest(url: URL): Promise<URL> {
 
 // ─── Instagram: no-auth caption via the /embed/captioned/ endpoint ───────────
 async function resolveInstagram(url: URL): Promise<string> {
-  const code = url.pathname.match(/\/(?:p|reel|reels|tv)\/([^/]+)/)?.[1];
+  const code = instagramShortcode(url.pathname);
   if (!code) throw new Error("no shortcode");
   const html = await fetchText(
     `https://www.instagram.com/p/${code}/embed/captioned/`, BROWSER_UA,
   );
-  const captionDiv = html.match(/class="Caption"[\s\S]*?>([\s\S]*?)<\/div>\s*<\/div>/)?.[1];
-  const raw = captionDiv ?? html.match(/"edge_media_to_caption".*?"text"\s*:\s*"([\s\S]*?)"\s*}/)?.[1];
-  const text = decodeText(stripToText(raw ?? ""));
+  const text = instagramCaptionFromEmbed(html);
   if (!text) throw new Error("empty caption");
   return text;
 }
@@ -138,9 +139,8 @@ async function resolveTikTok(url: URL): Promise<string> {
   } catch { /* oEmbed can 4xx on private/removed videos */ }
   try {
     const html = await fetchText(url.toString(), BROWSER_UA);
-    const desc = html.match(/"desc"\s*:\s*"([\s\S]*?)"\s*,/)?.[1] ??
-      html.match(/<meta[^>]+property="og:description"[^>]+content="([^"]+)"/i)?.[1];
-    if (desc) parts.push(decodeText(desc));
+    const desc = tiktokDescriptionFromHtml(html);
+    if (desc) parts.push(desc);
   } catch { /* page fetch best-effort */ }
   const text = decodeText(parts.join("\n").trim());
   if (!text) throw new Error("no tiktok text");
@@ -177,18 +177,6 @@ async function resolveYouTubeRecipe(url: URL): Promise<Recipe | null> {
   return parseWithClaude(text, "youtube");
 }
 
-// Pull likely recipe-page links from a video description, skipping affiliate,
-// shop, and social links. Prefer a link explicitly labelled "RECIPE".
-function recipeLinkCandidates(desc: string): string[] {
-  const skip =
-    /amzn\.to|amazon\.|instagram\.com|tiktok\.com|youtube\.com|youtu\.be|patreon|ko-?fi|linktr|facebook\.com|twitter\.com|x\.com|pinterest\.|bit\.ly|\/shop|\/store/i;
-  const clean = (u: string) => u.replace(/[)\].,]+$/, "");
-  const all = (desc.match(/https?:\/\/[^\s)]+/g) ?? []).map(clean).filter((u) => !skip.test(u));
-  const labeled = desc.match(/recipes?\b[:\s]+\s*(https?:\/\/[^\s)]+)/i)?.[1];
-  const ordered = labeled && !skip.test(labeled) ? [clean(labeled), ...all] : all;
-  return [...new Set(ordered)].slice(0, 2); // bound to 2 fetches
-}
-
 async function fetchYouTubeTranscript(watchHtml: string): Promise<string> {
   const base = watchHtml.match(/"captionTracks":\[\{"baseUrl":"([^"]+)"/)?.[1];
   if (!base) return "";
@@ -221,32 +209,7 @@ async function parseWithClaude(text: string, source: SourceType): Promise<Recipe
       "x-api-key": apiKey,
       "anthropic-version": "2023-06-01",
     },
-    body: JSON.stringify({
-      model: "claude-haiku-4-5",
-      max_tokens: 2048, // headroom so a long recipe doesn't truncate → invalid JSON
-      output_config: {
-        format: {
-          type: "json_schema",
-          schema: {
-            type: "object",
-            additionalProperties: false,
-            properties: {
-              name: { type: "string" },
-              emoji: { type: "string" },
-              ingredients: { type: "array", items: { type: "string" } },
-              steps: { type: "array", items: { type: "string" } },
-            },
-            required: ["name", "emoji", "ingredients", "steps"],
-          },
-        },
-      },
-      system:
-        "Extract a cooking recipe from the text (a social caption, video description, or web page). " +
-        "Return the dish name, a single representative food emoji, an ingredients list, and ordered steps. " +
-        "Clean out hashtags, @mentions, promo/links, and filler. If the text contains no recipe, " +
-        'return {"name":"","emoji":"","ingredients":[],"steps":[]}.',
-      messages: [{ role: "user", content: `Source: ${source}\n\n${text}` }],
-    }),
+    body: JSON.stringify(buildClaudeRequestBody(text, source)),
   }, 20000);
 
   if (!res.ok) throw new Error(`anthropic ${res.status}: ${await res.text()}`);
@@ -255,34 +218,6 @@ async function parseWithClaude(text: string, source: SourceType): Promise<Recipe
   if (!block) return null;
   const parsed = JSON.parse(block.text) as Recipe;
   return parsed.name ? parsed : null;
-}
-
-// ─── JSON-LD (unchanged fast path) ───────────────────────────────────────────
-function extractJSONLD(html: string): Recipe | null {
-  // Allow extra attributes on the tag (Yoast/WP Recipe Maker add class=…).
-  const matches = html.matchAll(
-    /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi,
-  );
-  for (const m of matches) {
-    try {
-      const data = JSON.parse(m[1]);
-      const recipes: any[] = [];
-      if (data["@type"] === "Recipe") recipes.push(data);
-      if (Array.isArray(data["@graph"])) {
-        recipes.push(...data["@graph"].filter((n: any) => n["@type"] === "Recipe"));
-      }
-      if (recipes.length) {
-        const r = recipes[0];
-        return {
-          name: r.name ?? "",
-          emoji: "",
-          ingredients: normalizeIngredients(r.recipeIngredient),
-          steps: normalizeSteps(r.recipeInstructions),
-        };
-      }
-    } catch { continue; }
-  }
-  return null;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -308,68 +243,6 @@ async function fetchJSON(url: string): Promise<any> {
   const res = await timedFetch(url, { headers: { "User-Agent": BROWSER_UA } }, 10000);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
-}
-
-function stripToText(html: string): string {
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style[\s\S]*?<\/style>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-// Decode HTML entities + JSON \uXXXX / \n escapes that survive regex extraction.
-function decodeText(s: string): string {
-  return s
-    .replace(/\\u([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)))
-    .replace(/\\n/g, "\n").replace(/\\t/g, " ").replace(/\\"/g, '"').replace(/\\\//g, "/")
-    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, " ")
-    .replace(/\s+\n/g, "\n").trim();
-}
-
-function normalizeIngredients(raw: any): string[] {
-  return Array.isArray(raw) ? raw.map(String) : [];
-}
-function normalizeSteps(raw: any): string[] {
-  if (!raw) return [];
-  if (typeof raw === "string") return [raw];
-  if (!Array.isArray(raw)) return [];
-  const out: string[] = [];
-  for (const s of raw) {
-    if (typeof s === "string") out.push(s);
-    else if (s?.["@type"] === "HowToStep") out.push(s.text ?? "");
-    // Recipes grouped into sections nest their steps in itemListElement.
-    else if (s?.["@type"] === "HowToSection" && Array.isArray(s.itemListElement)) {
-      for (const st of s.itemListElement) {
-        if (typeof st === "string") out.push(st);
-        else if (st?.text) out.push(st.text);
-      }
-    } else if (s?.text) out.push(s.text);
-  }
-  return out.filter(Boolean);
-}
-
-class SsrfError extends Error {}
-function assertPublicHost(host: string) {
-  const h = host.toLowerCase().replace(/:\d+$/, "");
-  if (
-    h === "localhost" || h.endsWith(".local") || h.endsWith(".internal") ||
-    /^127\./.test(h) || /^10\./.test(h) || /^192\.168\./.test(h) ||
-    /^172\.(1[6-9]|2\d|3[01])\./.test(h) || /^169\.254\./.test(h) || h === "0.0.0.0" || h === "::1"
-  ) throw new SsrfError(h);
-}
-
-function sourceMessage(source: SourceType): string {
-  if (source === "youtube") {
-    return "This video has no recipe in its description. Try one where the creator wrote out the recipe, or paste it manually.";
-  }
-  const label: Record<SourceType, string> = {
-    instagram: "that Instagram post", tiktok: "that TikTok",
-    youtube: "that YouTube video", pinterest: "that Pin", web: "that page",
-  };
-  return `Couldn't read a recipe from ${label[source]}. Try pasting the recipe text manually.`;
 }
 
 function json(body: unknown, status: number): Response {

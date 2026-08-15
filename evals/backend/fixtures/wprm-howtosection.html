@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <title>Chana Salad - Sample Food Blog</title>
+  <!-- WP Recipe Maker groups steps into HowToSection. Before the flattening fix
+       this returned zero steps. -->
+  <script type='application/ld+json' class="wprm-recipe-schema">
+  {
+    "@context": "https://schema.org",
+    "@type": "Recipe",
+    "name": "Chana Salad",
+    "recipeIngredient": [
+      "1 can chickpeas, drained",
+      "1 cucumber, diced",
+      "2 tomatoes, diced",
+      "1/2 red onion, finely chopped",
+      "1 lemon, juiced",
+      "1/4 cup chopped cilantro",
+      "1 tsp cumin"
+    ],
+    "recipeInstructions": [
+      {
+        "@type": "HowToSection",
+        "name": "Prep",
+        "itemListElement": [
+          { "@type": "HowToStep", "text": "Drain and rinse the chickpeas." },
+          { "@type": "HowToStep", "text": "Dice the cucumber and tomatoes." }
+        ]
+      },
+      {
+        "@type": "HowToSection",
+        "name": "Assemble",
+        "itemListElement": [
+          { "@type": "HowToStep", "text": "Combine everything in a large bowl." },
+          { "@type": "HowToStep", "text": "Dress with lemon juice, cumin, salt." },
+          { "@type": "HowToStep", "text": "Chill 15 minutes before serving." }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body><h1>Chana Salad</h1></body>
+</html>

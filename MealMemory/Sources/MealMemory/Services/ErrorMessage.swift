@@ -43,9 +43,17 @@ extension Error {
             return "We couldn't complete that. Try signing out and back in, then try again."
         }
 
-        // Invites
-        if raw.contains("invite") || raw.contains("token") {
-            return "That invite code is invalid or has expired."
+        // Invites — matched on "invite" only. This branch used to also match a
+        // bare "token", which swallowed Supabase session errors ("Token has
+        // expired or is invalid") and told users their invite code was bad even
+        // when they'd never used one.
+        if raw.contains("invite") {
+            return "That invite code is invalid or has expired. Ask whoever invited you for a fresh one."
+        }
+
+        // Session / refresh tokens — anything token-shaped that isn't an invite.
+        if raw.contains("token") {
+            return "Your session expired. Sign in again to continue."
         }
 
         return fallback
