@@ -52,13 +52,23 @@ export function extractJSONLD(html: string): Recipe | null {
       if (Array.isArray(data["@graph"])) {
         recipes.push(...data["@graph"].filter((n: any) => n["@type"] === "Recipe"));
       }
-      if (recipes.length) {
-        const r = recipes[0];
+      for (const r of recipes) {
+        const ingredients = normalizeIngredients(r.recipeIngredient);
+        const steps = normalizeSteps(r.recipeInstructions);
+
+        // A Recipe node with a name but NO ingredients and NO steps is metadata
+        // only — some sites publish times/yield/video as structured data and
+        // render the actual recipe in the page HTML. Accepting it would import
+        // an empty recipe AND short-circuit the LLM fallback that could have
+        // read the page properly. Treat it as "not found" and keep looking.
+        // (Found on joshuaweissman.com while validating YouTube tier 1, TRI-15.)
+        if (!ingredients.length && !steps.length) continue;
+
         return {
           name: r.name ?? "",
           emoji: emojiForDish(r.name ?? ""),
-          ingredients: normalizeIngredients(r.recipeIngredient),
-          steps: normalizeSteps(r.recipeInstructions),
+          ingredients,
+          steps,
         };
       }
     } catch {

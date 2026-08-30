@@ -1,0 +1,21 @@
+<!doctype html>
+<html><head>
+<!-- Real shape found on joshuaweissman.com: a Recipe node carrying only
+     metadata (times, yield, video) while the actual recipe lives in the page
+     body. Accepting this would import an empty recipe and skip the LLM tail. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Recipe",
+  "name": "The 2 Dollar Curry (Butter chicken) | But Cheaper",
+  "cookTime": "PT30M",
+  "prepTime": "PT15M",
+  "totalTime": "PT45M",
+  "recipeYield": "4 servings",
+  "image": "https://example.com/curry.jpg",
+  "description": "Cheap butter chicken."
+}
+</script>
+</head>
+<body><p>Ingredients and method are rendered here in HTML, not in the JSON-LD.</p></body>
+</html>

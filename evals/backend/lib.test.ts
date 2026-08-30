@@ -183,6 +183,24 @@ describe("extractJSONLD", () => {
     expect(extractJSONLD(fixture("no-jsonld.html"))).toBeNull();
   });
 
+  // Some sites publish a Recipe node carrying only metadata (times, yield,
+  // video) and render the real recipe in the page body. Accepting it imports an
+  // empty recipe AND short-circuits the LLM fallback that could have read the
+  // page properly — so it must count as "not found". Found on joshuaweissman.com
+  // while validating YouTube tier 1 (TRI-15).
+  test("rejects a metadata-only Recipe node so the LLM fallback still runs", () => {
+    expect(extractJSONLD(fixture("metadata-only-recipe.html"))).toBeNull();
+  });
+
+  test("still accepts a recipe that has steps but no ingredient list", () => {
+    const html = `<script type="application/ld+json">
+      {"@type":"Recipe","name":"Toast","recipeInstructions":["Toast the bread"]}
+      </script>`;
+    const r = extractJSONLD(html);
+    expect(r).not.toBeNull();
+    expect(r!.steps.length).toBe(1);
+  });
+
   // Was: "emoji is always empty on the JSON-LD path (app supplies the default)".
   // That assertion locked in a defect — the JSON-LD path covers ~80% of imports,
   // so most recipes landed on the app's 🍽 default and never got a real emoji.
