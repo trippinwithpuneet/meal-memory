@@ -35,7 +35,7 @@ All rows accessed **2026-07-24** on `apps.apple.com/us/...` unless noted. Rating
 
 ### Landscape read (the parts that change your strategy)
 
-1. **Two competitors already own your exact pitch.** Pestle's *subtitle is your hero feature*. ReciMe's whole brand is social import + meal planner. You are entering a proven-but-contested niche, not an empty one. Good news: proven demand. Bad news: you need a wedge beyond "import from TikTok." **Your wedge = the shared *household weekly grid* + free unlimited fridge suggester.** Neither Pestle nor ReciMe leads with "shared household plan."
+1. **Two competitors already own your exact pitch.** Pestle's *subtitle is your hero feature*. ReciMe's whole brand is social import + meal planner. You are entering a proven-but-contested niche, not an empty one. Good news: proven demand. Bad news: you need a wedge beyond "import from TikTok." **Your wedge = the shared *household weekly grid* (free for two — see TRI-7 amendment 2026-08-30) + free unlimited fridge suggester.** Neither Pestle nor ReciMe leads with "shared household plan."
    - Source: [Pestle listing](https://apps.apple.com/us/app/pestle-recipe-manager/id1574776971) (accessed 2026-07-24); [ReciMe listing](https://apps.apple.com/us/app/recime-recipes-meal-planner/id1593779280) (accessed 2026-07-24).
 
 2. **The pros rotate their app name to farm keywords.** ReciMe appears across storefronts/updates as "ReciMe: Recipes & Meal Planner", "ReciMe: Recipe Keeper", and "ReciMe: Recipe Manager". SuperCook cycles "Recipe By Ingredient" / "Grocery to Recipe" / "AI Meals Scanner". **Tactic to steal:** you can change your subtitle every release (and rotate secondary keywords) with no re-review pain, and swap the keyword after the colon in your name across updates to test which head term you actually rank for. (**EST** — inferred from multiple observed listing name variants for the same app IDs, 2026-07-24.)
@@ -139,33 +139,36 @@ Excluded (already in name/subtitle A): *meal, memory, recipe, planner, weekly, p
 > Paste the draft below. Lines 1–3 must survive the App Store truncation, so they lead with the wedge, not a mission statement (contrast Mealime's "game changer for busy individuals…").
 
 ```
-Turn any TikTok, Instagram Reel, YouTube, or Pinterest link into a real recipe in one tap — no screenshots, no retyping.
+Turn any Instagram Reel, YouTube, Pinterest, or recipe-site link into a real recipe in one tap — no screenshots, no retyping.
 Plan your whole week on a shared grid your household stays synced to.
 And when you're staring into the fridge, tap "What can I cook?" for free, unlimited ideas from what you already have.
 
 Meal Memory is the meal planner for busy homes that actually cook.
 
 ONE-TAP RECIPE IMPORTS (our favorite part)
-• Save recipes from TikTok, Instagram Reels, YouTube, Pinterest, or any website — our AI pulls out the ingredients and steps automatically.
+• Save recipes from Instagram Reels, YouTube, Pinterest, or any recipe website — our AI pulls out the ingredients and steps automatically.
 • Build a recipe library you actually use, not a folder of screenshots you never open.
 
 A WEEKLY PLAN THE WHOLE HOUSEHOLD SHARES
 • Breakfast, lunch, and dinner on one clean weekly grid.
-• Everyone in the household sees the same plan, in real time — plan together, cook together.
+• Everyone sees the same plan, in real time — plan together, cook together. Free for two; Pro takes it to six.
 • Share the week as an image or day-by-day text in one tap.
 
 "WHAT CAN I COOK?" — FREE & UNLIMITED
 • Tell Meal Memory what's in your fridge and get recipe ideas instantly.
 • Cut food waste and skip the "what's for dinner?" spiral. Always free.
 
-A GROCERY LIST THAT SORTS ITSELF
-• Add any recipe and your shopping list builds automatically, grouped by aisle/category.
-• Check off items together while one of you is at the store.
+A GROCERY LIST THAT BUILDS ITSELF
+• Add any recipe and your week's shopping list builds automatically.
+• Pro sorts it by aisle, lets the household check items off together, and exports it.
 
 MEAL MEMORY PRO
-• Unlimited one-tap recipe imports.
+• Unlimited one-tap recipe imports (free plan includes 10).
+• A smart grocery list — sorted by aisle, checkable together, exportable.
+• Unlimited saved recipes (free plan includes 25).
+• A household of up to 6 (free plan covers 2).
 • $2.99/month, $14.99/year, or $29.99 once (lifetime).
-• Core planning, the shared grid, the grocery list, and the fridge suggester are free.
+• Free forever: the shared plan for two, the full calendar, plan sharing, and unlimited "What can I cook?".
 
 Built by a solo indie developer who cooks. Questions or feature ideas? Get in touch — a real person reads every message.
 ```
@@ -225,7 +228,7 @@ Concrete moves:
 - [ ] **2. Subtitle direction call.** Traffic-optimized **"Weekly plan & grocery list"** (recommended) **vs.** hero-forward **"Import TikTok & IG dinners"**. This is a real strategy fork (broad reach vs. differentiator-shout). — *my pick: A, but it's your brand call.*
 - [ ] **3. Screenshots availability + timeline.** Do you have device screenshots (or a design pass) for the 6–8 frames in §4? First 2 frames matter most; I can spec exact copy once you confirm what's buildable before submission.
 - [ ] 4. **Apple Developer account status + target submission date** (from MEMORY: no account yet). Enrollment + first review adds days-to-weeks; needed to sequence the metadata lock.
-- [ ] 5. **Confirm final pricing display** ($2.99mo / $14.99yr / $29.99 lifetime) and that the fridge suggester + core plan are genuinely free — the description and screenshot badges assert "free/unlimited" and must match StoreKit.
+- [ ] 5. **Confirm final pricing display** ($2.99mo / $14.99yr / $29.99 lifetime) AND that every free/paid claim matches TRI-7 as amended 2026-08-30: free = shared plan for **2**, 25 recipes, 10 imports, basic grocery list, unlimited fridge suggester, plan sharing; Pro = unlimited imports, smart (aisle-sorted/checkable/exportable) grocery list, unlimited library, household of 6. The description and screenshot badges assert "free/unlimited" and must match StoreKit exactly — a mismatch is both a rejection risk and a refund driver.
 - [ ] 6. **Optional: pull one paid ASO-tool spot-check** (AppFigures/AstroASO free tier) on the 4 beachheads to replace my EST difficulty ratings with real popularity scores before locking the keyword field.
 
 ---
