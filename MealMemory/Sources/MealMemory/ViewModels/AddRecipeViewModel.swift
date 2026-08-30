@@ -62,6 +62,11 @@ final class AddRecipeViewModel: ObservableObject {
     func processPhotoItem(_ item: PhotosPickerItem?) async {
         guard let item, let data = try? await item.loadTransferable(type: Data.self),
               let uiImage = UIImage(data: data) else { return }
+        await processImage(uiImage)
+    }
+
+    /// Shared OCR entry point — used by both the library picker and the camera.
+    func processImage(_ uiImage: UIImage) async {
         isOCRProcessing = true
         defer { isOCRProcessing = false }
 
@@ -110,17 +115,27 @@ final class AddRecipeViewModel: ObservableObject {
     }
 
     func importURL(_ urlString: String) async {
-        if DemoData.isDemoMode {
-            importError = "URL import requires signing in. Tap \"Start fresh\" in the Household tab to create your account."
-            return
-        }
-        guard let url = URL(string: urlString.trimmingCharacters(in: .whitespaces)) else {
+        guard let url = URL(string: urlString.trimmingCharacters(in: .whitespaces)),
+              let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https",
+              url.host != nil else {
             importError = "That doesn't look like a valid URL."
             return
         }
         isImporting = true
         importError = nil
         defer { isImporting = false }
+
+        // Demo users have no session; mint an anonymous one so the import path is
+        // the real one, not a simulation. See AuthService.signInAnonymouslyIfNeeded.
+        // Kept separate from the import below so a config problem here (Anonymous
+        // Sign-ins disabled in the Supabase dashboard) doesn't surface as a
+        // confusing "couldn't read that link" message.
+        do {
+            try await AuthService.shared.signInAnonymouslyIfNeeded()
+        } catch {
+            importError = "Couldn't start a guest session for importing. Check your connection, or sign in from the Household tab."
+            return
+        }
 
         do {
             let result = try await RecipeImportService.shared.importRecipe(from: url)
