@@ -125,6 +125,18 @@ New `MealMemoryShareExt` target: captures a shared link → App Group `group.com
 ### Linear (project TRI) — new issues this session
 TRI-13 security(/cso) · TRI-14 RevenueCat · TRI-15 universal import (In Progress) · TRI-16 PostHog · TRI-17 App Store creative · TRI-18 UGC videos · TRI-19 evals · TRI-24 video-only extraction (Gemini/Whisper, Pro-gated, post-launch) · TRI-26 multi-recipe import (P0). Pricing DECIDED in TRI-7: $2.99mo/$14.99yr/$29.99life.
 
+**Free vs Pro (TRI-7, amended 2026-08-30 — check before writing any user-facing copy).**
+Free: shared household plan for **2 members** with live sync · week + full month calendar ·
+~25 saved recipes · ~10 imports · basic grocery list · **unlimited Fridge Raid** (the
+differentiator, never gated) · plan share as image + text (the growth loop) · meal reminders.
+Pro: unlimited imports (fair-use throttled — "unlimited" is marketing for client-side
+features and *rate-limited* for anything calling Claude) · smart grocery list (aisle-sorted,
+checkable, exportable) · unlimited library · household up to 6.
+The 2-member free cap is the amendment: gating all sync would have made the product's own
+headline promise a paid feature. Marketing copy has drifted from this twice — the website
+(fixed PR #14) and `docs/strategy/aso.md` both oversold the free tier. Re-check both when
+pricing changes.
+
 ---
 
 ### NEXT STEP (older): Structured bug bash — page by page, major + minor

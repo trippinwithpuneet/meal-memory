@@ -58,7 +58,7 @@ Meal Memory is a SwiftUI + Supabase iOS app for busy people who **cook for thems
 ### e) Pricing model — freemium + lifetime (Cashew-style) — [P1] (TRI-7)
 **Why:** Decide before App Store submission; the model dictates what onboarding gates and where the paywall sits.
 **Scope (deliverable = pricing plan doc):**
-- Free vs Paid feature split: most features free (weekly grid, recipes, household sync, share); reserve premium for power features — unlimited households/members, video import (d), AI fridge-suggester quota, plan-sharing / prep-reminder automation, categorized grocery-list extras, themes. Justify each gate.
+- Free vs Paid feature split: **DECIDED in TRI-7 (2026-07-24), amended 2026-08-30.** Free = shared plan for **2 members** with live sync, week + full calendar, ~25 recipes, ~10 imports, basic grocery list, unlimited fridge suggester, plan sharing, meal reminders. Pro = unlimited imports (fair-use throttled), smart grocery list (aisle-sorted / checkable / exportable), unlimited library, household up to 6. Note the fridge suggester is deliberately **not** quota-limited — it is the differentiator. See TRI-7 for the full record; this bullet was the pre-decision proposal and is superseded.
 - Tiers & price points: monthly, annual, AND a one-time lifetime option (mirror Cashew). Recommend $ price points with rationale; App Store regional / PPP pricing as a secondary pass.
 - Paywall placement & triggers: where in onboarding/usage the upsell appears without hurting activation.
 - RevenueCat entitlement/offering mapping (stack already includes RevenueCat).
