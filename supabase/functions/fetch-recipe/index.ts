@@ -13,6 +13,7 @@ import {
   instagramShortcode,
   type Recipe,
   recipeLinkCandidates,
+  youtubeVideoId,
   type SourceType,
   sourceMessage,
   SsrfError,
@@ -157,19 +158,57 @@ async function resolveTikTok(url: URL): Promise<string> {
 //  3. No description (spoken-only Short) → best-effort transcript (YouTube blocks
 //     most server-side), else a clear "not in the description" message.
 //
-// KNOWN LIMITATION (measured 2026-08-30): YouTube serves this Edge Function a
-// JS-only shell for /watch?v= URLs — 1.2MB with an empty <title> and no
-// "shortDescription" — so tiers 1-3 all have nothing to work with and the user
-// sees "no recipe in its description" even when the creator wrote one out.
-// /shorts/ URLs are served normally and work end to end. Neither m.youtube.com,
-// nor ?bpctr=, nor CONSENT/SOCS cookies made any difference; it appears to be
-// datacenter-IP shaping specific to the watch page. The real fix is the YouTube
-// Data API (videos.list returns the description reliably; free quota, 1 unit per
-// call) rather than scraping the watch page. Tracked separately from TRI-15.
+// WHY THE DATA API (TRI-29): scraping the watch page does not work from here.
+// YouTube serves this Edge Function a JS-only shell for /watch?v= URLs — 1.2MB
+// with an empty <title> and no "shortDescription" — so every tier had nothing to
+// parse and users saw "no recipe in its description" even when the creator had
+// written one out. /shorts/ URLs were served normally, which is what made the
+// asymmetry visible. m.youtube.com, ?bpctr=, and CONSENT/SOCS cookies were each
+// tried and made no difference; it looks like datacenter-IP shaping specific to
+// the watch page.
+//
+// So the description now comes from videos.list (1 quota unit of 10,000/day).
+// The scrape is kept as a fallback for when YOUTUBE_API_KEY is unset or the API
+// errors — that path still works for Shorts, so an unconfigured deploy degrades
+// to today's behaviour rather than breaking outright.
+async function youtubeSnippet(id: string): Promise<{ title: string; description: string } | null> {
+  const key = Deno.env.get("YOUTUBE_API_KEY");
+  if (!key) return null;
+  try {
+    const data = await fetchJSON(
+      "https://www.googleapis.com/youtube/v3/videos" +
+        `?part=snippet&id=${encodeURIComponent(id)}&key=${encodeURIComponent(key)}`,
+    );
+    const sn = data?.items?.[0]?.snippet;
+    if (!sn) return null; // private, deleted, or a bad id
+    return { title: String(sn.title ?? ""), description: String(sn.description ?? "") };
+  } catch {
+    return null; // quota exhausted / key invalid → fall back to the scrape
+  }
+}
+
 async function resolveYouTubeRecipe(url: URL): Promise<Recipe | null> {
-  const html = await fetchText(url.toString(), BROWSER_UA);
-  const title = html.match(/<meta[^>]+name="title"[^>]+content="([^"]+)"/i)?.[1];
-  const desc = decodeText(html.match(/"shortDescription"\s*:\s*"([\s\S]*?)"\s*,/)?.[1] ?? "");
+  const videoId = youtubeVideoId(url);
+
+  let title = "";
+  let desc = "";
+  // Only fetched when actually needed — the transcript tier is the sole
+  // remaining consumer of the watch HTML, and it is rarely reached.
+  let html: string | null = null;
+  const getWatchHtml = async (): Promise<string> => {
+    if (html === null) html = await fetchText(url.toString(), BROWSER_UA);
+    return html;
+  };
+
+  const snippet = videoId ? await youtubeSnippet(videoId) : null;
+  if (snippet) {
+    title = snippet.title;
+    desc = snippet.description;
+  } else {
+    const h = await getWatchHtml();
+    title = h.match(/<meta[^>]+name="title"[^>]+content="([^"]+)"/i)?.[1] ?? "";
+    desc = decodeText(h.match(/"shortDescription"\s*:\s*"([\s\S]*?)"\s*,/)?.[1] ?? "");
+  }
 
   // Tier 1: follow a linked recipe blog. Routed through resolveWeb so a followed
   // link gets the SAME treatment as a pasted one — JSON-LD first, LLM tail if the
@@ -186,7 +225,7 @@ async function resolveYouTubeRecipe(url: URL): Promise<Recipe | null> {
   }
 
   // Tier 2/3: description text (+ best-effort transcript when it's thin).
-  const transcript = desc.length < 40 ? await fetchYouTubeTranscript(html) : "";
+  const transcript = desc.length < 40 ? await fetchYouTubeTranscript(await getWatchHtml()) : "";
   const text = decodeText([title, desc, transcript].filter(Boolean).join("\n")).trim();
   if (text.length < 40) return null; // → graceful "no recipe in description"
   return parseWithClaude(text, "youtube");

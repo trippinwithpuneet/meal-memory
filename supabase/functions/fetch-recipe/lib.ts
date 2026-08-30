@@ -122,6 +122,38 @@ export function decodeText(s: string): string {
     .replace(/\s+\n/g, "\n").trim();
 }
 
+// ─── YouTube video id ────────────────────────────────────────────────────────
+
+// Pull the 11-character video id out of any YouTube URL shape. Needed because
+// the Data API is keyed on the id, not the page — which is the whole point of
+// TRI-29: scraping the watch page returns a JS-only shell with no description,
+// while the API returns it reliably.
+//
+// Shapes seen in the wild: /watch?v=, youtu.be/<id>, /shorts/<id>, /embed/<id>,
+// /live/<id>, and /v/<id>. Extra query params (?si=, &t=, ?feature=) are common
+// from share sheets and must not end up in the id.
+export function youtubeVideoId(url: URL): string | null {
+  const host = url.host.toLowerCase().replace(/^www\./, "");
+  const id = (raw: string | undefined | null): string | null => {
+    if (!raw) return null;
+    // Ids are exactly 11 chars of [A-Za-z0-9_-]; anything else is a playlist,
+    // channel, or handle and must not be treated as a video.
+    const m = raw.match(/^[A-Za-z0-9_-]{11}$/);
+    return m ? raw : null;
+  };
+
+  if (host === "youtu.be") return id(url.pathname.split("/").filter(Boolean)[0]);
+
+  const v = url.searchParams.get("v");
+  if (v) return id(v);
+
+  const parts = url.pathname.split("/").filter(Boolean);
+  if (parts.length >= 2 && ["shorts", "embed", "live", "v"].includes(parts[0])) {
+    return id(parts[1]);
+  }
+  return null;
+}
+
 // ─── YouTube description link mining ─────────────────────────────────────────
 
 // Pull likely recipe-page links from a video description, skipping affiliate,

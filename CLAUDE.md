@@ -174,6 +174,37 @@ Also: if the phone's iOS is newer than any cached DDI in `~/Library/Developer/Xc
 
 **Dogfood-only build config.** App Groups + APNs entitlements and the Share Extension can't be signed on a free personal team. Branch `dogfood-rachel-v2` strips them (`project.yml`, then `xcodegen generate`, then restore the two `SUPABASE_*` values in `MealMemory/Info.plist`, which xcodegen blanks). **DO NOT MERGE** it. All of this disappears once the $99 Apple Developer Program is active.
 
+**Automated profile refresh (set up 2026-08-30).** A `launchd` job keeps Rachel's
+phone alive against the 7-day free-team expiry, so the app doesn't die mid-week.
+
+- Script `~/.meal-memory-dogfood/refresh.sh` · log `refresh.log` alongside it
+- Agent `~/Library/LaunchAgents/com.puneetjain.mealmemory.dogfood-refresh.plist`
+- Runs **daily at 10:30**, but only rebuilds when the profile has **≤3 days**
+  left; most runs exit in under a second. Daily beats weekly because the phone
+  must be awake and on the same network — several chances, not one.
+- Builds from its **own worktree** `~/.meal-memory-dogfood/worktree` (branch
+  `dogfood-auto`) and does **no git operations**, so it can never switch
+  branches or disturb your working tree mid-task.
+- **To ship new code to her phone:**
+  `git -C ~/.meal-memory-dogfood/worktree merge dogfood-rachel-v2`
+- Force a run: `RENEW_WITHIN_DAYS=99 ~/.meal-memory-dogfood/refresh.sh`
+- Signing needs the **login keychain unlocked**, so it works while you're logged
+  in. At the login screen the build fails, logs why, and retries next day —
+  there's a week of margin.
+
+Two traps this script hit, worth not repeating in any similar shell tooling:
+1. `set -o pipefail` + `grep -q` reports **success as failure** — `grep -q` exits
+   on first match, SIGPIPEs the producer, and pipefail surfaces that. Four
+   successful installs were logged as failures. Capture to a variable and match
+   with `[[ ]]` instead of piping.
+2. `PlistBuddy` **cannot read `/dev/stdin`** — it returns "Error Reading File"
+   silently. Decode a `.mobileprovision` to a real temp file first.
+
+⚠️ **Git is slow on this repo** (~2s for a no-op checkout) and a branch switch
+once **timed out mid-operation and truncated `project.yml` to zero bytes**. Give
+branch switches a generous timeout, and verify (`wc -l project.yml`,
+`git status`) afterwards rather than assuming they completed.
+
 ### Session 5 additions (2026-06-29) — Plan page redesign
 
 - ✅ **Fridge Raid rebrand** — emergency mode renamed; header "Fridge Raid" / "What's in your fridge right now?", fridge (`refrigerator`) icon replaces fork.knife

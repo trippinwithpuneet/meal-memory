@@ -22,6 +22,7 @@ import {
   SsrfError,
   stripToText,
   tiktokDescriptionFromHtml,
+  youtubeVideoId,
 } from "../../supabase/functions/fetch-recipe/lib.ts";
 
 const fixture = (name: string) =>
@@ -443,5 +444,42 @@ describe("emojiForDish", () => {
       expect(e.length).toBeGreaterThan(0);
       expect([...e].length).toBeLessThanOrEqual(2); // some emoji are 2 code points
     }
+  });
+});
+
+// ─── YouTube video id ────────────────────────────────────────────────────────
+// The Data API is keyed on the id, not the page (TRI-29), so every URL shape a
+// share sheet can produce has to resolve. Share sheets append tracking params
+// (?si=, &t=) that must not leak into the id.
+describe("youtubeVideoId", () => {
+  const cases: [string, string | null][] = [
+    ["https://www.youtube.com/watch?v=hDjK5C2aoSs", "hDjK5C2aoSs"],
+    ["https://youtube.com/watch?v=hDjK5C2aoSs&t=42s", "hDjK5C2aoSs"],
+    ["https://m.youtube.com/watch?v=hDjK5C2aoSs", "hDjK5C2aoSs"],
+    ["https://youtu.be/hDjK5C2aoSs", "hDjK5C2aoSs"],
+    ["https://youtu.be/hDjK5C2aoSs?si=AbCdEfGhIjKl", "hDjK5C2aoSs"],
+    ["https://www.youtube.com/shorts/p_zFBa9nfXk", "p_zFBa9nfXk"],
+    ["https://www.youtube.com/shorts/p_zFBa9nfXk?cbrd=1", "p_zFBa9nfXk"],
+    ["https://www.youtube.com/embed/hDjK5C2aoSs", "hDjK5C2aoSs"],
+    ["https://www.youtube.com/live/hDjK5C2aoSs", "hDjK5C2aoSs"],
+  ];
+  for (const [u, want] of cases) {
+    test(`${u} -> ${want}`, () => {
+      expect(youtubeVideoId(new URL(u))).toBe(want);
+    });
+  }
+
+  test("refuses non-video URLs rather than inventing an id", () => {
+    // A channel, playlist or handle must not be treated as a video — the API
+    // would 404 and the user would get a confusing failure.
+    expect(youtubeVideoId(new URL("https://www.youtube.com/c/CookwithE"))).toBeNull();
+    expect(youtubeVideoId(new URL("https://www.youtube.com/@alfiecooks"))).toBeNull();
+    expect(youtubeVideoId(new URL("https://www.youtube.com/playlist?list=PLabc123"))).toBeNull();
+    expect(youtubeVideoId(new URL("https://www.youtube.com/"))).toBeNull();
+  });
+
+  test("rejects ids that are not exactly 11 characters", () => {
+    expect(youtubeVideoId(new URL("https://www.youtube.com/watch?v=tooshort"))).toBeNull();
+    expect(youtubeVideoId(new URL("https://youtu.be/waytoolongvideoid123"))).toBeNull();
   });
 });
