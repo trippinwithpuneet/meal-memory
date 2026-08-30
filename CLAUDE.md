@@ -88,6 +88,20 @@ The `fetch-recipe` Edge Function is now a host router + per-source resolvers + a
 - **Deploy status (2026-08-30):** ✅ deployed at the current TRI-19 revision, with
   `ANTHROPIC_API_KEY` set, so both the JSON-LD fast path and the Haiku parse tail
   work in production. Redeploy with `supabase functions deploy fetch-recipe`.
+- **Supabase dashboard "Save changes" (cost 20+ min on 2026-08-30):** the
+  Authentication → Sign In / Providers → **User Signups** section *stages* toggles
+  behind a `Save changes` button at the foot of the form. A green toggle is not a
+  saved toggle. Enabling "Allow anonymous sign-ins" without saving looks identical
+  to success but the API keeps returning `anonymous_provider_disabled`. Always
+  verify against the API, not the UI:
+  `curl -s -X POST "$SUPABASE_URL/auth/v1/signup" -H "apikey: <anon>" -H "Content-Type: application/json" -d '{}'`
+  → an `access_token` with `is_anonymous: true` means it actually took.
+- **Do NOT enable CAPTCHA protection** until the iOS client passes a captcha
+  token. Supabase applies captcha to *every* auth endpoint, so turning it on with
+  no client integration breaks anonymous sign-in, email sign-up **and** email
+  sign-in, all with `captcha_failed`. The SDK's `signInAnonymously(captchaToken:)`
+  needs a real hCaptcha/Turnstile widget in the app first. Sequence: ship → build
+  the widget → then enable. (TRI-13.)
 - **Supabase CLI + agents:** the CLI auto-detects agent invocation and switches to
   non-interactive JSON mode, which silently swallows confirmation prompts *and*
   error output — `db push` appears to do nothing. Use
