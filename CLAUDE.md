@@ -40,13 +40,21 @@ Status: all executed layers pass. DB layer still unrun (needs Docker); LLM eval 
 
 ## Resume Here
 
-**Last session:** 2026-07-24 — TRI-15 universal recipe import + Share Extension + App Store prep. Repo moved to `~/Documents/Claude projects/side-projects/meal-memory`. Work committed on branch `tri-15-universal-import` (stacked on `tri-6-share`, which has an open PR). Builds green for simulator.
+**Last session:** 2026-08-30 — merged **PR #8 (TRI-19 eval suite + 3 security/UX fixes)** into `main`. Rebuilt and installed the current build on both the iPhone 13 mini simulator and Rachel's phone; most of the session went to untangling code signing (see the device-signing runbook below — read it before touching signing again).
+
+**Live state after this session:**
+- `main` = `7e22c7e`, contains everything through TRI-19. Branch `dogfood-rachel-v2` holds the dogfood-only build config (DO NOT MERGE).
+- Rachel's phone: running the TRI-19 build. **Provisioning profile expires 2026-09-06** — reinstalling after that needs a fresh mint + 2FA.
+- ⚠️ **`fetch-recipe` is deployed but predates TRI-19**, so the three fixes from the eval suite — the IPv6 SSRF bypass in `assertPublicHost()` especially — are NOT live in production. Redeploy is the top open task.
+- ⚠️ **Orphaned fix:** the Instagram caption cleanup (strips `View all N comments` embed chrome) exists only on the old `dogfood-rachel` branch, never merged to `main`. Cherry-pick it before that branch is deleted.
+
+**Earlier (2026-07-24):** TRI-15 universal recipe import + Share Extension + App Store prep. Repo moved to `~/Documents/Claude projects/side-projects/meal-memory`.
 
 ### TRI-15 universal import — status
 The `fetch-recipe` Edge Function is now a host router + per-source resolvers + a shared **Claude Haiku (`claude-haiku-4-5`)** parse tail (raw HTTP, `output_config.format` JSON schema). JSON-LD stays LLM-free.
 - **Validated against real links:** Web + Pinterest (pin → source blog → JSON-LD), YouTube (3 tiers: follows a recipe-blog link in the description → JSON-LD; else parses a recipe written in the description; else best-effort transcript — YouTube blocks most server-side, so description-less spoken Shorts fall back gracefully). Bugs fixed along the way: JSON-LD `<script>` regex now allows extra attrs (Yoast/WPRM), `HowToSection` steps flattened, plural "RECIPES:" label match.
 - **Not yet validated:** Instagram + TikTok resolvers (best-effort selectors, untested against real captions). **NEXT: user will send one real IG Reel + one TikTok link → validate + fix, same method.**
-- **Deploy prereqs (both user-scoped):** set edge secret `ANTHROPIC_API_KEY`, then `supabase functions deploy fetch-recipe`. The function is NOT deployed yet; no API key was available locally this session (couldn't run the Haiku step — extraction inputs verified, LLM output projected).
+- **Deploy status (checked 2026-08-30):** the function IS deployed and live (`OPTIONS` on `/functions/v1/fetch-recipe` returns 405, not 404) — but at a **pre-TRI-19 revision**, so the SSRF/host-routing fixes are not in production. Redeploy with `supabase functions deploy fetch-recipe`; the edge secret `ANTHROPIC_API_KEY` must be set for the Haiku parse tail.
 
 ### Share Extension (built, simulator-verified)
 New `MealMemoryShareExt` target: captures a shared link → App Group `group.com.puneetjain.mealmemory` + `mealmemory://import?url=` scheme → main app `.onOpenURL` (`ImportCoordinator`) opens Add Recipe and auto-imports. **App Groups need a paid Apple Developer account to sign on device/TestFlight** (step zero, still open).
@@ -82,22 +90,36 @@ We're going to make the app feel finished. It's still rough around the edges. Pl
 
 **Build + install command (signing works, run from project root):**
 ```bash
-cd "/Users/puneetjain/Documents/Claude projects/meal-memory" && xcodebuild \
+cd "/Users/puneetjain/Documents/Claude projects/side-projects/meal-memory" && xcodebuild \
   -project MealMemory.xcodeproj \
   -scheme MealMemory \
   -destination "id=00008110-0006383C3C78801E" \
+  -derivedDataPath /tmp/DD-dev \
   DEVELOPMENT_TEAM=Q3JN42F5ST \
   CODE_SIGN_STYLE=Automatic \
   -allowProvisioningUpdates 2>&1 | grep -E "error:|BUILD (SUCCEEDED|FAILED)"
 # then:
 xcrun devicectl device install app --device 00008110-0006383C3C78801E \
-  "$HOME/Library/Developer/Xcode/DerivedData/MealMemory-fggwetyonilojuecihfbjlmnbeel/Build/Products/Debug-iphoneos/MealMemory.app"
+  /tmp/DD-dev/Build/Products/Debug-iphoneos/MealMemory.app
+# then, on the phone: Settings → General → VPN & Device Management → Developer App → Trust
 ```
 
 **Signing reference:**
 - `MealMemory.entitlements` — APNs (`aps-environment`) stripped (push not set up yet; restore when APNs is configured)
-- Xcode project team: **Puneet Jain (Personal Team)**, Team ID `Q3JN42F5ST`
+- Xcode project team: **Puneet Jain (Personal Team)**, Team ID `Q3JN42F5ST`, owned by Apple ID **`puneet.j23@icloud.com`**
+- Signing cert on this Mac: `Apple Development: puneet.j23@icloud.com (4ULKDHAQT8)`. **`4ULKDHAQT8` is the cert identifier, NOT a team ID** — passing it as `DEVELOPMENT_TEAM` fails with `No Account for Team`. Always use `Q3JN42F5ST`.
 - Rachel's phone: UDID `00008110-0006383C3C78801E`, Developer Mode ON
+
+**Device-signing runbook — four traps, all hit on 2026-08-30 (~2h lost). Read before debugging signing:**
+
+1. **The 7-day expiry is the root cause of "it worked last time".** Free personal-team profiles live exactly 7 days. The 2026-06-28 build installed fine because its profile was 6 days old and still valid — no portal call, no prompt. It expired 2026-07-05. Any gap longer than a week means a fresh mint, which *requires* Apple auth. There is no offline path: an expired profile won't launch, and profiles must be Apple-signed. Budget one 2FA prompt per week of dogfooding.
+2. **Only ONE Apple account may be signed into Xcode.** `xcodebuild` walks *every* registered account to resolve the team and aborts on the first that fails — so a stale/rejected account (here the work ID `puneet@creatorstack.com`) kills signing even when the correct account is present and healthy, and even when `DEVELOPMENT_TEAM` names the good team. Symptom: `Unable to log in with account '<wrong account>'`. Fix: Xcode → Settings → Apple Accounts → sign the other account **out**.
+3. **`-destination` must name the actual device, never `generic/platform=iOS`.** Xcode registers the device with the team as a side effect of building *for it*; with a generic destination it has no device to register and fails with `Your team has no devices from which to generate a provisioning profile`. Free teams start at 0 provisioned devices, so this bites on every fresh team.
+4. **A wedged "Loading teams…" spinner blocks `xcodebuild` too** — it holds a lock, so builds hang for their full timeout instead of erroring. Fix: quit Xcode fully, `rm -rf ~/Library/Caches/com.apple.dt.Xcode` (pure cache, rebuilt on launch), reopen, re-auth.
+
+Also: if the phone's iOS is newer than any cached DDI in `~/Library/Developer/Xcode/iOS DeviceSupport/`, connect it over USB and unlock it so Xcode can mount the developer disk image — otherwise device-targeted builds fail with `The developer disk image could not be mounted`.
+
+**Dogfood-only build config.** App Groups + APNs entitlements and the Share Extension can't be signed on a free personal team. Branch `dogfood-rachel-v2` strips them (`project.yml`, then `xcodegen generate`, then restore the two `SUPABASE_*` values in `MealMemory/Info.plist`, which xcodegen blanks). **DO NOT MERGE** it. All of this disappears once the $99 Apple Developer Program is active.
 
 ### Session 5 additions (2026-06-29) — Plan page redesign
 
