@@ -156,16 +156,31 @@ async function resolveTikTok(url: URL): Promise<string> {
 //  2. Recipe written directly in the description → Claude parse.
 //  3. No description (spoken-only Short) → best-effort transcript (YouTube blocks
 //     most server-side), else a clear "not in the description" message.
+//
+// KNOWN LIMITATION (measured 2026-08-30): YouTube serves this Edge Function a
+// JS-only shell for /watch?v= URLs — 1.2MB with an empty <title> and no
+// "shortDescription" — so tiers 1-3 all have nothing to work with and the user
+// sees "no recipe in its description" even when the creator wrote one out.
+// /shorts/ URLs are served normally and work end to end. Neither m.youtube.com,
+// nor ?bpctr=, nor CONSENT/SOCS cookies made any difference; it appears to be
+// datacenter-IP shaping specific to the watch page. The real fix is the YouTube
+// Data API (videos.list returns the description reliably; free quota, 1 unit per
+// call) rather than scraping the watch page. Tracked separately from TRI-15.
 async function resolveYouTubeRecipe(url: URL): Promise<Recipe | null> {
   const html = await fetchText(url.toString(), BROWSER_UA);
   const title = html.match(/<meta[^>]+name="title"[^>]+content="([^"]+)"/i)?.[1];
   const desc = decodeText(html.match(/"shortDescription"\s*:\s*"([\s\S]*?)"\s*,/)?.[1] ?? "");
 
-  // Tier 1: follow a linked recipe blog (accept only if it has Recipe JSON-LD).
+  // Tier 1: follow a linked recipe blog. Routed through resolveWeb so a followed
+  // link gets the SAME treatment as a pasted one — JSON-LD first, LLM tail if the
+  // page has none. Previously this accepted only JSON-LD, so a creator whose blog
+  // renders the recipe in HTML (joshuaweissman.com) failed here while pasting the
+  // very same URL succeeded. The host is SSRF-checked before we follow it.
   for (const link of recipeLinkCandidates(desc)) {
     try {
-      assertPublicHost(new URL(link).host);
-      const blogRecipe = extractJSONLD(await fetchText(link, BROWSER_UA));
+      const linkUrl = new URL(link);
+      assertPublicHost(linkUrl.host);
+      const blogRecipe = await resolveWeb(linkUrl);
       if (blogRecipe?.name) return blogRecipe;
     } catch { /* try the next candidate, then fall back to text */ }
   }

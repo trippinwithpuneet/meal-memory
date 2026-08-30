@@ -52,13 +52,23 @@ export function extractJSONLD(html: string): Recipe | null {
       if (Array.isArray(data["@graph"])) {
         recipes.push(...data["@graph"].filter((n: any) => n["@type"] === "Recipe"));
       }
-      if (recipes.length) {
-        const r = recipes[0];
+      for (const r of recipes) {
+        const ingredients = normalizeIngredients(r.recipeIngredient);
+        const steps = normalizeSteps(r.recipeInstructions);
+
+        // A Recipe node with a name but NO ingredients and NO steps is metadata
+        // only — some sites publish times/yield/video as structured data and
+        // render the actual recipe in the page HTML. Accepting it would import
+        // an empty recipe AND short-circuit the LLM fallback that could have
+        // read the page properly. Treat it as "not found" and keep looking.
+        // (Found on joshuaweissman.com while validating YouTube tier 1, TRI-15.)
+        if (!ingredients.length && !steps.length) continue;
+
         return {
           name: r.name ?? "",
           emoji: emojiForDish(r.name ?? ""),
-          ingredients: normalizeIngredients(r.recipeIngredient),
-          steps: normalizeSteps(r.recipeInstructions),
+          ingredients,
+          steps,
         };
       }
     } catch {
@@ -133,7 +143,16 @@ export function recipeLinkCandidates(desc: string): string[] {
 export function instagramCaptionFromEmbed(html: string): string {
   const captionDiv = html.match(/class="Caption"[\s\S]*?>([\s\S]*?)<\/div>\s*<\/div>/)?.[1];
   const raw = captionDiv ?? html.match(/"edge_media_to_caption".*?"text"\s*:\s*"([\s\S]*?)"\s*}/)?.[1];
-  return decodeText(stripToText(raw ?? ""));
+  const text = decodeText(stripToText(raw ?? ""));
+
+  // The embed page appends its own furniture inside the caption node — strip it
+  // so it never reaches the parser as if it were recipe text. Instagram renders
+  // this both with and without a count ("View all comments" on low-engagement
+  // posts, "View all 1,234 comments" otherwise), so match both. Everything from
+  // that marker to the end is chrome.
+  return text
+    .replace(/\s*\bView all(?:\s+[\d,]+)?\s+comments?\b[\s\S]*$/i, "")
+    .trim();
 }
 
 export function instagramShortcode(pathname: string): string | null {
