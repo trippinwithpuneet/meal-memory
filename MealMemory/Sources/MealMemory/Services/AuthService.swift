@@ -36,6 +36,22 @@ final class AuthService: ObservableObject {
         session = nil
     }
 
+    /// Demo mode has no signed-in user, but the import Edge Function requires a
+    /// real JWT — and rightly so: it fetches user-supplied URLs and calls Claude,
+    /// so it must never accept unauthenticated callers. An anonymous session gives
+    /// demo users the genuine import path without weakening that gate.
+    ///
+    /// Created lazily, on first import only, so simply opening the app doesn't
+    /// mint an anon user. The Edge Function already falls back to `user.id` when
+    /// there's no member row, so rate limiting keys correctly with no server change.
+    @discardableResult
+    func signInAnonymouslyIfNeeded() async throws -> Session {
+        if let session { return session }
+        let anonSession = try await client.auth.signInAnonymously()
+        session = anonSession
+        return anonSession
+    }
+
     private func refreshSession() async {
         session = try? await client.auth.session
     }

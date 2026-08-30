@@ -88,7 +88,6 @@ struct WeekGridView: View {
         .safeAreaInset(edge: .bottom) {
             if selectedSlot == nil && !viewModel.recipes.isEmpty {
                 fridgeRaidPill
-                    .coachAnchor(.hero)
             }
         }
         .overlay(alignment: .bottom) {
@@ -247,6 +246,10 @@ struct WeekGridView: View {
                         .shadow(color: Theme.saffron.opacity(0.4), radius: 12, y: 4)
                 )
             }
+            // Anchored on the button, not the surrounding HStack — the Spacers
+            // make that stack full-width, which drew the coach ring off both
+            // screen edges instead of around the pill.
+            .coachAnchor(.hero)
             Spacer()
         }
         .padding(.bottom, 6)

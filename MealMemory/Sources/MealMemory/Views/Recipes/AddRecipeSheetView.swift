@@ -189,9 +189,49 @@ struct AddRecipeSheetView: View {
 
 // MARK: - Camera / OCR
 
+/// Live camera capture. `PhotosPicker` can only read the library, so scanning a
+/// recipe card off the counter needs UIImagePickerController.
+struct CameraPicker: UIViewControllerRepresentable {
+    let onCapture: (UIImage) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    static var isAvailable: Bool {
+        UIImagePickerController.isSourceTypeAvailable(.camera)
+    }
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        private let parent: CameraPicker
+        init(_ parent: CameraPicker) { self.parent = parent }
+
+        func imagePickerController(_ picker: UIImagePickerController,
+                                   didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+            if let image = info[.originalImage] as? UIImage {
+                parent.onCapture(image)
+            }
+            parent.dismiss()
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            parent.dismiss()
+        }
+    }
+}
+
 struct CameraEntryView: View {
     @ObservedObject var vm: AddRecipeViewModel
     @State private var photosItem: PhotosPickerItem?
+    @State private var showCamera = false
 
     var body: some View {
         ScrollView {
@@ -206,19 +246,21 @@ struct CameraEntryView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 40)
                 } else {
-                    PhotosPicker(selection: $photosItem, matching: .images) {
-                        VStack(spacing: 8) {
-                            Image(systemName: "camera.fill")
-                                .font(.system(size: 32))
-                                .foregroundColor(Theme.saffron)
-                            Text("Take or choose a photo of a recipe")
-                                .font(.system(size: 14))
-                                .foregroundColor(Theme.textSecondary)
+                    // Two explicit routes. The camera is hidden where there isn't
+                    // one (Simulator), so the option never dead-ends.
+                    if CameraPicker.isAvailable {
+                        Button { showCamera = true } label: {
+                            sourceTile(icon: "camera.fill",
+                                       title: "Take a photo",
+                                       subtitle: "Scan a recipe card or a page from a book")
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 32)
-                        .background(Theme.cardFilled)
-                        .cornerRadius(14)
+                        .buttonStyle(.plain)
+                    }
+
+                    PhotosPicker(selection: $photosItem, matching: .images) {
+                        sourceTile(icon: "photo.on.rectangle",
+                                   title: "Choose from library",
+                                   subtitle: "Pick a screenshot or saved photo")
                     }
                     .onChange(of: photosItem) { _, item in
                         Task { await vm.processPhotoItem(item) }
@@ -231,6 +273,36 @@ struct CameraEntryView: View {
             }
             .padding(16)
         }
+        .fullScreenCover(isPresented: $showCamera) {
+            CameraPicker { image in
+                Task { await vm.processImage(image) }
+            }
+            .ignoresSafeArea()
+        }
+    }
+
+    private func sourceTile(icon: String, title: String, subtitle: String) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: icon)
+                .font(.system(size: 24))
+                .foregroundColor(Theme.saffron)
+                .frame(width: 34)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(Theme.textPrimary)
+                Text(subtitle)
+                    .font(.system(size: 12))
+                    .foregroundColor(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 18)
+        .background(Theme.cardFilled)
+        .cornerRadius(14)
     }
 }
 

@@ -36,12 +36,28 @@ struct CoachStep {
 
 // MARK: - Overlay
 
+/// Measures the callout's rendered height so we can decide whether it would
+/// cover the control it's describing.
+private struct CalloutHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
 struct CoachMarkOverlay: View {
     /// Resolved frames for each target, in the overlay's coordinate space.
     let rects: [CoachTarget: CGRect]
     let onFinish: () -> Void
 
     @State private var index = 0
+    @State private var calloutHeight: CGFloat = 0
+
+    // Default resting slot for the callout: above the tab bar at the bottom.
+    private let bottomInset: CGFloat = 96
+    /// Clearance between the callout and the control it points at.
+    private let gap: CGFloat = 16
+    private let topLimit: CGFloat = 24
 
     static let steps: [CoachStep] = [
         CoachStep(target: .grid,
@@ -63,34 +79,55 @@ struct CoachMarkOverlay: View {
     private var targetRect: CGRect? { rects[step.target] }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            // Dim backdrop — tapping it advances too.
-            Color(hex: "#141928").opacity(0.42)
-                .ignoresSafeArea()
-                .contentShape(Rectangle())
-                .onTapGesture { advance() }
+        GeometryReader { geo in
+            ZStack(alignment: .topLeading) {
+                // Dim backdrop — tapping it advances too.
+                Color(hex: "#141928").opacity(0.42)
+                    .ignoresSafeArea()
+                    .contentShape(Rectangle())
+                    .onTapGesture { advance() }
 
-            // Highlight ring around the current target.
-            if let rect = targetRect {
-                RoundedRectangle(cornerRadius: ringCornerRadius, style: .continuous)
-                    .stroke(Theme.saffron, lineWidth: 2.5)
+                // Highlight ring around the current target.
+                if let rect = targetRect {
+                    RoundedRectangle(cornerRadius: ringCornerRadius, style: .continuous)
+                        .stroke(Theme.saffron, lineWidth: 2.5)
+                        .background(
+                            RoundedRectangle(cornerRadius: ringCornerRadius, style: .continuous)
+                                .stroke(Theme.saffron.opacity(0.25), lineWidth: 8)
+                        )
+                        .frame(width: rect.width + 12, height: rect.height + 12)
+                        .position(x: rect.midX, y: rect.midY)
+                        .allowsHitTesting(false)
+                        .animation(.spring(response: 0.35, dampingFraction: 0.85), value: index)
+                }
+
+                callout
+                    .frame(width: max(0, geo.size.width - 24))
                     .background(
-                        RoundedRectangle(cornerRadius: ringCornerRadius, style: .continuous)
-                            .stroke(Theme.saffron.opacity(0.25), lineWidth: 8)
+                        GeometryReader { c in
+                            Color.clear.preference(key: CalloutHeightKey.self, value: c.size.height)
+                        }
                     )
-                    .frame(width: rect.width + 12, height: rect.height + 12)
-                    .position(x: rect.midX, y: rect.midY)
-                    .allowsHitTesting(false)
+                    .offset(x: 12, y: calloutTop(in: geo.size))
                     .animation(.spring(response: 0.35, dampingFraction: 0.85), value: index)
             }
-
-            callout
-                .padding(.horizontal, 12)
-                // Lift above the tab bar — the overlay is hosted inside the
-                // Plan tab, so the TabView's tab bar renders on top of it.
-                .padding(.bottom, 96)
+            .onPreferenceChange(CalloutHeightKey.self) { calloutHeight = $0 }
         }
         .transition(.opacity)
+    }
+
+    /// The callout normally rests near the bottom, clear of the tab bar. When the
+    /// spotlighted control also lives down there — the "What can I cook?" hero pill
+    /// on step 2 — the two collide and the callout covers the very thing it's
+    /// describing, so lift it above the target instead.
+    private func calloutTop(in size: CGSize) -> CGFloat {
+        let restingTop = size.height - bottomInset - calloutHeight
+        guard let rect = targetRect else { return max(topLimit, restingTop) }
+
+        if rect.maxY + gap > restingTop {
+            return max(topLimit, rect.minY - gap - calloutHeight)
+        }
+        return max(topLimit, restingTop)
     }
 
     // Tighter corners for the small buttons, rounder for the big grid.
