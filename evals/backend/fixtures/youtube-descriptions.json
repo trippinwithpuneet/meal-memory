@@ -1,0 +1,32 @@
+{
+  "labelled_recipe_link_wins": {
+    "description": "My best weeknight curry!\n\nRECIPE: https://sampleblog.com/weeknight-curry\n\nMy knives (affiliate): https://amzn.to/3xyz\nInstagram: https://instagram.com/chefsample\nSupport me: https://patreon.com/chefsample",
+    "expected": ["https://sampleblog.com/weeknight-curry"],
+    "why": "A link explicitly labelled RECIPE must sort first; affiliate/social links must be dropped entirely."
+  },
+  "affiliate_and_social_all_skipped": {
+    "description": "Links:\nhttps://amzn.to/abc\nhttps://www.instagram.com/chefsample\nhttps://tiktok.com/@chefsample\nhttps://bit.ly/shortened\nhttps://facebook.com/chefsample\nhttps://mystore.com/shop",
+    "expected": [],
+    "why": "Every link here is on the skip list, so nothing should be fetched."
+  },
+  "bare_links_capped_at_two": {
+    "description": "See https://a-blog.com/one and https://b-blog.com/two and https://c-blog.com/three",
+    "expected": ["https://a-blog.com/one", "https://b-blog.com/two"],
+    "why": "Outbound fetches are bounded to 2 to keep the function inside its time budget."
+  },
+  "trailing_punctuation_stripped": {
+    "description": "Full recipe here (https://sampleblog.com/pasta-bake).",
+    "expected": ["https://sampleblog.com/pasta-bake"],
+    "why": "A URL wrapped in parentheses must not carry the closing bracket into the fetch."
+  },
+  "duplicate_links_deduped": {
+    "description": "RECIPE: https://sampleblog.com/soup\nAlso here: https://sampleblog.com/soup",
+    "expected": ["https://sampleblog.com/soup"],
+    "why": "The labelled link and the bare link are the same page — one fetch, not two."
+  },
+  "no_links_at_all": {
+    "description": "Just me cooking. Recipe is in the video, sorry!",
+    "expected": [],
+    "why": "Falls through to the description/transcript tiers."
+  }
+}

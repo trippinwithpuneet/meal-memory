@@ -117,7 +117,7 @@ enum AppError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notAuthenticated:    return "You need to be signed in to do that."
-        case .invalidInviteToken:  return "That invite code is invalid or has expired."
+        case .invalidInviteToken:  return "That invite code is invalid or has expired. Ask whoever invited you for a fresh one."
         case .unknown(let msg):    return msg
         }
     }

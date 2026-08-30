@@ -63,6 +63,48 @@ targets:
       - package: Supabase
         product: Supabase
       - target: MealMemoryShareExt
+    scheme:
+      testTargets:
+        - MealMemoryTests
+        - MealMemoryUITests
+
+  # ── Evals ───────────────────────────────────────────────────────────────────
+  # Unit/logic evals (offline, no Supabase). Run:
+  #   xcodebuild test -scheme MealMemory -destination 'platform=iOS Simulator,name=iPhone 13 mini' \
+  #     -only-testing:MealMemoryTests
+  MealMemoryTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: MealMemory/Tests/MealMemoryTests
+    dependencies:
+      - target: MealMemory
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.puneetjain.mealmemory.tests
+        SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/MealMemory.app/MealMemory"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+
+  # UX flow evals — drive the shipping UI in demo mode on a simulator.
+  MealMemoryUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: MealMemory/Tests/MealMemoryUITests
+    dependencies:
+      - target: MealMemory
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.puneetjain.mealmemory.uitests
+        SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1"
+        TEST_TARGET_NAME: MealMemory
 
   MealMemoryShareExt:
     type: app-extension

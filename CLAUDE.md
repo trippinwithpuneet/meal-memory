@@ -10,6 +10,34 @@
 - Pricing in **$** (regional/PPP as a secondary pass); ASO/GTM target Western App Stores and English queries — no Hindi/Hinglish.
 - Backlog + GTM live in Linear (project TRI). See `docs/linear-backlog-plan.md` for the current issue set (TRI-5..TRI-12).
 
+## Evals (TRI-19)
+
+Four layers, one runner: `./evals/run-all.sh` (`fast` skips the simulator, `backend` is ~1s).
+Full reference: `docs/reference-evals.md`.
+
+- **BE** — `evals/backend/`: Bun unit tests over `fetch-recipe/lib.ts` (pure helpers extracted
+  from `index.ts` so they're importable), a **scored** JSON-LD extraction eval against gold
+  labels, and an LLM parse-tail eval that skips without `ANTHROPIC_API_KEY`. The Claude request
+  lives in `buildClaudeRequestBody()` and is shared with production, so the prompt can't drift.
+- **DB** — `supabase/tests/invites_and_schema.sql`: invite single-use/expiry/auth, direct
+  membership-insert blocking, migration drift. **Never executed** (no Docker on the authoring
+  machine) — first run is a bring-up.
+- **FE** — `MealMemory/Tests/MealMemoryTests`: view-model logic, Recipe decoding incl. the
+  unapplied-migration path, grocery categorizer (94.7% on a labeled corpus, floor 85%), error copy.
+- **UX** — `MealMemory/Tests/MealMemoryUITests` (demo mode, offline, iPhone 13 mini) plus
+  `evals/ux/copy-lint.ts` which enforces the positioning rules above across all user-facing strings.
+
+**Three real bugs the suite caught on its first run — all FIXED**, assertions kept as regression guards:
+1. `assertPublicHost()` was IPv4-only — IPv6 loopback/ULA/link-local and `::ffff:` mapped addresses
+   bypassed the SSRF guard entirely (incl. the metadata endpoint). Now unwraps brackets, handles
+   zone ids, and checks the v6 private ranges.
+2. `classify()` matched hosts by bare suffix, so `nottiktok.com` routed to the TikTok resolver — and
+   the tiktok/youtube resolvers fetch the user URL *without* the SSRF guard. Now dot-boundary matched.
+3. `Error.userMessage()` routed any error containing "token" to the invite branch, so an expired
+   session read as "That invite code is invalid or has expired." Now split, with a next step in both.
+
+Status: all executed layers pass. DB layer still unrun (needs Docker); LLM eval needs an API key.
+
 ## Resume Here
 
 **Last session:** 2026-07-24 — TRI-15 universal recipe import + Share Extension + App Store prep. Repo moved to `~/Documents/Claude projects/side-projects/meal-memory`. Work committed on branch `tri-15-universal-import` (stacked on `tri-6-share`, which has an open PR). Builds green for simulator.

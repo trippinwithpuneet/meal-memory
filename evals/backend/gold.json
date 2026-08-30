@@ -1,0 +1,109 @@
+{
+  "_comment": "Gold labels for the deterministic (JSON-LD) extraction path. Each case names a fixture and the recipe a human would expect the app to save. Add a case by dropping an HTML fixture next to this file and appending an entry.",
+  "cases": [
+    {
+      "fixture": "yoast-graph.html",
+      "sourceType": "web",
+      "note": "Yoast @graph + attributes on the ld+json script tag",
+      "expected": {
+        "name": "One-Pan Lemon Garlic Chicken",
+        "ingredients": [
+          "4 chicken thighs, bone-in",
+          "3 tbsp olive oil",
+          "1 lemon, sliced",
+          "6 cloves garlic, crushed",
+          "1 tsp dried oregano",
+          "Salt and black pepper to taste"
+        ],
+        "steps": [
+          "Heat the oven to 200C / 400F.",
+          "Toss the chicken with oil, garlic, oregano, salt and pepper.",
+          "Arrange in a single layer with the lemon slices tucked around.",
+          "Roast for 35 minutes until the skin is crisp and juices run clear.",
+          "Rest 5 minutes before serving."
+        ]
+      }
+    },
+    {
+      "fixture": "wprm-howtosection.html",
+      "sourceType": "web",
+      "note": "WP Recipe Maker sectioned steps must flatten in order",
+      "expected": {
+        "name": "Chana Salad",
+        "ingredients": [
+          "1 can chickpeas, drained",
+          "1 cucumber, diced",
+          "2 tomatoes, diced",
+          "1/2 red onion, finely chopped",
+          "1 lemon, juiced",
+          "1/4 cup chopped cilantro",
+          "1 tsp cumin"
+        ],
+        "steps": [
+          "Drain and rinse the chickpeas.",
+          "Dice the cucumber and tomatoes.",
+          "Combine everything in a large bowl.",
+          "Dress with lemon juice, cumin, salt.",
+          "Chill 15 minutes before serving."
+        ]
+      }
+    },
+    {
+      "fixture": "plain-recipe.html",
+      "sourceType": "web",
+      "note": "Bare Recipe node, instructions as plain strings",
+      "expected": {
+        "name": "Tofu Stir Fry",
+        "ingredients": [
+          "400g firm tofu, cubed",
+          "2 tbsp soy sauce",
+          "1 tbsp sesame oil",
+          "1 head broccoli, florets",
+          "1 red pepper, sliced",
+          "2 cloves garlic, minced",
+          "1 thumb ginger, grated"
+        ],
+        "steps": [
+          "Press and cube the tofu.",
+          "Sear the tofu in sesame oil until golden on all sides.",
+          "Add garlic and ginger, cook 30 seconds.",
+          "Add broccoli and pepper, stir fry 4 minutes.",
+          "Splash in soy sauce and toss to coat."
+        ]
+      }
+    },
+    {
+      "fixture": "malformed-then-valid.html",
+      "sourceType": "web",
+      "note": "Broken first ld+json block must not abort the scan",
+      "expected": {
+        "name": "Fluffy Pancakes",
+        "ingredients": [
+          "1 1/2 cups flour",
+          "3 1/2 tsp baking powder",
+          "1 tsp salt",
+          "1 tbsp sugar",
+          "1 1/4 cups milk",
+          "1 egg",
+          "3 tbsp butter, melted"
+        ],
+        "steps": [
+          "Whisk the dry ingredients, add the wet, rest 10 minutes, then cook on a hot buttered griddle until bubbles form and the edges set."
+        ]
+      }
+    }
+  ],
+  "expectedMisses": [
+    {
+      "fixture": "no-jsonld.html",
+      "why": "No structured data — must return null so the caller falls through to the LLM tail rather than saving a wrong recipe."
+    }
+  ],
+  "thresholds": {
+    "nameAccuracy": 1.0,
+    "ingredientRecall": 0.95,
+    "ingredientPrecision": 0.95,
+    "stepRecall": 0.95,
+    "stepOrderAccuracy": 1.0
+  }
+}
