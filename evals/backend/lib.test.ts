@@ -309,6 +309,30 @@ describe("instagramCaptionFromEmbed", () => {
   test("returns empty string when there is no caption", () => {
     expect(instagramCaptionFromEmbed("<html><body>no caption here</body></html>")).toBe("");
   });
+
+  // The embed page puts its own furniture inside the caption node. Left in, it
+  // reaches the parser as if it were recipe text. Instagram renders this both
+  // with and without a count, and the fixture happens to use the un-numbered
+  // form — a fix matching only "View all 1,234 comments" would silently miss it.
+  test("strips the embed's comments chrome, un-numbered", () => {
+    const caption = instagramCaptionFromEmbed(fixture("instagram-embed.html"));
+    expect(caption).not.toMatch(/view all/i);
+    expect(caption).not.toMatch(/comments/i);
+    expect(caption).toContain("chilli"); // real caption content survives
+  });
+
+  test("strips the embed's comments chrome, numbered", () => {
+    const html = `<div class="Caption">Garlic Butter Shrimp
+      <div class="CaptionComments">View all 1,284 comments</div></div></div>`;
+    const caption = instagramCaptionFromEmbed(html);
+    expect(caption).toContain("Garlic Butter Shrimp");
+    expect(caption).not.toMatch(/1,284|view all|comments/i);
+  });
+
+  test("leaves a caption that merely mentions comments in prose alone", () => {
+    const html = `<div class="Caption">Drop a comment if you try this!</div></div>`;
+    expect(instagramCaptionFromEmbed(html)).toContain("Drop a comment");
+  });
 });
 
 describe("tiktokDescriptionFromHtml", () => {

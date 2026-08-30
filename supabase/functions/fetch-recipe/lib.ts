@@ -133,7 +133,16 @@ export function recipeLinkCandidates(desc: string): string[] {
 export function instagramCaptionFromEmbed(html: string): string {
   const captionDiv = html.match(/class="Caption"[\s\S]*?>([\s\S]*?)<\/div>\s*<\/div>/)?.[1];
   const raw = captionDiv ?? html.match(/"edge_media_to_caption".*?"text"\s*:\s*"([\s\S]*?)"\s*}/)?.[1];
-  return decodeText(stripToText(raw ?? ""));
+  const text = decodeText(stripToText(raw ?? ""));
+
+  // The embed page appends its own furniture inside the caption node — strip it
+  // so it never reaches the parser as if it were recipe text. Instagram renders
+  // this both with and without a count ("View all comments" on low-engagement
+  // posts, "View all 1,234 comments" otherwise), so match both. Everything from
+  // that marker to the end is chrome.
+  return text
+    .replace(/\s*\bView all(?:\s+[\d,]+)?\s+comments?\b[\s\S]*$/i, "")
+    .trim();
 }
 
 export function instagramShortcode(pathname: string): string | null {
