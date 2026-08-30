@@ -22,7 +22,7 @@ struct OnboardingFlowView: View {
               body: "Everyone at home sees the same weekly plan, synced instantly. No more group texts about dinner."),
         Slide(emoji: "🍽️",
               title: "No more\n“what's for dinner?”",
-              body: "Plan breakfast, lunch and dinner for the whole week in a glanceable grid — decided once, not every night."),
+              body: "Plan breakfast, lunch, dinner and dessert for the whole week in a glanceable grid — decided once, not every night."),
         Slide(emoji: "🧑‍🍳",
               title: "Always know\nwhat to cook",
               body: "Tell us what's in your fridge and get instant ideas from your own recipes. Plus a tidy weekly grocery list."),

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dessert meal type — options</title>
+<style>
+  :root{
+    --bg:#faf8f4; --cardFilled:#fff8f0; --cardEmpty:#f4f2ee;
+    --navy:#1a2744; --saffron:#e8883a; --textPrimary:#1a1a1a;
+    --textSecondary:#6b6b6b; --textTertiary:#9a9a9a; --border:#e8e4de;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px;background:#20242c;color:#e8e4de;
+       font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  h1{font-size:20px;margin:0 0 6px}
+  .sub{color:#9aa3b2;margin:0 0 28px;max-width:900px}
+  .row{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
+  .col{width:375px}
+  .cap{font-weight:700;margin:0 0 4px;color:#fff}
+  .why{color:#9aa3b2;font-size:12.5px;margin:0 0 12px;min-height:56px}
+  /* phone */
+  .phone{width:375px;height:600px;background:var(--bg);border-radius:26px;
+         padding:14px 12px;color:var(--textPrimary);overflow:hidden;
+         box-shadow:0 10px 30px rgba(0,0,0,.45)}
+  .hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .hdr h2{font-size:26px;margin:0;color:var(--navy);font-weight:800}
+  .grid{display:flex;gap:6px}
+  .labels{display:flex;flex-direction:column;gap:6px;padding-top:38px}
+  .lab{display:flex;align-items:center;justify-content:center;
+       color:var(--textTertiary);font-size:11px;font-weight:600}
+  .days{display:flex;gap:6px;overflow:hidden}
+  .day{display:flex;flex-direction:column;gap:6px}
+  .dh{height:38px;text-align:center;font-size:11px;color:var(--textSecondary)}
+  .dh b{display:block;font-size:15px;color:var(--textPrimary)}
+  .cell{width:74px;border-radius:12px;border:1px solid var(--border);
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:3px;font-size:9.5px;text-align:center;padding:3px;color:var(--textPrimary)}
+  .filled{background:var(--cardFilled)}
+  .empty{background:var(--cardEmpty);color:var(--textTertiary);font-size:16px}
+  .em{font-size:19px}
+  .note{margin-top:10px;font-size:11px;color:var(--textSecondary)}
+  .tag{display:inline-block;background:#2c323d;color:#c9d2e0;border-radius:99px;
+       padding:2px 9px;font-size:11px;margin-left:6px}
+  .rec{background:#1d3a2a;color:#8fe0ac}
+</style>
+</head>
+<body>
+
+<h1>Adding a “Dessert” meal type</h1>
+<p class="sub">
+  The week grid’s label column is only <b>20pt</b> wide, so “De” doesn’t fit —
+  that constraint drives the whole choice. All three keep Dessert as a fourth row
+  after Dinner. Shown at true iPhone 13 mini width (375pt), the smallest screen
+  we support.
+</p>
+
+<div class="row">
+
+  <!-- Option A -->
+  <div class="col">
+    <p class="cap">A · Icons in the label column <span class="tag rec">recommended</span></p>
+    <p class="why">Replaces the B/L/D letters with small glyphs. Solves the
+      D-vs-D collision outright, reads instantly, and needs no extra width.
+      Cost: letters are a familiar anchor, and you lose them for all four rows.</p>
+    <div class="phone">
+      <div class="hdr"><h2>This Week</h2></div>
+      <div class="grid">
+        <div class="labels">
+          <div class="lab" style="height:82px">🌅</div>
+          <div class="lab" style="height:82px">🥪</div>
+          <div class="lab" style="height:82px">🌙</div>
+          <div class="lab" style="height:82px">🍰</div>
+        </div>
+        <div class="days">
+          <div class="day">
+            <div class="dh">T<b>27</b></div>
+            <div class="cell empty" style="height:82px">+</div>
+            <div class="cell filled" style="height:82px"><span class="em">🐟</span>Tuna Salad</div>
+            <div class="cell filled" style="height:82px"><span class="em">🍗</span>Sheet-Pan</div>
+            <div class="cell empty" style="height:82px">+</div>
+          </div>
+          <div class="day">
+            <div class="dh">F<b>28</b></div>
+            <div class="cell filled" style="height:82px"><span class="em">🥪</span>Egg Sandwich</div>
+            <div class="cell empty" style="height:82px">+</div>
+            <div class="cell filled" style="height:82px"><span class="em">🌯</span>Burrito Bowl</div>
+            <div class="cell filled" style="height:82px"><span class="em">🍪</span>Tahini Cookies</div>
+          </div>
+          <div class="day">
+            <div class="dh">S<b>29</b></div>
+            <div class="cell empty" style="height:82px">+</div>
+            <div class="cell empty" style="height:82px">+</div>
+            <div class="cell empty" style="height:82px">+</div>
+            <div class="cell empty" style="height:82px">+</div>
+          </div>
+        </div>
+      </div>
+      <p class="note">Row height trimmed 96 → 82pt so four rows still fit above the
+        “What can I cook?” pill without scrolling.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="col">
+    <p class="cap">B · Keep letters, widen the column</p>
+    <p class="why">Label column grows 20 → 30pt so two-letter codes fit:
+      B / L / Di / De. Keeps the familiar lettering. Cost: eats 10pt of
+      horizontal space on the narrowest screen, and “Di/De” scans slower
+      than a single letter.</p>
+    <div class="phone">
+      <div class="hdr"><h2>This Week</h2></div>
+      <div class="grid">
+        <div class="labels" style="width:30px">
+          <div class="lab" style="height:82px">B</div>
+          <div class="lab" style="height:82px">L</div>
+          <div class="lab" style="height:82px">Di</div>
+          <div class="lab" style="height:82px">De</div>
+        </div>
+        <div class="days">
+          <div class="day">
+            <div class="dh">T<b>27</b></div>
+            <div class="cell empty" style="height:82px">+</div>
+            <div class="cell filled" style="height:82px"><span class="em">🐟</span>Tuna Salad</div>
+            <div class="cell filled" style="height:82px"><span class="em">🍗</span>Sheet-Pan</div>
+            <div class="cell empty" style="height:82px">+</div>
+          </div>
+          <div class="day">
+            <div class="dh">F<b>28</b></div>
+            <div class="cell filled" style="height:82px"><span class="em">🥪</span>Egg Sandwich</div>
+            <div class="cell empty" style="height:82px">+</div>
+            <div class="cell filled" style="height:82px"><span class="em">🌯</span>Burrito Bowl</div>
+            <div class="cell filled" style="height:82px"><span class="em">🍪</span>Tahini Cookies</div>
+          </div>
+          <div class="day">
+            <div class="dh">S<b>29</b></div>
+            <div class="cell empty" style="height:82px">+</div>
+            <div class="cell empty" style="height:82px">+</div>
+            <div class="cell empty" style="height:82px">+</div>
+            <div class="cell empty" style="height:82px">+</div>
+          </div>
+        </div>
+      </div>
+      <p class="note">Dinner changes from “D” to “Di”, so existing users see two
+        labels change, not one.</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="col">
+    <p class="cap">C · Dessert is opt-in</p>
+    <p class="why">Grid stays 3 rows by default; a Household setting adds the
+      Dessert row for people who want it. Keeps the daily view uncluttered for
+      those who don’t plan dessert. Cost: a settings toggle to build and explain,
+      and the feature is invisible until found.</p>
+    <div class="phone">
+      <div class="hdr"><h2>This Week</h2></div>
+      <div class="grid">
+        <div class="labels">
+          <div class="lab" style="height:96px">B</div>
+          <div class="lab" style="height:96px">L</div>
+          <div class="lab" style="height:96px">D</div>
+        </div>
+        <div class="days">
+          <div class="day">
+            <div class="dh">T<b>27</b></div>
+            <div class="cell empty" style="height:96px">+</div>
+            <div class="cell filled" style="height:96px"><span class="em">🐟</span>Tuna Salad</div>
+            <div class="cell filled" style="height:96px"><span class="em">🍗</span>Sheet-Pan</div>
+          </div>
+          <div class="day">
+            <div class="dh">F<b>28</b></div>
+            <div class="cell filled" style="height:96px"><span class="em">🥪</span>Egg Sandwich</div>
+            <div class="cell empty" style="height:96px">+</div>
+            <div class="cell filled" style="height:96px"><span class="em">🌯</span>Burrito Bowl</div>
+          </div>
+          <div class="day">
+            <div class="dh">S<b>29</b></div>
+            <div class="cell empty" style="height:96px">+</div>
+            <div class="cell empty" style="height:96px">+</div>
+            <div class="cell empty" style="height:96px">+</div>
+          </div>
+        </div>
+      </div>
+      <p class="note">Household → “Show a dessert row” · off by default.
+        Row heights stay at today’s 96pt.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="sub" style="margin-top:28px">
+  <b>One thing worth knowing before you pick:</b> whichever option we take, the
+  database change is the same — <code>meal_type</code> is a Postgres ENUM, so
+  Dessert means <code>ALTER TYPE meal_type ADD VALUE 'dessert'</code>. That is a
+  one-way change: Postgres cannot remove a value from an enum, so backing it out
+  later means rebuilding the type. Worth being sure before it ships.
+</p>
+
+</body>
+</html>

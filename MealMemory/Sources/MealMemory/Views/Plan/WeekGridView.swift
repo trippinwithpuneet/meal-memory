@@ -265,9 +265,12 @@ struct WeekGridView: View {
             VStack(alignment: .center, spacing: cellGap) {
                 Color.clear.frame(width: labelWidth, height: dayHeaderHeight)
                 ForEach(MealType.allCases, id: \.self) { mealType in
-                    Text(mealType.shortLabel)
-                        .font(.system(size: 10, weight: .medium))
+                    Text(mealType.gridLabel)
+                        .font(.system(size: mealType.gridLabelIsGlyph ? 12 : 10, weight: .medium))
                         .foregroundColor(Theme.textTertiary)
+                        // Emoji ignore foregroundColor, so match the letters'
+                        // visual weight with opacity instead of colour.
+                        .opacity(mealType.gridLabelIsGlyph ? 0.85 : 1)
                         .frame(width: labelWidth, height: cellHeight)
                 }
             }

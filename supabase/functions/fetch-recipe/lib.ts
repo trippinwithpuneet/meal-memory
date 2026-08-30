@@ -56,7 +56,7 @@ export function extractJSONLD(html: string): Recipe | null {
         const r = recipes[0];
         return {
           name: r.name ?? "",
-          emoji: "",
+          emoji: emojiForDish(r.name ?? ""),
           ingredients: normalizeIngredients(r.recipeIngredient),
           steps: normalizeSteps(r.recipeInstructions),
         };
@@ -147,6 +147,71 @@ export function tiktokDescriptionFromHtml(html: string): string {
   return desc ? decodeText(desc) : "";
 }
 
+// ─── Dish emoji (JSON-LD path) ───────────────────────────────────────────────
+// The JSON-LD fast path is LLM-free and carries no emoji, so ~80% of imports
+// used to land on the app's 🍽 default. This picks one locally: free, instant,
+// deterministic, and gradeable by the eval suite.
+//
+// Ordered most-specific first, and deliberately matched against the DISH FORM
+// before any ingredient. "Tahini Banana Breakfast Cookies" must resolve to 🍪,
+// not 🍌 — the emoji should describe what you end up eating.
+const DISH_EMOJI_RULES: [RegExp, string][] = [
+  // Baked goods & sweets — checked first; these names often name fruit too.
+  [/\bcookies?\b|\bbiscuits?\b/, "🍪"],
+  [/\bbrownies?\b/, "🍫"],
+  [/\bcupcakes?\b|\bmuffins?\b/, "🧁"],
+  [/\bcheesecakes?\b|\bcakes?\b/, "🍰"],
+  [/\bpies?\b|\btarts?\b/, "🥧"],
+  [/\bdoughnuts?\b|\bdonuts?\b/, "🍩"],
+  [/\bpancakes?\b|\bcrepes?\b|\bchillas?\b/, "🥞"],
+  [/\bwaffles?\b/, "🧇"],
+  [/\bice cream\b|\bgelato\b|\bsorbet\b/, "🍨"],
+  [/\bpudding\b|\bcustard\b|\bmousse\b/, "🍮"],
+  [/\bbreads?\b|\bloaf\b|\bfocaccia\b|\bbanana bread\b/, "🍞"],
+  [/\bcroissants?\b/, "🥐"],
+  [/\bbagels?\b/, "🥯"],
+  [/\bpretzels?\b/, "🥨"],
+  // Savoury dish forms
+  [/\bpizzas?\b/, "🍕"],
+  [/\bburgers?\b|\bcheeseburgers?\b/, "🍔"],
+  [/\btacos?\b/, "🌮"],
+  [/\bburritos?\b|\bwraps?\b|\bquesadillas?\b/, "🌯"],
+  [/\bsandwich(es)?\b|\btoasties?\b|\bpanini\b/, "🥪"],
+  [/\bsushi\b|\bmaki\b|\bnigiri\b/, "🍣"],
+  [/\bramen\b|\bpho\b|\bnoodle soup\b/, "🍜"],
+  [/\bnoodles?\b|\bchow mein\b|\bpad thai\b/, "🍝"],
+  [/\bpastas?\b|\bspaghetti\b|\bpenne\b|\blasagne?a?\b|\bmac and cheese\b/, "🍝"],
+  [/\bcurr(y|ies)\b|\bmasala\b|\bkorma\b|\btikka\b|\bdal\b|\bdaal\b/, "🍛"],
+  [/\bsoups?\b|\bbroth\b|\bstew\b|\bchowder\b/, "🍲"],
+  [/\bsalads?\b|\bslaw\b/, "🥗"],
+  [/\bstir[- ]?fry\b|\bfried rice\b/, "🥘"],
+  [/\brice\b|\bbiryani\b|\bpilaf\b|\brisotto\b/, "🍚"],
+  [/\bdumplings?\b|\bgyoza\b|\bmomos?\b/, "🥟"],
+  [/\bburritos? bowls?\b|\bbowls?\b/, "🥣"],
+  [/\bomelettes?\b|\bfrittatas?\b|\bscrambled eggs?\b|\beggs?\b/, "🍳"],
+  [/\bporridge\b|\boatmeal\b|\bovernight oats\b|\boats\b/, "🥣"],
+  [/\bsmoothies?\b|\bshakes?\b|\bjuice\b|\blassi\b/, "🥤"],
+  [/\bkebabs?\b|\bskewers?\b|\bsatay\b/, "🍢"],
+  [/\bfries\b|\bchips\b/, "🍟"],
+  // Protein-led names, only when no dish form matched above
+  [/\bchicken\b|\bpoultry\b/, "🍗"],
+  [/\bbeef\b|\bsteak\b|\blamb\b|\bmutton\b|\bpork\b/, "🥩"],
+  [/\bfish\b|\bsalmon\b|\btuna\b|\bcod\b/, "🐟"],
+  [/\bprawns?\b|\bshrimps?\b/, "🍤"],
+  [/\btofu\b|\bpaneer\b|\btempeh\b/, "🧀"],
+];
+
+/// Best-effort emoji for a dish name. Returns 🍽 when nothing is a clear match —
+/// a wrong emoji is worse than a neutral one.
+export function emojiForDish(name: string): string {
+  const n = (name ?? "").toLowerCase();
+  if (!n.trim()) return "🍽";
+  for (const [pattern, emoji] of DISH_EMOJI_RULES) {
+    if (pattern.test(n)) return emoji;
+  }
+  return "🍽";
+}
+
 // ─── LLM parse tail — request shape ──────────────────────────────────────────
 // The model, prompt, and JSON schema live here rather than inline in index.ts so
 // the eval suite grades the exact request production sends. If you tune the
@@ -157,6 +222,10 @@ export const CLAUDE_MODEL = "claude-haiku-4-5";
 export const CLAUDE_SYSTEM_PROMPT =
   "Extract a cooking recipe from the text (a social caption, video description, or web page). " +
   "Return the dish name, a single representative food emoji, an ingredients list, and ordered steps. " +
+  "Pick the MOST SPECIFIC emoji for the finished dish, not a generic one: 🍪 for cookies, " +
+  "🥞 for pancakes, 🍜 for noodle soup, 🌮 for tacos, 🍰 for cake, 🥗 for salad, 🍛 for curry. " +
+  "Judge by the dish itself, not its ingredients — banana cookies are 🍪, not 🍌. " +
+  "Fall back to 🍽 only when nothing fits. " +
   "Clean out hashtags, @mentions, promo/links, and filler. If the text contains no recipe, " +
   'return {"name":"","emoji":"","ingredients":[],"steps":[]}.';
 

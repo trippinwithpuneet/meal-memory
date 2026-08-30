@@ -134,6 +134,12 @@ struct AddRecipeSheetView: View {
 
     // MARK: - Form sheet (full size)
 
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil
+        )
+    }
+
     /// Editing always has a recipe to update. Manual entry is a form from the
     /// start. Camera and URL only have something to save once OCR or the import
     /// has populated the fields — the same condition that reveals the form.
@@ -163,6 +169,10 @@ struct AddRecipeSheetView: View {
                 }
             }
             .background(Theme.appBackground)
+            // After an import the form is full of extracted content, but the
+            // keyboard covers most of it. Swipe down anywhere in the scroll view
+            // to dismiss it (and tap any field to bring it back).
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle(vm.isEditing ? "Edit Recipe" : "Add Recipe")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Theme.appBackground, for: .navigationBar)
@@ -179,6 +189,14 @@ struct AddRecipeSheetView: View {
                         }
                     }
                     .foregroundColor(Theme.saffron)
+                }
+                // Explicit way back out of the keyboard, for anyone who doesn't
+                // discover the swipe. Sits above the keyboard only while it's up.
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") { dismissKeyboard() }
+                        .fontWeight(.semibold)
+                        .foregroundColor(Theme.saffron)
                 }
                 // Camera and URL start with nothing to commit — the import/OCR
                 // fills the form first. Showing a permanently-disabled Save in the

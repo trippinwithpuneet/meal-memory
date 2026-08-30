@@ -211,6 +211,25 @@ enum DemoData {
                      "Mix tuna, eggs, apple and celery with mayo, mustard and lemon juice; season well",
                      "Serve on a bed of mixed greens"],
              safeFor: ["Gluten-free", "No milk", "Dairy-free"]),
+
+        // Dessert, so the fourth row shows what it's for on first run rather than
+        // reading as an empty stripe.
+        make(id: 11, name: "Tahini Banana Cookies", emoji: "🍪", prepTime: 25,
+             ingredients: ["1/2 cup tahini",
+                           "1/4 cup maple syrup",
+                           "1 ripe banana, mashed",
+                           "1 flax egg",
+                           "1 cup rolled oats",
+                           "1 tsp vanilla extract",
+                           "1/2 tsp baking soda",
+                           "pinch of sea salt",
+                           "1/3 cup dark chocolate chunks"],
+             steps: ["Heat oven to 180°C and line a tray",
+                     "Mash the banana; whisk with tahini, maple syrup, flax egg and vanilla",
+                     "Fold in oats, baking soda and salt, then the chocolate",
+                     "Spoon onto the tray and flatten slightly",
+                     "Bake 12–14 minutes until the edges set; cool on the tray"],
+             safeFor: ["Vegan", "Vegetarian", "No milk", "Dairy-free"]),
     ]
 
     // MARK: - Slots (populated relative to current week start)
@@ -235,6 +254,10 @@ enum DemoData {
             (3, .dinner,    5),   // Thu dinner:    Sheet-Pan Chicken & Veg ✅ both
             (4, .breakfast, 4),   // Fri breakfast: Egg Sandwich ❌ Alex (gluten)
             (4, .dinner,    0),   // Fri dinner:    Burrito Bowl ✅ both
+            // Dessert is deliberately sparse — it's an occasional row, not a
+            // daily one, and a mostly-empty row reads that way at a glance.
+            (2, .dessert,  10),   // Wed dessert:   Tahini Banana Cookies ✅ both
+            (4, .dessert,  10),   // Fri dessert:   Tahini Banana Cookies ✅ both
         ]
 
         var result: [String: MealSlot] = [:]
