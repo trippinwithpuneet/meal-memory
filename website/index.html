@@ -7,14 +7,17 @@
 <meta name="description" content="Meal Memory is the shared weekly meal planner that keeps your household on the same page — one plan that syncs, a grocery list that builds itself, and recipe ideas from whatever's already in your fridge.">
 <meta name="theme-color" content="#faf8f4">
 
-<!-- Open Graph / social preview (TODO: add real og:image once brand art exists) -->
+<!-- Open Graph / social preview -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Meal Memory — Dinner, decided. For the whole house.">
 <meta property="og:description" content="The shared weekly meal planner that keeps your household on the same page.">
 <meta property="og:url" content="https://mealmemory.app">
+<meta property="og:image" content="https://mealmemory.app/icon-1024.png">
+<meta name="twitter:card" content="summary">
 
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="styles.css">
-<!-- TODO: add real favicon.ico / apple-touch-icon once brand art exists -->
 </head>
 <body>
 
@@ -24,7 +27,7 @@
 <header>
   <nav class="nav" aria-label="Primary">
     <a class="brand" href="/" aria-label="Meal Memory home">
-      <span class="mark" aria-hidden="true">🍳</span> Meal Memory
+      <img class="mark" src="logo.png" alt="" width="32" height="32" decoding="async"> Meal Memory
     </a>
     <div class="links">
       <span class="inline-links" style="display:contents">
@@ -90,7 +93,7 @@
         <article class="vcard big">
           <div class="vic" aria-hidden="true">🗓️</div>
           <h3>One plan, one household</h3>
-          <p>A shared weekly grid for breakfast, lunch and dinner that updates on everyone's phone the moment it changes. No more “did you defrost the chicken?” texts — the plan already knows.</p>
+          <p>A shared weekly grid for breakfast, lunch, dinner and dessert that updates on everyone's phone the moment it changes. No more “did you defrost the chicken?” texts — the plan already knows. Free for two people; Pro takes it to six.</p>
         </article>
         <article class="vcard">
           <div class="vic" aria-hidden="true">🤔</div>
@@ -105,12 +108,12 @@
         <article class="vcard">
           <div class="vic" aria-hidden="true">📥</div>
           <h3>One-tap recipe imports</h3>
-          <p>Saw it on TikTok, Instagram, YouTube, Pinterest or the web? Paste the link — it lands in your plan, clean and ready.</p>
+          <p>Saw it on TikTok, Instagram, YouTube, Pinterest or the web? Paste the link — it lands in your plan, clean and ready. Ten free imports to try it; unlimited on Pro.</p>
         </article>
         <article class="vcard">
           <div class="vic" aria-hidden="true">🛒</div>
           <h3>A grocery list that writes itself</h3>
-          <p>Your week's meals roll up into one tidy, aisle-sorted list. Share it, check it off together, shop it once.</p>
+          <p>Your week's meals roll up into one list, free. Pro sorts it by aisle, lets the household tick items off together, and exports it wherever you shop.</p>
         </article>
       </div>
     </section>
@@ -130,12 +133,12 @@
         <div class="step">
           <div class="num" aria-hidden="true">2</div>
           <h3>Share the plan</h3>
-          <p>Invite your partner or housemate. Everyone sees the same plan, live, on their own phone.</p>
+          <p>Invite your partner or housemate — free for two. Everyone sees the same plan, live, on their own phone.</p>
         </div>
         <div class="step">
           <div class="num" aria-hidden="true">3</div>
           <h3>Shop &amp; cook</h3>
-          <p>Grab the auto-built grocery list, shop once, and cook without the nightly guesswork.</p>
+          <p>Your week's ingredients are already gathered into a list. Shop once, and cook without the nightly guesswork.</p>
         </div>
       </div>
     </section>
@@ -161,29 +164,39 @@
       <div class="ptable">
         <div class="pcard">
           <h3>Free</h3>
-          <p class="pdesc">Everything a home cook needs to get organized.</p>
+          <p class="pdesc">The whole planning loop, for you and one other person. No trial, no card.</p>
           <ul>
-            <li>Shared weekly meal plan</li>
+            <li>Shared weekly plan for <b>up to 2 people</b>, in sync</li>
+            <li>Breakfast, lunch, dinner and dessert — week and month view</li>
+            <li><b>25</b> saved recipes</li>
+            <li><b>10</b> recipe imports</li>
+            <li>Grocery list for the week</li>
             <li>Unlimited “What can I cook?”</li>
-            <li>Auto grocery list</li>
             <li>Share your week as image + text</li>
+            <li>Meal reminders</li>
           </ul>
+          <p class="pnote">The 25 recipes and 10 imports are one-off totals, not monthly
+            allowances. Everything else here is unlimited and stays free.</p>
           <a class="pbtn ghost" href="#waitlist">Start free</a>
         </div>
         <div class="pcard pro">
           <span class="ptag">Meal Memory Pro</span>
           <h3>Pro</h3>
-          <p class="pdesc">Unlimited imports, more households, and everything unlocked.</p>
+          <p class="pdesc">Unlimited imports, a smarter grocery list, and room for the whole household.</p>
           <div class="tiers">
             <div class="tier"><div class="amt">$2.99</div><div class="per">/month</div></div>
             <div class="tier best"><div class="amt">$14.99</div><div class="per">/year</div><div class="lab">Save 58%</div></div>
             <div class="tier"><div class="amt">$29.99</div><div class="per">once</div><div class="lab">Lifetime</div></div>
           </div>
           <ul>
-            <li>Unlimited one-tap recipe imports</li>
-            <li>Multiple households &amp; plans</li>
-            <li>Priority “What can I cook?” ideas</li>
+            <li><b>Unlimited recipe imports</b> — TikTok, Instagram, YouTube, Pinterest, any recipe site</li>
+            <li><b>Smart grocery list</b> — sorted by aisle, checkable, exportable</li>
+            <li><b>Unlimited</b> saved recipes</li>
+            <li>Household of <b>up to 6</b>, with per-person dietary needs</li>
           </ul>
+          <p class="pnote">Everything in Free, plus the above. Imports are unlimited under
+            fair use — a per-day ceiling exists only to stop abuse, and normal cooking
+            never reaches it. Lifetime is a one-time purchase and never renews.</p>
           <a class="pbtn solid" href="#waitlist">Go Pro at launch</a>
         </div>
       </div>

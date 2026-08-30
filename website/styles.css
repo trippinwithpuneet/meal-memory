@@ -90,13 +90,15 @@ input:focus-visible {
   color: var(--navy);
   text-decoration: none;
 }
+/* The real app icon, so web and App Store listing read as one product. The
+   icon art is full-bleed navy, so the old saffron gradient behind it (there for
+   the emoji mark) is gone — it would never have been visible anyway. */
 .brand .mark {
   width: 32px; height: 32px;
   border-radius: 9px;
-  background: linear-gradient(135deg, var(--saffron), var(--terracotta));
-  display: grid;
-  place-items: center;
-  font-size: 17px;
+  display: block;
+  object-fit: cover;
+  flex: none;
 }
 .nav .links {
   display: flex;
@@ -458,6 +460,14 @@ input:focus-visible {
   border: none;
   cursor: pointer;
   width: 100%;
+}
+.pcard .pnote {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0 0 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
 }
 .pbtn.ghost { border: 1px solid var(--border); color: var(--navy); background: #fff; }
 .pbtn.ghost:hover { border-color: var(--navy); }
