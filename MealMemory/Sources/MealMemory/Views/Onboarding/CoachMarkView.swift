@@ -65,7 +65,7 @@ struct CoachMarkOverlay: View {
         CoachStep(target: .grid,
                   label: "The grid",
                   title: "Your week at a glance",
-                  message: "Every day's breakfast, lunch and dinner in one view. Tap any slot to add a meal."),
+                  message: "Every day's breakfast, lunch, dinner and dessert in one view. Tap any slot to add a meal."),
         CoachStep(target: .hero,
                   label: "What can I cook?",
                   title: "Stuck for ideas?",

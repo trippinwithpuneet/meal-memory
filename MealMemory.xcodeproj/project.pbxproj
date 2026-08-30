@@ -638,7 +638,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = ShareExtension/MealMemoryShareExt.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				INFOPLIST_FILE = ShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -660,7 +660,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = ShareExtension/MealMemoryShareExt.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				INFOPLIST_FILE = ShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -747,7 +747,7 @@
 				CODE_SIGN_ENTITLEMENTS = MealMemory/MealMemory.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = MealMemory/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -771,7 +771,7 @@
 				CODE_SIGN_ENTITLEMENTS = MealMemory/MealMemory.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = MealMemory/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

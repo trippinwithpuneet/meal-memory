@@ -11,6 +11,7 @@ import {
   assertPublicHost,
   classify,
   decodeText,
+  emojiForDish,
   extractJSONLD,
   instagramCaptionFromEmbed,
   instagramShortcode,
@@ -182,8 +183,14 @@ describe("extractJSONLD", () => {
     expect(extractJSONLD(fixture("no-jsonld.html"))).toBeNull();
   });
 
-  test("emoji is always empty on the JSON-LD path (app supplies the default)", () => {
-    expect(extractJSONLD(fixture("yoast-graph.html"))!.emoji).toBe("");
+  // Was: "emoji is always empty on the JSON-LD path (app supplies the default)".
+  // That assertion locked in a defect — the JSON-LD path covers ~80% of imports,
+  // so most recipes landed on the app's 🍽 default and never got a real emoji.
+  // Reported from dogfooding a Pinterest import. The path now derives one locally.
+  test("derives a dish emoji rather than leaving it to the app default", () => {
+    const emoji = extractJSONLD(fixture("yoast-graph.html"))!.emoji;
+    expect(emoji).not.toBe("");
+    expect([...emoji].length).toBeGreaterThan(0);
   });
 });
 
@@ -352,4 +359,47 @@ describe("sourceMessage", () => {
       expect(m.toLowerCase()).toContain("manually");
     });
   }
+});
+
+// ─── Dish emoji (JSON-LD path) ───────────────────────────────────────────────
+// The JSON-LD fast path is LLM-free, so the emoji is picked locally. The rule
+// that matters: match the DISH FORM, not an ingredient in the name. Reported
+// from dogfooding — "Tahini Banana Breakfast Cookies" imported with no emoji.
+describe("emojiForDish", () => {
+  test("prefers the dish form over an ingredient in the name", () => {
+    expect(emojiForDish("Tahini Banana Breakfast Cookies")).toBe("\u{1F36A}");
+    expect(emojiForDish("Banana Bread")).toBe("\u{1F35E}");
+  });
+
+  test("covers the demo-data dishes", () => {
+    const expected: Record<string, string> = {
+      "Egg Sandwich": "\u{1F96A}",
+      "Burrito Bowl": "\u{1F32F}",
+      "Tuna & Egg Salad": "\u{1F957}",
+      "Sheet-Pan Chicken & Veg": "\u{1F357}",
+      "Spaghetti Bolognese": "\u{1F35D}",
+      "Moong Dal Chilla": "\u{1F95E}",
+      "Paneer Bhurji": "\u{1F9C0}",
+      "Quinoa Beetroot Salad": "\u{1F957}",
+      "Tofu Stir Fry": "\u{1F958}",
+    };
+    for (const [name, emoji] of Object.entries(expected)) {
+      expect(emojiForDish(name)).toBe(emoji);
+    }
+  });
+
+  test("falls back to a neutral plate rather than guessing wrong", () => {
+    expect(emojiForDish("Something Unrecognisable")).toBe("\u{1F37D}");
+    expect(emojiForDish("")).toBe("\u{1F37D}");
+    expect(emojiForDish("   ")).toBe("\u{1F37D}");
+  });
+
+  test("always returns exactly one emoji, never empty", () => {
+    const names = ["Pancakes", "Ramen", "zzzz", "", "Chocolate Chip Cookies"];
+    for (const n of names) {
+      const e = emojiForDish(n);
+      expect(e.length).toBeGreaterThan(0);
+      expect([...e].length).toBeLessThanOrEqual(2); // some emoji are 2 code points
+    }
+  });
 });

@@ -77,7 +77,7 @@ struct WeekPlanShareCard: View {
                 .foregroundColor(navy)
             ForEach(Array(day.meals.enumerated()), id: \.offset) { _, meal in
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Text(meal.type.shortLabel)
+                    Text(meal.type.gridLabel)
                         .font(.system(size: 10, weight: .heavy))
                         .foregroundColor(saffron)
                         .frame(width: 14, alignment: .leading)

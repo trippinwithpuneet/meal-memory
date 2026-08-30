@@ -264,7 +264,10 @@ final class MealPlanViewModelTests: XCTestCase {
     func testSlotKeyDistinguishesMealTypesOnTheSameDay() {
         let date = monday(2026, 8, 10)
         let keys = Set(MealType.allCases.map { makeSlot(date: date, meal: $0, recipeId: nil).slotKey })
-        XCTAssertEqual(keys.count, 3)
+        // Derived from allCases rather than hardcoded, so adding a meal type
+        // (dessert, 2026-08-30) doesn't silently weaken this into a no-op.
+        XCTAssertEqual(keys.count, MealType.allCases.count,
+                       "every meal type needs its own slot on a given day")
     }
 
     // MARK: - Dietary conflicts

@@ -137,7 +137,27 @@ final class RecipeCodableTests: XCTestCase {
         for type in MealType.allCases {
             XCTAssertEqual(MealType(rawValue: type.rawValue), type)
             XCTAssertFalse(type.label.isEmpty)
-            XCTAssertEqual(type.shortLabel.count, 1, "grid labels must stay single characters")
+        }
+    }
+
+    // The grid label and the text label are deliberately different things.
+    // Dessert (added 2026-08-30) uses 🍰 in the grid because "D" is taken by
+    // dinner and the column is 20pt — but a glyph in the SHARE TEXT would render
+    // as "🍪 🍰: Tahini Cookies", two emoji and no word. These two assertions
+    // pin each label to its own job.
+    func testGridLabelIsASingleCharacterThatFitsTheColumn() {
+        for type in MealType.allCases {
+            XCTAssertEqual(type.gridLabel.count, 1,
+                           "\(type.rawValue): the grid column is 20pt — one character only")
+        }
+    }
+
+    func testShortLabelStaysPlainTextForSharedPlans() {
+        for type in MealType.allCases {
+            XCTAssertFalse(type.shortLabel.isEmpty)
+            XCTAssertTrue(type.shortLabel.canBeConverted(to: .ascii),
+                          "\(type.rawValue): shortLabel goes into the shared plan text — "
+                          + "an emoji here collides with the recipe's own emoji")
         }
     }
 }

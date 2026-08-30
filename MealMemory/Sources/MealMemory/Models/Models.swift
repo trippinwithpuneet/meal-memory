@@ -129,21 +129,48 @@ struct RecipeStep: Codable {
 // MARK: - Meal Slot
 
 enum MealType: String, Codable, CaseIterable {
-    case breakfast, lunch, dinner
+    // Order is the on-screen row order in the week grid, and the order meals are
+    // listed in a shared plan. Dessert sits after dinner.
+    case breakfast, lunch, dinner, dessert
 
     var label: String {
         switch self {
         case .breakfast: return "Breakfast"
         case .lunch:     return "Lunch"
         case .dinner:    return "Dinner"
+        case .dessert:   return "Dessert"
         }
     }
 
+    /// Compact label for the week grid's 20pt column. Dessert uses a glyph
+    /// because "D" is taken by dinner and there isn't width for two letters.
+    var gridLabel: String {
+        switch self {
+        case .breakfast: return "B"
+        case .lunch:     return "L"
+        case .dinner:    return "D"
+        case .dessert:   return "🍰"
+        }
+    }
+
+    /// True when `gridLabel` is a glyph rather than a letter. Glyphs need a
+    /// larger point size than letterforms to read at the same optical weight.
+    var gridLabelIsGlyph: Bool {
+        switch self {
+        case .breakfast, .lunch, .dinner: return false
+        case .dessert:                    return true
+        }
+    }
+
+    /// Label for plain-text contexts (the shared plan message). Stays a WORD for
+    /// dessert — an emoji here would collide with the recipe's own emoji and
+    /// render as "🍪 🍰: Tahini Cookies".
     var shortLabel: String {
         switch self {
         case .breakfast: return "B"
         case .lunch:     return "L"
         case .dinner:    return "D"
+        case .dessert:   return "Dessert"
         }
     }
 }

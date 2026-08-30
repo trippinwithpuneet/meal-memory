@@ -7,6 +7,37 @@ which is the single source of truth — both `Info.plist` files resolve them via
 The app has not shipped, so `MARKETING_VERSION` stays at `1.0` until the first
 App Store submission. The build number increments per dogfood/TestFlight build.
 
+## 1.0 (3) — 2026-08-30
+
+Dogfooding feedback from the first real Pinterest import.
+
+### Added
+- **Dessert meal type** — a fourth row after dinner, labelled **B / L / D / 🍰**.
+  Dessert uses a glyph because "D" is taken by dinner and the grid's label column
+  is 20pt, too narrow for two letters. Four rows fit at the existing row height.
+  Options considered are in `docs/mockups/dessert-row/`.
+  - Split one label into two: `gridLabel` (🍰) for the grid and share image,
+    `shortLabel` ("Dessert") for the shared-plan text, where a glyph would have
+    rendered as "🍪 🍰: Tahini Cookies". Both pinned by tests.
+  - Migration `20260830000002`. **One-way** — Postgres cannot remove an enum value.
+  - Demo data gains a dessert on two days so the row shows its purpose.
+- **Keyboard dismissal in the recipe form** — interactive swipe-to-dismiss plus an
+  explicit Done button above the keyboard, so an imported recipe can be reviewed
+  in full before saving. Applies to Camera and Manual entry too.
+
+### Fixed
+- **Imported recipes had no emoji.** The JSON-LD fast path hardcoded `emoji: ""`,
+  so ~80% of imports fell back to the app's 🍽 default; only the Claude path ever
+  asked for one. Adds a local picker that matches the dish form before any
+  ingredient — "Tahini Banana Breakfast Cookies" resolves to 🍪, not 🍌 — kept
+  local so the free path stays free. The Claude prompt now demands specificity.
+
+### Tests
+Two assertions had codified defects and were replaced: "emoji is always empty on
+the JSON-LD path" (asserted the bug above) and "grid labels must stay single
+characters" (conflated the two label roles). A hardcoded slot-key count of 3 is
+now derived from `allCases`.
+
 ## 1.0 (2) — 2026-08-30
 
 Dogfood build. Backend brought fully up to date with the code.
