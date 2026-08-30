@@ -459,6 +459,14 @@ input:focus-visible {
   cursor: pointer;
   width: 100%;
 }
+.pcard .pnote {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0 0 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
 .pbtn.ghost { border: 1px solid var(--border); color: var(--navy); background: #fff; }
 .pbtn.ghost:hover { border-color: var(--navy); }
 .pbtn.solid { background: var(--navy); color: #fff; }
