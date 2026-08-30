@@ -45,7 +45,7 @@ Status: all executed layers pass. DB layer still unrun (needs Docker); LLM eval 
 **Versioning.** `project.yml` is the single source of truth. Both `Info.plist`s
 resolve `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)` as build settings —
 the app's plist used to hardcode them, so a bump silently desynced app vs Share
-Extension. Current: **1.0 (2)**. `MARKETING_VERSION` stays `1.0` until the first
+Extension. Current: **1.0 (3)**. `MARKETING_VERSION` stays `1.0` until the first
 App Store submission; bump the build number per dogfood/TestFlight build. Changes
 must land in `project.yml` **and** `MealMemory.xcodeproj/project.pbxproj` unless
 you re-run `xcodegen` (which clobbers the Supabase keys in `Info.plist`). See `CHANGELOG.md`.
