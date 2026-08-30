@@ -134,6 +134,17 @@ struct AddRecipeSheetView: View {
 
     // MARK: - Form sheet (full size)
 
+    /// Editing always has a recipe to update. Manual entry is a form from the
+    /// start. Camera and URL only have something to save once OCR or the import
+    /// has populated the fields — the same condition that reveals the form.
+    private var showsSaveAction: Bool {
+        if vm.isEditing { return true }
+        switch vm.entryMethod ?? .manual {
+        case .manual:        return true
+        case .camera, .url:  return !vm.name.isEmpty
+        }
+    }
+
     private var formSheet: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -169,18 +180,26 @@ struct AddRecipeSheetView: View {
                     }
                     .foregroundColor(Theme.saffron)
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(vm.isEditing ? "Update" : "Save") {
-                        Task {
-                            if let recipe = await vm.save(householdId: householdId) {
-                                onSave(recipe)
-                                dismiss()
+                // Camera and URL start with nothing to commit — the import/OCR
+                // fills the form first. Showing a permanently-disabled Save in the
+                // primary toolbar slot next to the actual action (the → button)
+                // just reads as a redundant control, so hold it back until the
+                // form has content. Manual entry keeps it visible throughout,
+                // since typing a name is the whole flow there.
+                if showsSaveAction {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(vm.isEditing ? "Update" : "Save") {
+                            Task {
+                                if let recipe = await vm.save(householdId: householdId) {
+                                    onSave(recipe)
+                                    dismiss()
+                                }
                             }
                         }
+                        .disabled(!vm.canSave || vm.isSaving)
+                        .fontWeight(.semibold)
+                        .foregroundColor(vm.canSave ? Theme.saffron : Theme.textTertiary)
                     }
-                    .disabled(!vm.canSave || vm.isSaving)
-                    .fontWeight(.semibold)
-                    .foregroundColor(vm.canSave ? Theme.saffron : Theme.textTertiary)
                 }
             }
         }

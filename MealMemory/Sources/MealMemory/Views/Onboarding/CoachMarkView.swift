@@ -58,6 +58,8 @@ struct CoachMarkOverlay: View {
     /// Clearance between the callout and the control it points at.
     private let gap: CGFloat = 16
     private let topLimit: CGFloat = 24
+    /// How far the highlight ring sits outside the target's own bounds.
+    private let ringPadding: CGFloat = 12
 
     static let steps: [CoachStep] = [
         CoachStep(target: .grid,
@@ -89,13 +91,14 @@ struct CoachMarkOverlay: View {
 
                 // Highlight ring around the current target.
                 if let rect = targetRect {
-                    RoundedRectangle(cornerRadius: ringCornerRadius, style: .continuous)
+                    let radius = ringCornerRadius(for: rect)
+                    RoundedRectangle(cornerRadius: radius, style: .continuous)
                         .stroke(Theme.saffron, lineWidth: 2.5)
                         .background(
-                            RoundedRectangle(cornerRadius: ringCornerRadius, style: .continuous)
+                            RoundedRectangle(cornerRadius: radius, style: .continuous)
                                 .stroke(Theme.saffron.opacity(0.25), lineWidth: 8)
                         )
-                        .frame(width: rect.width + 12, height: rect.height + 12)
+                        .frame(width: rect.width + ringPadding, height: rect.height + ringPadding)
                         .position(x: rect.midX, y: rect.midY)
                         .allowsHitTesting(false)
                         .animation(.spring(response: 0.35, dampingFraction: 0.85), value: index)
@@ -130,11 +133,14 @@ struct CoachMarkOverlay: View {
         return max(topLimit, restingTop)
     }
 
-    // Tighter corners for the small buttons, rounder for the big grid.
-    private var ringCornerRadius: CGFloat {
+    // Tighter corners for the small buttons, rounder for the big grid. The hero
+    // target is a Capsule, so its radius has to track the ring's own height
+    // (target + padding) rather than a constant — a fixed 26 against a ~64pt
+    // ring reads visibly squarer than the pill sitting inside it.
+    private func ringCornerRadius(for rect: CGRect) -> CGFloat {
         switch step.target {
         case .grid: return 16
-        case .hero: return 26
+        case .hero: return (rect.height + ringPadding) / 2
         case .share: return 10
         }
     }
