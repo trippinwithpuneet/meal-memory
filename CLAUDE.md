@@ -40,13 +40,44 @@ Status: all executed layers pass. DB layer still unrun (needs Docker); LLM eval 
 
 ## Resume Here
 
-**Last session:** 2026-08-30 — merged **PR #8 (TRI-19 eval suite + 3 security/UX fixes)** into `main`. Rebuilt and installed the current build on both the iPhone 13 mini simulator and Rachel's phone; most of the session went to untangling code signing (see the device-signing runbook below — read it before touching signing again).
+**Last session:** 2026-08-30 — merged PR #8 (TRI-19 evals) and PR #9 (signing runbook); fixed four demo-mode defects (PR #10); brought the **backend fully up to date with the code** for the first time since July. Most of the morning went to untangling code signing — read the device-signing runbook below before touching signing again.
 
-**Live state after this session:**
-- `main` = `7e22c7e`, contains everything through TRI-19. Branch `dogfood-rachel-v2` holds the dogfood-only build config (DO NOT MERGE).
-- Rachel's phone: running the TRI-19 build. **Provisioning profile expires 2026-09-06** — reinstalling after that needs a fresh mint + 2FA.
-- ⚠️ **`fetch-recipe` is deployed but predates TRI-19**, so the three fixes from the eval suite — the IPv6 SSRF bypass in `assertPublicHost()` especially — are NOT live in production. Redeploy is the top open task.
-- ⚠️ **Orphaned fix:** the Instagram caption cleanup (strips `View all N comments` embed chrome) exists only on the old `dogfood-rachel` branch, never merged to `main`. Cherry-pick it before that branch is deleted.
+**Versioning.** `project.yml` is the single source of truth. Both `Info.plist`s
+resolve `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)` as build settings —
+the app's plist used to hardcode them, so a bump silently desynced app vs Share
+Extension. Current: **1.0 (2)**. `MARKETING_VERSION` stays `1.0` until the first
+App Store submission; bump the build number per dogfood/TestFlight build. Changes
+must land in `project.yml` **and** `MealMemory.xcodeproj/project.pbxproj` unless
+you re-run `xcodegen` (which clobbers the Supabase keys in `Info.plist`). See `CHANGELOG.md`.
+
+**Production state (all verified 2026-08-30):**
+- ✅ **All 8 migrations applied AND recorded.** This included `20260703000001`,
+  applied via the SQL Editor in July but never written to `schema_migrations` —
+  that long-standing drift is now cleared. Every migration is idempotent.
+- ✅ **`fetch-recipe` redeployed** with the TRI-19 refactor (`index.ts` + `lib.ts`).
+  The IPv6 SSRF fix and `nottiktok.com` host-routing fix are live in production
+  for the first time since being merged on 2026-08-15. Auth gate smoke-tested:
+  405 on OPTIONS, 401 unauthenticated, 401 on malformed JWT.
+- ✅ **`ANTHROPIC_API_KEY` set** as an edge secret, so the Claude Haiku parse tail
+  works — Instagram/TikTok/description-only YouTube imports are now possible.
+- ✅ **Anonymous Sign-ins enabled** (+ captcha), and confined by migration
+  `20260830000001` to import only. Anonymous users carry the `authenticated` role,
+  so anything granted to `authenticated` must be checked against `is_anonymous()`.
+- Supabase project is in **ap-southeast-1 (Singapore)** while the target market is
+  US/UK/CA/AU. Region can't be changed after creation — migrating projects before
+  real users exist is worth a ticket.
+
+**Still open:**
+- Rachel's phone runs 1.0 (2). **Provisioning profile expires 2026-09-06** — after
+  that a rebuild needs a fresh mint + 2FA. Wireless install works (~16s, no cable),
+  but a Wi-Fi dropout fails the install outright; just re-run it.
+- ⚠️ **Orphaned fix:** the Instagram caption cleanup (strips `View all N comments`
+  embed chrome) exists only on the old `dogfood-rachel` branch, never merged to
+  `main`. Cherry-pick it before that branch is deleted.
+- TRI-15 Instagram + TikTok resolvers remain **unvalidated against real content**;
+  the API key that blocked testing them is now set. Needs one real Reel + one real
+  TikTok link.
+- Anonymous users with no member row need a periodic cleanup job (TRI-13).
 
 **Earlier (2026-07-24):** TRI-15 universal recipe import + Share Extension + App Store prep. Repo moved to `~/Documents/Claude projects/side-projects/meal-memory`.
 
@@ -54,7 +85,15 @@ Status: all executed layers pass. DB layer still unrun (needs Docker); LLM eval 
 The `fetch-recipe` Edge Function is now a host router + per-source resolvers + a shared **Claude Haiku (`claude-haiku-4-5`)** parse tail (raw HTTP, `output_config.format` JSON schema). JSON-LD stays LLM-free.
 - **Validated against real links:** Web + Pinterest (pin → source blog → JSON-LD), YouTube (3 tiers: follows a recipe-blog link in the description → JSON-LD; else parses a recipe written in the description; else best-effort transcript — YouTube blocks most server-side, so description-less spoken Shorts fall back gracefully). Bugs fixed along the way: JSON-LD `<script>` regex now allows extra attrs (Yoast/WPRM), `HowToSection` steps flattened, plural "RECIPES:" label match.
 - **Not yet validated:** Instagram + TikTok resolvers (best-effort selectors, untested against real captions). **NEXT: user will send one real IG Reel + one TikTok link → validate + fix, same method.**
-- **Deploy status (checked 2026-08-30):** the function IS deployed and live (`OPTIONS` on `/functions/v1/fetch-recipe` returns 405, not 404) — but at a **pre-TRI-19 revision**, so the SSRF/host-routing fixes are not in production. Redeploy with `supabase functions deploy fetch-recipe`; the edge secret `ANTHROPIC_API_KEY` must be set for the Haiku parse tail.
+- **Deploy status (2026-08-30):** ✅ deployed at the current TRI-19 revision, with
+  `ANTHROPIC_API_KEY` set, so both the JSON-LD fast path and the Haiku parse tail
+  work in production. Redeploy with `supabase functions deploy fetch-recipe`.
+- **Supabase CLI + agents:** the CLI auto-detects agent invocation and switches to
+  non-interactive JSON mode, which silently swallows confirmation prompts *and*
+  error output — `db push` appears to do nothing. Use
+  `script -q <log> <cli> <cmd> --agent no --output-format text </dev/null` and
+  pass `--yes`; do **not** pipe `yes |`, which floods stdin and aborts the command.
+  `supabase login` needs the same treatment (a pty), since `!` runs without a TTY.
 
 ### Share Extension (built, simulator-verified)
 New `MealMemoryShareExt` target: captures a shared link → App Group `group.com.puneetjain.mealmemory` + `mealmemory://import?url=` scheme → main app `.onOpenURL` (`ImportCoordinator`) opens Add Recipe and auto-imports. **App Groups need a paid Apple Developer account to sign on device/TestFlight** (step zero, still open).
