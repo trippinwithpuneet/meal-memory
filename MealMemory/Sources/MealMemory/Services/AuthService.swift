@@ -14,7 +14,16 @@ final class AuthService: ObservableObject {
         observeAuthChanges()
     }
 
-    var isSignedIn: Bool { session != nil }
+    /// True only for a REAL account. An anonymous session exists purely so demo
+    /// users can try recipe import (see `signInAnonymouslyIfNeeded`); it is not
+    /// a signed-in user and must never be treated as one.
+    ///
+    /// This was `session != nil`, which broke the entire signup path: once a demo
+    /// user ran an import, the app saw a session, skipped AuthView, and dropped
+    /// them straight into HouseholdSetupView — where `create_household()`
+    /// correctly refuses anonymous callers. The result was "We couldn't finish
+    /// setting up" with no way forward and no way to reach the sign-up screen.
+    var isSignedIn: Bool { session != nil && !isAnonymousSession }
     var userId: UUID? { session?.user.id }
 
     /// True when the only thing signed in is a throwaway import session.
